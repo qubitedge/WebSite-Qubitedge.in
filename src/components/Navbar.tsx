@@ -1,169 +1,182 @@
-import { useState, useRef, useEffect } from "react";
-import { ArrowUpRight, X, GraduationCap, Factory, Cpu, Info, Calendar, Mail } from "lucide-react";
+import { useState, useEffect } from "react";
+import { ArrowUpRight, X, Settings, Box } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import logo from "@/assets/qubitedge-logo.png.asset.json";
-
-const navItems = [
-  { label: "Learning", href: "#learning", icon: GraduationCap, desc: "Workshops, courses & career pathways" },
-  { label: "Manufacturing", href: "#manufacturing", icon: Factory, desc: "Operations, automation & growth" },
-  { label: "IT/IT Services", href: "#it-services", icon: Cpu, desc: "Enterprise tech & implementation" },
-  { label: "About Us", href: "#about", icon: Info, desc: "Who we are & what we stand for" },
-  { label: "Workshops", href: "#workshops", icon: Calendar, desc: "2-hour live sessions, real impact" },
-];
+import { Link } from "@tanstack/react-router";
+import { useCMS, scrollToAnchor } from "@/lib/cms";
 
 export function Navbar() {
+  const { content } = useCMS();
   const [open, setOpen] = useState(false);
-  const [hoverIdx, setHoverIdx] = useState<number | null>(null);
-  const itemRefs = useRef<(HTMLAnchorElement | null)[]>([]);
-  const [indicator, setIndicator] = useState<{ left: number; width: number } | null>(null);
+  const [scrolled, setScrolled] = useState(false);
+  const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
 
   useEffect(() => {
-    if (hoverIdx === null) {
-      setIndicator(null);
-      return;
-    }
-    const el = itemRefs.current[hoverIdx];
-    if (el) {
-      const parent = el.parentElement!;
-      const elRect = el.getBoundingClientRect();
-      const parentRect = parent.getBoundingClientRect();
-      setIndicator({ left: elRect.left - parentRect.left, width: elRect.width });
-    }
-  }, [hoverIdx]);
+    const onScroll = () => {
+      setScrolled(window.scrollY > 16);
+      // active section detection
+      let current: string | null = null;
+      for (const item of content.nav) {
+        const el = document.getElementById(item.anchor);
+        if (el) {
+          const top = el.getBoundingClientRect().top;
+          if (top <= 120) current = item.anchor;
+        }
+      }
+      setActiveAnchor(current);
+    };
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [content.nav]);
+
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [open]);
+
+  const handleNav = (anchor: string) => {
+    setOpen(false);
+    setTimeout(() => scrollToAnchor(anchor), 60);
+  };
 
   return (
     <>
-      <header className="fixed top-0 left-0 right-0 z-50 backdrop-blur-md bg-black/40 border-b border-white/10">
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 flex items-center justify-between h-16">
-          <a href="#" className="flex items-center">
-            <img src={logo.url} alt="Qubitedge" className="h-8 w-auto" />
-          </a>
+      <header className="fixed top-3 left-0 right-0 z-50 px-3 sm:px-4">
+        <div
+          className={`mx-auto max-w-6xl flex items-center justify-between rounded-full border border-white/15 transition-all ${
+            scrolled ? "bg-black/70 backdrop-blur-xl shadow-[0_8px_40px_-12px_rgba(100,206,251,0.25)]" : "bg-black/40 backdrop-blur-md"
+          } pl-4 pr-2 py-2`}
+        >
+          {/* Brand */}
+          <button onClick={() => scrollToAnchor(content.blocks[0]?.anchor || "")} className="flex items-center gap-2 shrink-0">
+            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-[#64CEFB] to-blue-700 shadow-[0_0_20px_rgba(100,206,251,0.4)]">
+              <Box className="h-4 w-4 text-white" />
+            </span>
+            <span className="text-white font-medium tracking-tight">{content.brand.name}</span>
+          </button>
 
-          {/* Desktop dynamic nav with sliding indicator */}
-          <nav
-            className="hidden lg:flex relative items-center gap-1 rounded-full border border-gray-700 px-2 py-2"
-            onMouseLeave={() => setHoverIdx(null)}
-          >
-            <AnimatePresence>
-              {indicator && (
-                <motion.span
-                  layout
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1, left: indicator.left, width: indicator.width }}
-                  exit={{ opacity: 0 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
-                  className="absolute top-1 bottom-1 rounded-full bg-white/10 border border-white/15"
-                  style={{ left: indicator.left, width: indicator.width }}
-                />
-              )}
-            </AnimatePresence>
-
-            {navItems.map((i, idx) => (
-              <a
-                key={i.label}
-                ref={(el) => { itemRefs.current[idx] = el; }}
-                href={i.href}
-                onMouseEnter={() => setHoverIdx(idx)}
-                className="relative z-10 px-4 py-1.5 text-sm text-white/80 hover:text-white rounded-full transition-colors"
-              >
-                {i.label}
-              </a>
-            ))}
-            <a
-              ref={(el) => { itemRefs.current[navItems.length] = el; }}
-              href="#contact"
-              onMouseEnter={() => setHoverIdx(navItems.length)}
-              className="relative z-10 flex items-center gap-1 px-4 py-1.5 text-sm text-white/80 hover:text-white rounded-full transition-colors"
-            >
-              Contact us <ArrowUpRight className="h-3.5 w-3.5" />
-            </a>
+          {/* Desktop nav */}
+          <nav className="hidden lg:flex items-center gap-1">
+            {content.nav.map((i) => {
+              const isActive = activeAnchor === i.anchor;
+              return (
+                <button
+                  key={i.id}
+                  onClick={() => handleNav(i.anchor)}
+                  className={`relative px-4 py-2 text-sm transition-colors ${
+                    isActive ? "text-white" : "text-white/70 hover:text-white"
+                  }`}
+                >
+                  {i.label}
+                  {isActive && (
+                    <motion.span
+                      layoutId="nav-active-dot"
+                      className="absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-1 w-1 rounded-full bg-[#64CEFB]"
+                    />
+                  )}
+                </button>
+              );
+            })}
           </nav>
 
-          {/* Mobile: animated dot-grid trigger (not a classic hamburger) */}
-          <button
-            onClick={() => setOpen(true)}
-            className="lg:hidden group flex items-center gap-2 rounded-full border border-white/20 px-3 py-2 text-xs text-white/80 hover:text-white hover:border-white/40 transition-colors"
-            aria-label="Open menu"
-          >
-            <span className="grid grid-cols-2 gap-0.5">
-              <span className="h-1 w-1 rounded-full bg-current" />
-              <span className="h-1 w-1 rounded-full bg-current" />
-              <span className="h-1 w-1 rounded-full bg-current" />
-              <span className="h-1 w-1 rounded-full bg-current" />
-            </span>
-            Menu
-          </button>
+          {/* Right side */}
+          <div className="flex items-center gap-2">
+            <Link
+              to="/admin"
+              title="Admin"
+              className="hidden sm:flex h-9 w-9 items-center justify-center rounded-full text-white/60 hover:text-white hover:bg-white/10 transition-colors"
+            >
+              <Settings className="h-4 w-4" />
+            </Link>
+            <button
+              onClick={() => handleNav(content.cta.anchor)}
+              className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white text-black px-5 py-2 text-sm font-medium hover:bg-white/90 transition-colors"
+            >
+              {content.cta.label}
+            </button>
+
+            {/* Mobile menu trigger */}
+            <button
+              onClick={() => setOpen(true)}
+              className="lg:hidden relative flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-white"
+              aria-label="Open menu"
+            >
+              <span className="flex flex-col gap-1">
+                <span className="h-px w-4 bg-current" />
+                <span className="h-px w-4 bg-current" />
+              </span>
+            </button>
+          </div>
         </div>
       </header>
 
-      {/* Mobile slide-over drawer */}
+      {/* Mobile drawer — top sheet, large tappable items */}
       <AnimatePresence>
         {open && (
           <>
             <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
+              initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }}
+              transition={{ duration: 0.2 }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm lg:hidden"
+              className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-md lg:hidden"
             />
             <motion.aside
-              initial={{ x: "100%" }}
-              animate={{ x: 0 }}
-              exit={{ x: "100%" }}
-              transition={{ type: "spring", damping: 30, stiffness: 280 }}
-              className="fixed top-0 right-0 bottom-0 z-[70] w-[85%] max-w-sm bg-black border-l border-white/10 lg:hidden flex flex-col"
+              initial={{ y: "-100%" }} animate={{ y: 0 }} exit={{ y: "-100%" }}
+              transition={{ type: "spring", damping: 28, stiffness: 240 }}
+              className="fixed top-0 left-0 right-0 z-[70] lg:hidden bg-gradient-to-b from-[#0a1118] to-black border-b border-white/10 rounded-b-3xl overflow-hidden"
             >
-              <div className="flex items-center justify-between p-5 border-b border-white/10">
-                <img src={logo.url} alt="Qubitedge" className="h-7 w-auto" />
+              <div className="flex items-center justify-between px-5 pt-5 pb-3">
+                <div className="flex items-center gap-2">
+                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-[#64CEFB] to-blue-700">
+                    <Box className="h-4 w-4 text-white" />
+                  </span>
+                  <span className="text-white font-medium">{content.brand.name}</span>
+                </div>
                 <button
                   onClick={() => setOpen(false)}
-                  className="rounded-full p-2 hover:bg-white/10 text-white"
-                  aria-label="Close menu"
+                  className="h-9 w-9 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10"
+                  aria-label="Close"
                 >
                   <X className="h-5 w-5" />
                 </button>
               </div>
 
-              <nav className="flex-1 overflow-y-auto p-4">
-                <p className="px-3 pb-3 text-[10px] uppercase tracking-widest text-white/40">Explore</p>
-                <ul className="flex flex-col gap-1">
-                  {navItems.map((i, idx) => (
+              <nav className="px-3 pb-3">
+                <ul>
+                  {content.nav.map((i, idx) => (
                     <motion.li
-                      key={i.label}
-                      initial={{ opacity: 0, x: 20 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: 0.05 + idx * 0.05 }}
+                      key={i.id}
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.04 + idx * 0.04 }}
                     >
-                      <a
-                        href={i.href}
-                        onClick={() => setOpen(false)}
-                        className="group flex items-start gap-3 rounded-xl p-3 hover:bg-white/5 transition-colors"
+                      <button
+                        onClick={() => handleNav(i.anchor)}
+                        className="group w-full flex items-center justify-between px-4 py-4 rounded-xl hover:bg-white/5 transition-colors"
                       >
-                        <span className="mt-0.5 flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-white/10 bg-white/[0.03] text-[#64CEFB] group-hover:border-[#64CEFB]/40">
-                          <i.icon className="h-4 w-4" />
-                        </span>
-                        <span className="flex-1 min-w-0">
-                          <span className="block text-sm text-white font-medium">{i.label}</span>
-                          <span className="block text-xs text-white/50 mt-0.5">{i.desc}</span>
-                        </span>
-                        <ArrowUpRight className="h-4 w-4 text-white/30 group-hover:text-white transition-colors mt-2" />
-                      </a>
+                        <span className="text-xl font-medium text-white tracking-tight">{i.label}</span>
+                        <ArrowUpRight className="h-5 w-5 text-white/30 group-hover:text-[#64CEFB] transition-colors" />
+                      </button>
                     </motion.li>
                   ))}
                 </ul>
               </nav>
 
-              <div className="p-5 border-t border-white/10">
-                <a
-                  href="#contact"
+              <div className="px-5 pb-6 pt-2 flex gap-2">
+                <Link
+                  to="/admin"
                   onClick={() => setOpen(false)}
-                  className="group flex items-center justify-center gap-2 w-full rounded-full bg-white text-black px-5 py-3 text-sm font-medium hover:bg-white/90 transition-colors"
+                  className="flex-1 flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-3 text-sm text-white hover:bg-white/5"
                 >
-                  <Mail className="h-4 w-4" />
-                  Contact us
-                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
-                </a>
+                  <Settings className="h-4 w-4" /> Admin
+                </Link>
+                <button
+                  onClick={() => handleNav(content.cta.anchor)}
+                  className="flex-[2] inline-flex items-center justify-center gap-1.5 rounded-full bg-white text-black px-5 py-3 text-sm font-medium hover:bg-white/90"
+                >
+                  {content.cta.label}
+                  <ArrowUpRight className="h-4 w-4" />
+                </button>
               </div>
             </motion.aside>
           </>
