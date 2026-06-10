@@ -158,9 +158,9 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
         </div>
       </header>
 
-      <div className={`flex-1 grid grid-cols-1 ${previewOn ? "lg:grid-cols-[260px_minmax(0,1fr)_minmax(0,1.1fr)]" : "lg:grid-cols-[280px_minmax(0,1fr)]"} gap-0`}>
+      <div className={`flex-1 grid grid-cols-1 ${previewOn ? "lg:grid-cols-[280px_minmax(0,1fr)_minmax(0,1.2fr)]" : "lg:grid-cols-[320px_minmax(0,1fr)]"} gap-0`}>
         {/* Sidebar */}
-        <aside className="border-r border-white/10 p-3 space-y-3 max-h-[calc(100vh-57px)] overflow-y-auto">
+        <aside className="border-r border-white/10 bg-[#06080a] p-4 space-y-4 max-h-[calc(100vh-57px)] overflow-y-auto shadow-xl">
           {/* Page Selector */}
           <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
             <label className="block">
@@ -248,7 +248,7 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
         </aside>
 
         {/* Editor */}
-        <main className="p-4 sm:p-8 md:p-12 max-h-[calc(100vh-57px)] overflow-y-auto flex justify-center items-start bg-[#080b10]">
+        <main className="p-6 sm:p-10 md:p-16 max-h-[calc(100vh-57px)] overflow-y-auto flex justify-center items-start bg-gradient-to-br from-[#080b10] to-[#0a0d12]">
           {active ? (
             <BlockEditor
               key={active.id}
@@ -398,9 +398,9 @@ function BlockEditor({ block, onChange, onAnchorChange }: { block: Block; onChan
   const set = (k: string, v: any) => onChange({ [k]: v });
 
   return (
-    <div className="w-full max-w-4xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6 hover:border-white/15 transition-all duration-300">
-      <div className="flex items-center justify-between pb-4 border-b border-white/10">
-        <h2 className="text-2xl font-semibold tracking-tight text-white">{BLOCK_LABELS[block.type]}</h2>
+    <div className="w-full max-w-6xl bg-white/[0.03] border border-white/10 rounded-3xl p-8 sm:p-12 backdrop-blur-2xl shadow-2xl space-y-8 hover:bg-white/[0.04] transition-all duration-300">
+      <div className="flex items-center justify-between pb-6 border-b border-white/10">
+        <h2 className="text-3xl font-semibold tracking-tight text-white">{BLOCK_LABELS[block.type]}</h2>
         <div className="flex items-center gap-3">
           <span className="text-xs text-white/40 font-medium uppercase tracking-wider">Scroll anchor</span>
           <input
