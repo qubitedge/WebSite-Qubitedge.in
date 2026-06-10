@@ -420,49 +420,76 @@ function ItemListEditor({ block, onChange }: { block: Block; onChange: (d: Recor
   };
 
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [overPos, setOverPos] = useState<{ idx: number; pos: "before" | "after" } | null>(null);
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-widest text-white/40">Items · drag to reorder</span>
+        <span className="text-xs uppercase tracking-widest text-white/40">Items · drag to reorder · Alt+↑/↓</span>
         <button onClick={add} className="inline-flex items-center gap-1 text-xs rounded-md bg-white/10 hover:bg-white/15 px-2 py-1">
           <Plus className="h-3.5 w-3.5" /> Add item
         </button>
       </div>
-      {items.map((it, idx) => (
-        <details
-          key={it.id || idx}
-          draggable
-          onDragStart={() => setDragIdx(idx)}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={() => { if (dragIdx !== null) reorder(dragIdx, idx); setDragIdx(null); }}
-          onDragEnd={() => setDragIdx(null)}
-          className={`rounded-lg border border-white/10 bg-white/[0.02] ${dragIdx === idx ? "opacity-50" : ""}`}
-        >
-          <summary className="cursor-pointer px-3 py-2 text-sm flex items-center justify-between gap-2">
-            <span className="flex items-center gap-1.5 min-w-0">
-              <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab" />
-              <span className="truncate">{it[fields[0]?.key] || `Item ${idx + 1}`}</span>
-            </span>
-            <span className="flex items-center gap-1 shrink-0">
-              <button onClick={(e) => { e.preventDefault(); move(idx, -1); }} className="p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
-              <button onClick={(e) => { e.preventDefault(); move(idx, 1); }} className="p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
-              <button onClick={(e) => { e.preventDefault(); remove(idx); }} className="p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
-            </span>
-          </summary>
-          <div className="p-3 pt-0 space-y-2.5">
-            {fields.map((f) => (
-              <Field key={f.key} label={f.label}>
-                {f.multiline ? (
-                  <TextArea value={it[f.key]} onChange={(v) => update(idx, { [f.key]: v })} />
-                ) : (
-                  <TextInput value={it[f.key]} onChange={(v) => update(idx, { [f.key]: v })} />
-                )}
-              </Field>
-            ))}
+      {items.map((it, idx) => {
+        const showBefore = overPos?.idx === idx && overPos.pos === "before" && dragIdx !== null && dragIdx !== idx && dragIdx !== idx - 1;
+        const showAfter = overPos?.idx === idx && overPos.pos === "after" && dragIdx !== null && dragIdx !== idx && dragIdx !== idx + 1;
+        return (
+          <div key={it.id || idx} className="relative">
+            {showBefore && <div className="absolute -top-1 left-0 right-0 h-0.5 bg-[#64CEFB] rounded-full z-10" />}
+            {showAfter && <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#64CEFB] rounded-full z-10" />}
+            <details
+              draggable
+              onDragStart={() => setDragIdx(idx)}
+              onDragOver={(e) => {
+                e.preventDefault();
+                const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                const pos = e.clientY < r.top + r.height / 2 ? "before" : "after";
+                setOverPos({ idx, pos });
+              }}
+              onDragLeave={() => setOverPos((o) => (o?.idx === idx ? null : o))}
+              onDrop={() => {
+                if (dragIdx === null) return;
+                let target = overPos?.pos === "after" ? idx + 1 : idx;
+                if (dragIdx < target) target -= 1;
+                reorder(dragIdx, target);
+                setDragIdx(null); setOverPos(null);
+              }}
+              onDragEnd={() => { setDragIdx(null); setOverPos(null); }}
+              className={`rounded-lg border border-white/10 bg-white/[0.02] ${dragIdx === idx ? "opacity-40" : ""}`}
+            >
+              <summary
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.altKey && e.key === "ArrowUp") { e.preventDefault(); move(idx, -1); }
+                  else if (e.altKey && e.key === "ArrowDown") { e.preventDefault(); move(idx, 1); }
+                }}
+                className="cursor-pointer px-3 py-2 text-sm flex items-center justify-between gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#64CEFB]/60 rounded-lg"
+              >
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab" />
+                  <span className="truncate">{it[fields[0]?.key] || `Item ${idx + 1}`}</span>
+                </span>
+                <span className="flex items-center gap-1 shrink-0">
+                  <button onClick={(e) => { e.preventDefault(); move(idx, -1); }} aria-label="Move up" className="p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
+                  <button onClick={(e) => { e.preventDefault(); move(idx, 1); }} aria-label="Move down" className="p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
+                  <button onClick={(e) => { e.preventDefault(); remove(idx); }} aria-label="Delete item" className="p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
+                </span>
+              </summary>
+              <div className="p-3 pt-0 space-y-2.5">
+                {fields.map((f) => (
+                  <Field key={f.key} label={f.label}>
+                    {f.multiline ? (
+                      <TextArea value={it[f.key]} onChange={(v) => update(idx, { [f.key]: v })} />
+                    ) : (
+                      <TextInput value={it[f.key]} onChange={(v) => update(idx, { [f.key]: v })} />
+                    )}
+                  </Field>
+                ))}
+              </div>
+            </details>
           </div>
-        </details>
-      ))}
+        );
+      })}
     </div>
   );
 }
