@@ -27,6 +27,7 @@ export type SiteContent = {
   brand: { name: string };
   nav: NavItem[];
   cta: { label: string; anchor: string };
+  background: { enabled: boolean; videoUrl: string; imageUrl?: string; opacity: number };
   blocks: Block[];
   footer: { copyright: string; links: { label: string; href: string }[] };
 };
@@ -47,6 +48,12 @@ export const defaultContent: SiteContent = {
     { id: uid(), label: "About Us", anchor: "about" },
   ],
   cta: { label: "Get Started", anchor: "contact" },
+  background: {
+    enabled: true,
+    videoUrl:
+      "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_105406_16f4600d-7a92-4292-b96e-b19156c7830a.mp4",
+    opacity: 0.25,
+  },
   blocks: [
     {
       id: uid(),
@@ -185,7 +192,8 @@ function loadFromStorage(): SiteContent {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultContent;
-    return JSON.parse(raw) as SiteContent;
+    const parsed = JSON.parse(raw) as Partial<SiteContent>;
+    return { ...defaultContent, ...parsed, background: { ...defaultContent.background, ...(parsed.background || {}) } } as SiteContent;
   } catch {
     return defaultContent;
   }

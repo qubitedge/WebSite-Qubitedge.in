@@ -88,7 +88,7 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
   const [activeId, setActiveId] = useState<string | null>(content.blocks[0]?.id ?? null);
   const [previewOn, setPreviewOn] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
-  const [overIdx, setOverIdx] = useState<number | null>(null);
+  const [overPos, setOverPos] = useState<{ idx: number; pos: "before" | "after" } | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const active = content.blocks.find((b) => b.id === activeId) ?? null;
@@ -144,6 +144,7 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
         {/* Sidebar */}
         <aside className="border-r border-white/10 p-3 space-y-3 max-h-[calc(100vh-57px)] overflow-y-auto">
           <SiteSettings />
+          <BackgroundSettings />
           <NavEditor />
 
           <div>
@@ -152,34 +153,61 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
               <AddBlockMenu onAdd={addBlock} />
             </div>
             <ul className="space-y-1">
-              {content.blocks.map((b, i) => (
-                <li
-                  key={b.id}
-                  draggable
-                  onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = "move"; }}
-                  onDragOver={(e) => { e.preventDefault(); setOverIdx(i); }}
-                  onDragLeave={() => setOverIdx((o) => (o === i ? null : o))}
-                  onDrop={(e) => { e.preventDefault(); if (dragIdx !== null) reorder(dragIdx, i); setDragIdx(null); setOverIdx(null); }}
-                  onDragEnd={() => { setDragIdx(null); setOverIdx(null); }}
-                  className={overIdx === i && dragIdx !== null && dragIdx !== i ? "ring-1 ring-[#64CEFB]/60 rounded-lg" : ""}
-                >
-                  <div
-                    className={`group flex items-center gap-1 rounded-lg px-2 py-2 text-sm cursor-pointer ${
-                      activeId === b.id ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
-                    } ${dragIdx === i ? "opacity-50" : ""}`}
-                    onClick={() => setActiveId(b.id)}
+              {content.blocks.map((b, i) => {
+                const showBefore = overPos?.idx === i && overPos.pos === "before" && dragIdx !== null && dragIdx !== i && dragIdx !== i - 1;
+                const showAfter = overPos?.idx === i && overPos.pos === "after" && dragIdx !== null && dragIdx !== i && dragIdx !== i + 1;
+                return (
+                  <li
+                    key={b.id}
+                    draggable
+                    onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = "move"; }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                      const pos = e.clientY < r.top + r.height / 2 ? "before" : "after";
+                      setOverPos({ idx: i, pos });
+                    }}
+                    onDragLeave={() => setOverPos((o) => (o?.idx === i ? null : o))}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (dragIdx === null) return;
+                      let target = overPos?.pos === "after" ? i + 1 : i;
+                      if (dragIdx < target) target -= 1;
+                      reorder(dragIdx, target);
+                      setDragIdx(null); setOverPos(null);
+                    }}
+                    onDragEnd={() => { setDragIdx(null); setOverPos(null); }}
+                    className="relative"
                   >
-                    <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab active:cursor-grabbing" />
-                    <span className="text-[10px] text-white/40 w-4 shrink-0">{i + 1}</span>
-                    <span className="flex-1 truncate">{BLOCK_LABELS[b.type]}</span>
-                    <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
-                    <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
-                    <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
-                  </div>
-                </li>
-              ))}
+                    {showBefore && <div className="absolute -top-0.5 left-0 right-0 h-0.5 bg-[#64CEFB] rounded-full" />}
+                    {showAfter && <div className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-[#64CEFB] rounded-full" />}
+                    <div
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Block ${i + 1}: ${BLOCK_LABELS[b.type]}. Alt+Arrow Up or Down to reorder.`}
+                      onKeyDown={(e) => {
+                        if (e.altKey && e.key === "ArrowUp") { e.preventDefault(); moveBlock(b.id, -1); }
+                        else if (e.altKey && e.key === "ArrowDown") { e.preventDefault(); moveBlock(b.id, 1); }
+                        else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveId(b.id); }
+                        else if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }
+                      }}
+                      className={`group flex items-center gap-1 rounded-lg px-2 py-2 text-sm cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#64CEFB]/60 ${
+                        activeId === b.id ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
+                      } ${dragIdx === i ? "opacity-40" : ""}`}
+                      onClick={() => setActiveId(b.id)}
+                    >
+                      <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab active:cursor-grabbing" />
+                      <span className="text-[10px] text-white/40 w-4 shrink-0">{i + 1}</span>
+                      <span className="flex-1 truncate">{BLOCK_LABELS[b.type]}</span>
+                      <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }} aria-label="Move up" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
+                      <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }} aria-label="Move down" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
+                      <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }} aria-label="Delete block" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
-            <p className="mt-2 px-1 text-[11px] text-white/30">Tip: drag the handle to reorder.</p>
+            <p className="mt-2 px-1 text-[11px] text-white/30">Drag the handle to reorder · focus a block and press <kbd className="px-1 rounded bg-white/10">Alt</kbd>+<kbd className="px-1 rounded bg-white/10">↑/↓</kbd></p>
           </div>
         </aside>
 
@@ -327,7 +355,7 @@ function BlockEditor({ block, onChange, onAnchorChange }: { block: Block; onChan
           <Field label="Title line 1"><TextInput value={d.titleLine1} onChange={(v) => set("titleLine1", v)} /></Field>
           <Field label="Title line 2 (gradient)"><TextInput value={d.titleLine2} onChange={(v) => set("titleLine2", v)} /></Field>
           <Field label="Subtitle"><TextArea value={d.subtitle} onChange={(v) => set("subtitle", v)} /></Field>
-          <Field label="Background video URL"><TextInput value={d.videoUrl} onChange={(v) => set("videoUrl", v)} /></Field>
+          <Field label="Background video"><MediaInput value={d.videoUrl} accept="video/*" onChange={(v) => set("videoUrl", v)} /></Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Primary CTA label"><TextInput value={d.primaryCta?.label} onChange={(v) => set("primaryCta", { ...d.primaryCta, label: v })} /></Field>
             <Field label="Primary CTA anchor"><TextInput value={d.primaryCta?.anchor} onChange={(v) => set("primaryCta", { ...d.primaryCta, anchor: v })} /></Field>
@@ -392,49 +420,76 @@ function ItemListEditor({ block, onChange }: { block: Block; onChange: (d: Recor
   };
 
   const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [overPos, setOverPos] = useState<{ idx: number; pos: "before" | "after" } | null>(null);
 
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-widest text-white/40">Items · drag to reorder</span>
+        <span className="text-xs uppercase tracking-widest text-white/40">Items · drag to reorder · Alt+↑/↓</span>
         <button onClick={add} className="inline-flex items-center gap-1 text-xs rounded-md bg-white/10 hover:bg-white/15 px-2 py-1">
           <Plus className="h-3.5 w-3.5" /> Add item
         </button>
       </div>
-      {items.map((it, idx) => (
-        <details
-          key={it.id || idx}
-          draggable
-          onDragStart={() => setDragIdx(idx)}
-          onDragOver={(e) => e.preventDefault()}
-          onDrop={() => { if (dragIdx !== null) reorder(dragIdx, idx); setDragIdx(null); }}
-          onDragEnd={() => setDragIdx(null)}
-          className={`rounded-lg border border-white/10 bg-white/[0.02] ${dragIdx === idx ? "opacity-50" : ""}`}
-        >
-          <summary className="cursor-pointer px-3 py-2 text-sm flex items-center justify-between gap-2">
-            <span className="flex items-center gap-1.5 min-w-0">
-              <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab" />
-              <span className="truncate">{it[fields[0]?.key] || `Item ${idx + 1}`}</span>
-            </span>
-            <span className="flex items-center gap-1 shrink-0">
-              <button onClick={(e) => { e.preventDefault(); move(idx, -1); }} className="p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
-              <button onClick={(e) => { e.preventDefault(); move(idx, 1); }} className="p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
-              <button onClick={(e) => { e.preventDefault(); remove(idx); }} className="p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
-            </span>
-          </summary>
-          <div className="p-3 pt-0 space-y-2.5">
-            {fields.map((f) => (
-              <Field key={f.key} label={f.label}>
-                {f.multiline ? (
-                  <TextArea value={it[f.key]} onChange={(v) => update(idx, { [f.key]: v })} />
-                ) : (
-                  <TextInput value={it[f.key]} onChange={(v) => update(idx, { [f.key]: v })} />
-                )}
-              </Field>
-            ))}
+      {items.map((it, idx) => {
+        const showBefore = overPos?.idx === idx && overPos.pos === "before" && dragIdx !== null && dragIdx !== idx && dragIdx !== idx - 1;
+        const showAfter = overPos?.idx === idx && overPos.pos === "after" && dragIdx !== null && dragIdx !== idx && dragIdx !== idx + 1;
+        return (
+          <div key={it.id || idx} className="relative">
+            {showBefore && <div className="absolute -top-1 left-0 right-0 h-0.5 bg-[#64CEFB] rounded-full z-10" />}
+            {showAfter && <div className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#64CEFB] rounded-full z-10" />}
+            <details
+              draggable
+              onDragStart={() => setDragIdx(idx)}
+              onDragOver={(e) => {
+                e.preventDefault();
+                const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                const pos = e.clientY < r.top + r.height / 2 ? "before" : "after";
+                setOverPos({ idx, pos });
+              }}
+              onDragLeave={() => setOverPos((o) => (o?.idx === idx ? null : o))}
+              onDrop={() => {
+                if (dragIdx === null) return;
+                let target = overPos?.pos === "after" ? idx + 1 : idx;
+                if (dragIdx < target) target -= 1;
+                reorder(dragIdx, target);
+                setDragIdx(null); setOverPos(null);
+              }}
+              onDragEnd={() => { setDragIdx(null); setOverPos(null); }}
+              className={`rounded-lg border border-white/10 bg-white/[0.02] ${dragIdx === idx ? "opacity-40" : ""}`}
+            >
+              <summary
+                tabIndex={0}
+                onKeyDown={(e) => {
+                  if (e.altKey && e.key === "ArrowUp") { e.preventDefault(); move(idx, -1); }
+                  else if (e.altKey && e.key === "ArrowDown") { e.preventDefault(); move(idx, 1); }
+                }}
+                className="cursor-pointer px-3 py-2 text-sm flex items-center justify-between gap-2 outline-none focus-visible:ring-2 focus-visible:ring-[#64CEFB]/60 rounded-lg"
+              >
+                <span className="flex items-center gap-1.5 min-w-0">
+                  <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab" />
+                  <span className="truncate">{it[fields[0]?.key] || `Item ${idx + 1}`}</span>
+                </span>
+                <span className="flex items-center gap-1 shrink-0">
+                  <button onClick={(e) => { e.preventDefault(); move(idx, -1); }} aria-label="Move up" className="p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
+                  <button onClick={(e) => { e.preventDefault(); move(idx, 1); }} aria-label="Move down" className="p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
+                  <button onClick={(e) => { e.preventDefault(); remove(idx); }} aria-label="Delete item" className="p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
+                </span>
+              </summary>
+              <div className="p-3 pt-0 space-y-2.5">
+                {fields.map((f) => (
+                  <Field key={f.key} label={f.label}>
+                    {f.multiline ? (
+                      <TextArea value={it[f.key]} onChange={(v) => update(idx, { [f.key]: v })} />
+                    ) : (
+                      <TextInput value={it[f.key]} onChange={(v) => update(idx, { [f.key]: v })} />
+                    )}
+                  </Field>
+                ))}
+              </div>
+            </details>
           </div>
-        </details>
-      ))}
+        );
+      })}
     </div>
   );
 }
@@ -448,4 +503,100 @@ function itemFieldsFor(type: BlockType): { key: string; label: string; multiline
     case "faq": return [{ key: "q", label: "Question" }, { key: "a", label: "Answer", multiline: true }];
     default: return [];
   }
+}
+
+/* ---------- Media upload (file → base64 dataURL, stored in localStorage) ---------- */
+
+function MediaInput({ value, onChange, accept = "image/*" }: { value?: string; onChange: (v: string) => void; accept?: string }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const isVideo = accept.startsWith("video");
+
+  const onFile = async (file: File | undefined) => {
+    if (!file) return;
+    setErr(null);
+    if (file.size > 4 * 1024 * 1024) {
+      setErr("File is large (>4MB). localStorage may reject it. Consider hosting it and pasting a URL.");
+    }
+    setBusy(true);
+    try {
+      const dataUrl: string = await new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => res(String(r.result));
+        r.onerror = () => rej(r.error);
+        r.readAsDataURL(file);
+      });
+      onChange(dataUrl);
+    } catch (e: any) {
+      setErr(e?.message || "Upload failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <label className="inline-flex items-center gap-1.5 rounded-md border border-white/15 bg-white/5 hover:bg-white/10 px-3 py-1.5 text-xs cursor-pointer">
+          <Plus className="h-3.5 w-3.5" /> {busy ? "Uploading…" : "Upload"}
+          <input type="file" accept={accept} className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+        </label>
+        {value && (
+          <button type="button" onClick={() => onChange("")} className="text-xs text-white/60 hover:text-red-400">Remove</button>
+        )}
+        <span className="text-[11px] text-white/40">or paste URL below</span>
+      </div>
+      <input
+        type="url"
+        value={value && value.startsWith("data:") ? "" : value ?? ""}
+        placeholder={value?.startsWith("data:") ? "(uploaded file in use)" : "https://…"}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#64CEFB]/60"
+      />
+      {value && (
+        <div className="rounded-md overflow-hidden border border-white/10 bg-black/40 max-h-40">
+          {isVideo ? (
+            <video src={value} className="w-full max-h-40 object-cover" muted loop autoPlay playsInline />
+          ) : (
+            <img src={value} alt="preview" className="w-full max-h-40 object-cover" />
+          )}
+        </div>
+      )}
+      {err && <p className="text-[11px] text-amber-400">{err}</p>}
+    </div>
+  );
+}
+
+/* ---------- Background settings panel ---------- */
+
+function BackgroundSettings() {
+  const { content, setContent } = useCMS();
+  const bg = content.background;
+  const update = (patch: Partial<typeof bg>) =>
+    setContent((c) => ({ ...c, background: { ...c.background, ...patch } }));
+
+  return (
+    <details className="rounded-lg border border-white/10 bg-white/[0.02] p-3" open>
+      <summary className="cursor-pointer text-xs uppercase tracking-widest text-white/60">Site Background</summary>
+      <div className="mt-3 space-y-3">
+        <label className="flex items-center gap-2 text-xs text-white/80">
+          <input type="checkbox" checked={bg.enabled} onChange={(e) => update({ enabled: e.target.checked })} />
+          Show across all sections while scrolling
+        </label>
+        <Field label="Background video">
+          <MediaInput accept="video/*" value={bg.videoUrl} onChange={(v) => update({ videoUrl: v })} />
+        </Field>
+        <Field label="Or background image (used if video is empty)">
+          <MediaInput accept="image/*" value={bg.imageUrl} onChange={(v) => update({ imageUrl: v })} />
+        </Field>
+        <Field label={`Opacity · ${Math.round((bg.opacity ?? 0.25) * 100)}%`}>
+          <input
+            type="range" min={0} max={100} value={Math.round((bg.opacity ?? 0.25) * 100)}
+            onChange={(e) => update({ opacity: Number(e.target.value) / 100 })}
+            className="w-full accent-[#64CEFB]"
+          />
+        </Field>
+      </div>
+    </details>
+  );
 }
