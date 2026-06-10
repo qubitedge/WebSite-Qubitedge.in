@@ -477,3 +477,99 @@ function itemFieldsFor(type: BlockType): { key: string; label: string; multiline
     default: return [];
   }
 }
+
+/* ---------- Media upload (file → base64 dataURL, stored in localStorage) ---------- */
+
+function MediaInput({ value, onChange, accept = "image/*" }: { value?: string; onChange: (v: string) => void; accept?: string }) {
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+  const isVideo = accept.startsWith("video");
+
+  const onFile = async (file: File | undefined) => {
+    if (!file) return;
+    setErr(null);
+    if (file.size > 4 * 1024 * 1024) {
+      setErr("File is large (>4MB). localStorage may reject it. Consider hosting it and pasting a URL.");
+    }
+    setBusy(true);
+    try {
+      const dataUrl: string = await new Promise((res, rej) => {
+        const r = new FileReader();
+        r.onload = () => res(String(r.result));
+        r.onerror = () => rej(r.error);
+        r.readAsDataURL(file);
+      });
+      onChange(dataUrl);
+    } catch (e: any) {
+      setErr(e?.message || "Upload failed");
+    } finally {
+      setBusy(false);
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center gap-2">
+        <label className="inline-flex items-center gap-1.5 rounded-md border border-white/15 bg-white/5 hover:bg-white/10 px-3 py-1.5 text-xs cursor-pointer">
+          <Plus className="h-3.5 w-3.5" /> {busy ? "Uploading…" : "Upload"}
+          <input type="file" accept={accept} className="hidden" onChange={(e) => onFile(e.target.files?.[0])} />
+        </label>
+        {value && (
+          <button type="button" onClick={() => onChange("")} className="text-xs text-white/60 hover:text-red-400">Remove</button>
+        )}
+        <span className="text-[11px] text-white/40">or paste URL below</span>
+      </div>
+      <input
+        type="url"
+        value={value && value.startsWith("data:") ? "" : value ?? ""}
+        placeholder={value?.startsWith("data:") ? "(uploaded file in use)" : "https://…"}
+        onChange={(e) => onChange(e.target.value)}
+        className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#64CEFB]/60"
+      />
+      {value && (
+        <div className="rounded-md overflow-hidden border border-white/10 bg-black/40 max-h-40">
+          {isVideo ? (
+            <video src={value} className="w-full max-h-40 object-cover" muted loop autoPlay playsInline />
+          ) : (
+            <img src={value} alt="preview" className="w-full max-h-40 object-cover" />
+          )}
+        </div>
+      )}
+      {err && <p className="text-[11px] text-amber-400">{err}</p>}
+    </div>
+  );
+}
+
+/* ---------- Background settings panel ---------- */
+
+function BackgroundSettings() {
+  const { content, setContent } = useCMS();
+  const bg = content.background;
+  const update = (patch: Partial<typeof bg>) =>
+    setContent((c) => ({ ...c, background: { ...c.background, ...patch } }));
+
+  return (
+    <details className="rounded-lg border border-white/10 bg-white/[0.02] p-3" open>
+      <summary className="cursor-pointer text-xs uppercase tracking-widest text-white/60">Site Background</summary>
+      <div className="mt-3 space-y-3">
+        <label className="flex items-center gap-2 text-xs text-white/80">
+          <input type="checkbox" checked={bg.enabled} onChange={(e) => update({ enabled: e.target.checked })} />
+          Show across all sections while scrolling
+        </label>
+        <Field label="Background video">
+          <MediaInput accept="video/*" value={bg.videoUrl} onChange={(v) => update({ videoUrl: v })} />
+        </Field>
+        <Field label="Or background image (used if video is empty)">
+          <MediaInput accept="image/*" value={bg.imageUrl} onChange={(v) => update({ imageUrl: v })} />
+        </Field>
+        <Field label={`Opacity · ${Math.round((bg.opacity ?? 0.25) * 100)}%`}>
+          <input
+            type="range" min={0} max={100} value={Math.round((bg.opacity ?? 0.25) * 100)}
+            onChange={(e) => update({ opacity: Number(e.target.value) / 100 })}
+            className="w-full accent-[#64CEFB]"
+          />
+        </Field>
+      </div>
+    </details>
+  );
+}
