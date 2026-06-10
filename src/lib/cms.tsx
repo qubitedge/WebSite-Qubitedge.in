@@ -48,6 +48,12 @@ export const defaultContent: SiteContent = {
     { id: uid(), label: "About Us", anchor: "about" },
   ],
   cta: { label: "Get Started", anchor: "contact" },
+  background: {
+    enabled: true,
+    videoUrl:
+      "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_105406_16f4600d-7a92-4292-b96e-b19156c7830a.mp4",
+    opacity: 0.25,
+  },
   blocks: [
     {
       id: uid(),
