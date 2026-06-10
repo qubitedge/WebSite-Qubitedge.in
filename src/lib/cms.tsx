@@ -27,6 +27,7 @@ export type SiteContent = {
   brand: { name: string };
   nav: NavItem[];
   cta: { label: string; anchor: string };
+  background: { enabled: boolean; videoUrl: string; imageUrl?: string; opacity: number };
   blocks: Block[];
   footer: { copyright: string; links: { label: string; href: string }[] };
 };
