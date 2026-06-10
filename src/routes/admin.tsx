@@ -355,7 +355,7 @@ function BlockEditor({ block, onChange, onAnchorChange }: { block: Block; onChan
           <Field label="Title line 1"><TextInput value={d.titleLine1} onChange={(v) => set("titleLine1", v)} /></Field>
           <Field label="Title line 2 (gradient)"><TextInput value={d.titleLine2} onChange={(v) => set("titleLine2", v)} /></Field>
           <Field label="Subtitle"><TextArea value={d.subtitle} onChange={(v) => set("subtitle", v)} /></Field>
-          <Field label="Background video URL"><TextInput value={d.videoUrl} onChange={(v) => set("videoUrl", v)} /></Field>
+          <Field label="Background video"><MediaInput value={d.videoUrl} accept="video/*" onChange={(v) => set("videoUrl", v)} /></Field>
           <div className="grid grid-cols-2 gap-3">
             <Field label="Primary CTA label"><TextInput value={d.primaryCta?.label} onChange={(v) => set("primaryCta", { ...d.primaryCta, label: v })} /></Field>
             <Field label="Primary CTA anchor"><TextInput value={d.primaryCta?.anchor} onChange={(v) => set("primaryCta", { ...d.primaryCta, anchor: v })} /></Field>
