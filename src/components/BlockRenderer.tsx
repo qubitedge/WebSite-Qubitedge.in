@@ -86,7 +86,8 @@ export function BlockRenderer({ block }: { block: Block }) {
 
     case "workshops":
       return (
-        <section id={anchor} className="py-24 md:py-32 border-t border-white/10 bg-gradient-to-b from-black via-[#0a0f14] to-black">
+        <section id={anchor} className="py-24 md:py-32 border-t border-white/10 bg-black/40 backdrop-blur-sm">
+
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-16 max-w-3xl">
               <p className="text-xs uppercase tracking-widest text-[#64CEFB] mb-4">{d.eyebrow}</p>
