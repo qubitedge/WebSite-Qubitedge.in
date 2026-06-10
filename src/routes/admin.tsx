@@ -152,34 +152,61 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
               <AddBlockMenu onAdd={addBlock} />
             </div>
             <ul className="space-y-1">
-              {content.blocks.map((b, i) => (
-                <li
-                  key={b.id}
-                  draggable
-                  onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = "move"; }}
-                  onDragOver={(e) => { e.preventDefault(); setOverIdx(i); }}
-                  onDragLeave={() => setOverIdx((o) => (o === i ? null : o))}
-                  onDrop={(e) => { e.preventDefault(); if (dragIdx !== null) reorder(dragIdx, i); setDragIdx(null); setOverIdx(null); }}
-                  onDragEnd={() => { setDragIdx(null); setOverIdx(null); }}
-                  className={overIdx === i && dragIdx !== null && dragIdx !== i ? "ring-1 ring-[#64CEFB]/60 rounded-lg" : ""}
-                >
-                  <div
-                    className={`group flex items-center gap-1 rounded-lg px-2 py-2 text-sm cursor-pointer ${
-                      activeId === b.id ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
-                    } ${dragIdx === i ? "opacity-50" : ""}`}
-                    onClick={() => setActiveId(b.id)}
+              {content.blocks.map((b, i) => {
+                const showBefore = overPos?.idx === i && overPos.pos === "before" && dragIdx !== null && dragIdx !== i && dragIdx !== i - 1;
+                const showAfter = overPos?.idx === i && overPos.pos === "after" && dragIdx !== null && dragIdx !== i && dragIdx !== i + 1;
+                return (
+                  <li
+                    key={b.id}
+                    draggable
+                    onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = "move"; }}
+                    onDragOver={(e) => {
+                      e.preventDefault();
+                      const r = (e.currentTarget as HTMLElement).getBoundingClientRect();
+                      const pos = e.clientY < r.top + r.height / 2 ? "before" : "after";
+                      setOverPos({ idx: i, pos });
+                    }}
+                    onDragLeave={() => setOverPos((o) => (o?.idx === i ? null : o))}
+                    onDrop={(e) => {
+                      e.preventDefault();
+                      if (dragIdx === null) return;
+                      let target = overPos?.pos === "after" ? i + 1 : i;
+                      if (dragIdx < target) target -= 1;
+                      reorder(dragIdx, target);
+                      setDragIdx(null); setOverPos(null);
+                    }}
+                    onDragEnd={() => { setDragIdx(null); setOverPos(null); }}
+                    className="relative"
                   >
-                    <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab active:cursor-grabbing" />
-                    <span className="text-[10px] text-white/40 w-4 shrink-0">{i + 1}</span>
-                    <span className="flex-1 truncate">{BLOCK_LABELS[b.type]}</span>
-                    <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
-                    <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
-                    <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
-                  </div>
-                </li>
-              ))}
+                    {showBefore && <div className="absolute -top-0.5 left-0 right-0 h-0.5 bg-[#64CEFB] rounded-full" />}
+                    {showAfter && <div className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-[#64CEFB] rounded-full" />}
+                    <div
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Block ${i + 1}: ${BLOCK_LABELS[b.type]}. Alt+Arrow Up or Down to reorder.`}
+                      onKeyDown={(e) => {
+                        if (e.altKey && e.key === "ArrowUp") { e.preventDefault(); moveBlock(b.id, -1); }
+                        else if (e.altKey && e.key === "ArrowDown") { e.preventDefault(); moveBlock(b.id, 1); }
+                        else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveId(b.id); }
+                        else if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }
+                      }}
+                      className={`group flex items-center gap-1 rounded-lg px-2 py-2 text-sm cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#64CEFB]/60 ${
+                        activeId === b.id ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
+                      } ${dragIdx === i ? "opacity-40" : ""}`}
+                      onClick={() => setActiveId(b.id)}
+                    >
+                      <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab active:cursor-grabbing" />
+                      <span className="text-[10px] text-white/40 w-4 shrink-0">{i + 1}</span>
+                      <span className="flex-1 truncate">{BLOCK_LABELS[b.type]}</span>
+                      <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }} aria-label="Move up" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
+                      <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }} aria-label="Move down" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
+                      <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }} aria-label="Delete block" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
+                    </div>
+                  </li>
+                );
+              })}
             </ul>
-            <p className="mt-2 px-1 text-[11px] text-white/30">Tip: drag the handle to reorder.</p>
+            <p className="mt-2 px-1 text-[11px] text-white/30">Drag the handle to reorder · focus a block and press <kbd className="px-1 rounded bg-white/10">Alt</kbd>+<kbd className="px-1 rounded bg-white/10">↑/↓</kbd></p>
           </div>
         </aside>
 
