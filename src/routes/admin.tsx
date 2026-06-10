@@ -21,6 +21,16 @@ const BLOCK_LABELS: Record<BlockType, string> = {
   faq: "FAQ",
   cta: "Call to Action",
   richText: "Rich Text",
+  profile: "Profile Block",
+  story: "Story Block",
+};
+
+const PAGES: Record<string, string> = {
+  home: "Homepage",
+  learning: "Learning",
+  "it-services": "IT Services",
+  workshops: "Workshops & Internships",
+  about: "About Us",
 };
 
 function AdminPage() {
@@ -85,29 +95,37 @@ function LoginScreen({ onAuth }: { onAuth: () => void }) {
 function AdminApp({ onLogout }: { onLogout: () => void }) {
   const { content, setContent, reset, addBlock, removeBlock, moveBlock, updateBlock } = useCMS();
   const [savedAt, setSavedAt] = useState<string | null>(null);
-  const [activeId, setActiveId] = useState<string | null>(content.blocks[0]?.id ?? null);
+  const [activePageId, setActivePageId] = useState<string>("home");
+
+  const blocks = content.pages?.[activePageId] ?? [];
+  const [activeId, setActiveId] = useState<string | null>(blocks[0]?.id ?? null);
   const [previewOn, setPreviewOn] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
   const [overPos, setOverPos] = useState<{ idx: number; pos: "before" | "after" } | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
-  const active = content.blocks.find((b) => b.id === activeId) ?? null;
+  const active = blocks.find((b) => b.id === activeId) ?? null;
 
-  // Force iframe to pick up updates (storage event fires in iframe automatically,
-  // but we also nudge it whenever the structure changes for snappy feel).
+  // Sync active block ID when page switches
   useEffect(() => {
-    // no-op: storage event handles it
-  }, [content]);
+    const pageBlocks = content.pages?.[activePageId] ?? [];
+    setActiveId(pageBlocks[0]?.id ?? null);
+  }, [activePageId, content.pages]);
 
   const handleSave = () => setSavedAt(new Date().toLocaleTimeString());
 
   const reorder = (from: number, to: number) => {
-    if (from === to || to < 0 || to >= content.blocks.length) return;
+    if (from === to || to < 0 || to >= blocks.length) return;
     setContent((c) => {
-      const blocks = [...c.blocks];
-      const [m] = blocks.splice(from, 1);
-      blocks.splice(to, 0, m);
-      return { ...c, blocks };
+      const nextBlocks = [...(c.pages?.[activePageId] ?? [])];
+      const [m] = nextBlocks.splice(from, 1);
+      nextBlocks.splice(to, 0, m);
+      const nextPages = { ...c.pages, [activePageId]: nextBlocks };
+      return {
+        ...c,
+        pages: nextPages,
+        blocks: activePageId === "home" ? nextBlocks : c.blocks
+      };
     });
   };
 
@@ -143,6 +161,24 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
       <div className={`flex-1 grid grid-cols-1 ${previewOn ? "lg:grid-cols-[260px_minmax(0,1fr)_minmax(0,1.1fr)]" : "lg:grid-cols-[280px_minmax(0,1fr)]"} gap-0`}>
         {/* Sidebar */}
         <aside className="border-r border-white/10 p-3 space-y-3 max-h-[calc(100vh-57px)] overflow-y-auto">
+          {/* Page Selector */}
+          <div className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
+            <label className="block">
+              <span className="block text-xs uppercase tracking-widest text-white/40 mb-2">Select Page to Edit</span>
+              <select
+                value={activePageId}
+                onChange={(e) => setActivePageId(e.target.value)}
+                className="w-full rounded-md bg-[#0f1620] border border-white/10 px-3 py-2 text-sm text-white focus:outline-none focus:border-[#64CEFB]/60 cursor-pointer"
+              >
+                {Object.entries(PAGES).map(([id, label]) => (
+                  <option key={id} value={id}>
+                    {label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          </div>
+
           <SiteSettings />
           <BackgroundSettings />
           <NavEditor />
@@ -150,10 +186,10 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
           <div>
             <div className="flex items-center justify-between px-1 py-2">
               <span className="text-xs uppercase tracking-widest text-white/40">Blocks</span>
-              <AddBlockMenu onAdd={addBlock} />
+              <AddBlockMenu onAdd={(type) => addBlock(type, activePageId)} />
             </div>
             <ul className="space-y-1">
-              {content.blocks.map((b, i) => {
+              {blocks.map((b, i) => {
                 const showBefore = overPos?.idx === i && overPos.pos === "before" && dragIdx !== null && dragIdx !== i && dragIdx !== i - 1;
                 const showAfter = overPos?.idx === i && overPos.pos === "after" && dragIdx !== null && dragIdx !== i && dragIdx !== i + 1;
                 return (
@@ -186,10 +222,10 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
                       role="button"
                       aria-label={`Block ${i + 1}: ${BLOCK_LABELS[b.type]}. Alt+Arrow Up or Down to reorder.`}
                       onKeyDown={(e) => {
-                        if (e.altKey && e.key === "ArrowUp") { e.preventDefault(); moveBlock(b.id, -1); }
-                        else if (e.altKey && e.key === "ArrowDown") { e.preventDefault(); moveBlock(b.id, 1); }
+                        if (e.altKey && e.key === "ArrowUp") { e.preventDefault(); moveBlock(b.id, -1, activePageId); }
+                        else if (e.altKey && e.key === "ArrowDown") { e.preventDefault(); moveBlock(b.id, 1, activePageId); }
                         else if (e.key === "Enter" || e.key === " ") { e.preventDefault(); setActiveId(b.id); }
-                        else if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }
+                        else if (e.key === "Delete" || e.key === "Backspace") { e.preventDefault(); if (confirm("Delete this block?")) { removeBlock(b.id, activePageId); if (activeId === b.id) setActiveId(null); } }
                       }}
                       className={`group flex items-center gap-1 rounded-lg px-2 py-2 text-sm cursor-pointer outline-none focus-visible:ring-2 focus-visible:ring-[#64CEFB]/60 ${
                         activeId === b.id ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
@@ -199,9 +235,9 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
                       <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab active:cursor-grabbing" />
                       <span className="text-[10px] text-white/40 w-4 shrink-0">{i + 1}</span>
                       <span className="flex-1 truncate">{BLOCK_LABELS[b.type]}</span>
-                      <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }} aria-label="Move up" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
-                      <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }} aria-label="Move down" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
-                      <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }} aria-label="Delete block" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
+                      <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1, activePageId); }} aria-label="Move up" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
+                      <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1, activePageId); }} aria-label="Move down" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
+                      <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete this block?")) { removeBlock(b.id, activePageId); if (activeId === b.id) setActiveId(null); } }} aria-label="Delete block" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
                     </div>
                   </li>
                 );
@@ -212,16 +248,26 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
         </aside>
 
         {/* Editor */}
-        <main className="p-4 sm:p-6 max-h-[calc(100vh-57px)] overflow-y-auto">
+        <main className="p-4 sm:p-8 md:p-12 max-h-[calc(100vh-57px)] overflow-y-auto flex justify-center items-start bg-[#080b10]">
           {active ? (
             <BlockEditor
               key={active.id}
               block={active}
-              onChange={(data) => updateBlock(active.id, data)}
-              onAnchorChange={(anchor) => setContent((c) => ({ ...c, blocks: c.blocks.map((bb) => bb.id === active.id ? { ...bb, anchor } : bb) }))}
+              onChange={(data) => updateBlock(active.id, data, activePageId)}
+              onAnchorChange={(anchor) => setContent((c) => {
+                const pageBlocks = c.pages?.[activePageId] ?? [];
+                const newBlocks = pageBlocks.map((bb) => bb.id === active.id ? { ...bb, anchor } : bb);
+                return {
+                  ...c,
+                  pages: { ...c.pages, [activePageId]: newBlocks },
+                  blocks: activePageId === "home" ? newBlocks : c.blocks
+                };
+              })}
             />
           ) : (
-            <div className="text-white/50 text-sm">Select a block on the left to edit it, or add a new one.</div>
+            <div className="text-white/40 text-sm bg-white/[0.02] border border-white/5 rounded-2xl px-8 py-16 text-center w-full max-w-md mx-auto backdrop-blur-xl shadow-xl">
+              Select a block on the left sidebar to edit its content, or add a new one.
+            </div>
           )}
         </main>
 
@@ -232,7 +278,13 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
               <span>Live preview · updates as you edit</span>
               <button onClick={() => iframeRef.current?.contentWindow?.location.reload()} className="text-white/60 hover:text-white">Refresh</button>
             </div>
-            <iframe ref={iframeRef} src="/" title="Live preview" className="flex-1 w-full bg-black" />
+            <iframe
+              ref={iframeRef}
+              key={activePageId}
+              src={activePageId === "home" ? "/" : `/${activePageId}`}
+              title="Live preview"
+              className="flex-1 w-full bg-black"
+            />
           </aside>
         )}
       </div>
@@ -244,8 +296,8 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
 
 function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <label className="block">
-      <span className="block text-xs uppercase tracking-widest text-white/40 mb-1.5">{label}</span>
+    <label className="block space-y-1.5">
+      <span className="block text-[11px] font-semibold uppercase tracking-widest text-white/40 transition-colors">{label}</span>
       {children}
     </label>
   );
@@ -253,13 +305,23 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function TextInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
   return (
-    <input value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#64CEFB]/60" />
+    <input
+      value={value ?? ""}
+      onChange={(e) => onChange(e.target.value)}
+      placeholder={placeholder}
+      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#64CEFB] focus:ring-1 focus:ring-[#64CEFB]/20 focus:bg-white/[0.07] transition-all duration-200"
+    />
   );
 }
 
 function TextArea({ value, onChange, rows = 3 }: { value: string; onChange: (v: string) => void; rows?: number }) {
   return (
-    <textarea value={value ?? ""} onChange={(e) => onChange(e.target.value)} rows={rows} className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#64CEFB]/60 resize-y" />
+    <textarea
+      value={value ?? ""}
+      onChange={(e) => onChange(e.target.value)}
+      rows={rows}
+      className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2.5 text-sm text-white placeholder:text-white/20 focus:outline-none focus:border-[#64CEFB] focus:ring-1 focus:ring-[#64CEFB]/20 focus:bg-white/[0.07] transition-all duration-200 resize-y"
+    />
   );
 }
 
@@ -268,9 +330,9 @@ function TextArea({ value, onChange, rows = 3 }: { value: string; onChange: (v: 
 function SiteSettings() {
   const { content, setContent } = useCMS();
   return (
-    <details className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
-      <summary className="cursor-pointer text-xs uppercase tracking-widest text-white/60">Site</summary>
-      <div className="mt-3 space-y-3">
+    <details className="rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-200 p-3.5 group">
+      <summary className="cursor-pointer text-xs uppercase tracking-widest font-semibold text-white/50 group-hover:text-white/80 transition-colors select-none outline-none">Site Settings</summary>
+      <div className="mt-4 space-y-4">
         <Field label="Brand name"><TextInput value={content.brand.name} onChange={(v) => setContent((c) => ({ ...c, brand: { name: v } }))} /></Field>
         <Field label="CTA label"><TextInput value={content.cta.label} onChange={(v) => setContent((c) => ({ ...c, cta: { ...c.cta, label: v } }))} /></Field>
         <Field label="CTA scroll target (anchor)"><TextInput value={content.cta.anchor} onChange={(v) => setContent((c) => ({ ...c, cta: { ...c.cta, anchor: v } }))} /></Field>
@@ -288,14 +350,14 @@ function NavEditor() {
   const add = () => setContent((c) => ({ ...c, nav: [...c.nav, { id: Math.random().toString(36).slice(2, 10), label: "New", anchor: "" }] }));
 
   return (
-    <details className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
-      <summary className="cursor-pointer text-xs uppercase tracking-widest text-white/60">Navigation</summary>
-      <div className="mt-3 space-y-2">
+    <details className="rounded-xl border border-white/10 bg-white/[0.02] hover:bg-white/[0.04] transition-all duration-200 p-3.5 group">
+      <summary className="cursor-pointer text-xs uppercase tracking-widest font-semibold text-white/50 group-hover:text-white/80 transition-colors select-none outline-none">Navigation Items</summary>
+      <div className="mt-4 space-y-3">
         {content.nav.map((n, idx) => (
-          <div key={n.id} className="flex gap-1.5">
-            <input value={n.label} onChange={(e) => update(idx, { label: e.target.value })} placeholder="Label" className="flex-1 min-w-0 rounded-md bg-white/5 border border-white/10 px-2 py-1.5 text-xs" />
-            <input value={n.anchor} onChange={(e) => update(idx, { anchor: e.target.value })} placeholder="anchor" className="w-24 rounded-md bg-white/5 border border-white/10 px-2 py-1.5 text-xs" />
-            <button onClick={() => remove(idx)} className="p-1.5 rounded-md hover:bg-red-500/20 text-red-400"><Trash2 className="h-3.5 w-3.5" /></button>
+          <div key={n.id} className="flex gap-2">
+            <input value={n.label} onChange={(e) => update(idx, { label: e.target.value })} placeholder="Label" className="flex-1 min-w-0 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-xs text-white focus:outline-none focus:border-[#64CEFB] focus:ring-1 focus:ring-[#64CEFB]/20 transition-all duration-200" />
+            <input value={n.anchor} onChange={(e) => update(idx, { anchor: e.target.value })} placeholder="anchor" className="w-24 rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-xs text-white focus:outline-none focus:border-[#64CEFB] focus:ring-1 focus:ring-[#64CEFB]/20 transition-all duration-200" />
+            <button onClick={() => remove(idx)} className="p-2 rounded-lg hover:bg-red-500/20 text-red-400 transition-colors"><Trash2 className="h-4 w-4" /></button>
           </div>
         ))}
         <button onClick={add} className="w-full inline-flex items-center justify-center gap-1 rounded-md border border-dashed border-white/15 py-1.5 text-xs text-white/60 hover:text-white hover:border-white/30">
@@ -310,7 +372,7 @@ function NavEditor() {
 
 function AddBlockMenu({ onAdd }: { onAdd: (t: BlockType) => void }) {
   const [open, setOpen] = useState(false);
-  const types: BlockType[] = ["hero", "features", "workshops", "testimonials", "articles", "faq", "cta", "richText"];
+  const types: BlockType[] = ["hero", "features", "workshops", "testimonials", "articles", "faq", "cta", "richText", "profile", "story"];
   return (
     <div className="relative">
       <button onClick={() => setOpen(!open)} className="inline-flex items-center gap-1 rounded-md bg-[#64CEFB] text-black px-2 py-1 text-xs font-medium">
@@ -336,12 +398,17 @@ function BlockEditor({ block, onChange, onAnchorChange }: { block: Block; onChan
   const set = (k: string, v: any) => onChange({ [k]: v });
 
   return (
-    <div className="max-w-3xl space-y-5">
-      <div className="flex items-center justify-between">
-        <h2 className="text-xl font-medium tracking-tight">{BLOCK_LABELS[block.type]}</h2>
-        <div className="flex items-center gap-2">
-          <span className="text-xs text-white/40">Scroll anchor</span>
-          <input value={block.anchor ?? ""} onChange={(e) => onAnchorChange(e.target.value)} placeholder="e.g. about" className="w-32 rounded-md bg-white/5 border border-white/10 px-2 py-1 text-xs" />
+    <div className="w-full max-w-4xl bg-white/[0.02] border border-white/10 rounded-2xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-6 hover:border-white/15 transition-all duration-300">
+      <div className="flex items-center justify-between pb-4 border-b border-white/10">
+        <h2 className="text-2xl font-semibold tracking-tight text-white">{BLOCK_LABELS[block.type]}</h2>
+        <div className="flex items-center gap-3">
+          <span className="text-xs text-white/40 font-medium uppercase tracking-wider">Scroll anchor</span>
+          <input
+            value={block.anchor ?? ""}
+            onChange={(e) => onAnchorChange(e.target.value)}
+            placeholder="e.g. about"
+            className="w-32 rounded-lg bg-white/5 border border-white/10 px-3 py-1.5 text-xs text-white focus:outline-none focus:border-[#64CEFB] focus:ring-1 focus:ring-[#64CEFB]/20 transition-all duration-200"
+          />
         </div>
       </div>
 
@@ -379,6 +446,26 @@ function BlockEditor({ block, onChange, onAnchorChange }: { block: Block; onChan
           <Field label="Eyebrow"><TextInput value={d.eyebrow} onChange={(v) => set("eyebrow", v)} /></Field>
           <Field label="Title"><TextInput value={d.title} onChange={(v) => set("title", v)} /></Field>
           <Field label="Body"><TextArea rows={8} value={d.body} onChange={(v) => set("body", v)} /></Field>
+        </>
+      )}
+
+      {block.type === "profile" && (
+        <>
+          <Field label="Title"><TextInput value={d.title} onChange={(v) => set("title", v)} /></Field>
+          <Field label="Name"><TextInput value={d.name} onChange={(v) => set("name", v)} /></Field>
+          <Field label="Role"><TextInput value={d.role} onChange={(v) => set("role", v)} /></Field>
+          <Field label="Avatar Image"><MediaInput value={d.imageUrl} accept="image/*" onChange={(v) => set("imageUrl", v)} /></Field>
+          <Field label="Biography"><TextArea rows={8} value={d.bio} onChange={(v) => set("bio", v)} /></Field>
+        </>
+      )}
+
+      {block.type === "story" && (
+        <>
+          <Field label="Title"><TextInput value={d.title} onChange={(v) => set("title", v)} /></Field>
+          <Field label="Subtitle"><TextInput value={d.subtitle} onChange={(v) => set("subtitle", v)} /></Field>
+          <Field label="Body Before Quote"><TextArea rows={4} value={d.bodyBeforeQuote} onChange={(v) => set("bodyBeforeQuote", v)} /></Field>
+          <Field label="Quote text"><TextArea rows={3} value={d.quote} onChange={(v) => set("quote", v)} /></Field>
+          <Field label="Body After Quote"><TextArea rows={8} value={d.bodyAfterQuote} onChange={(v) => set("bodyAfterQuote", v)} /></Field>
         </>
       )}
 
@@ -600,3 +687,4 @@ function BackgroundSettings() {
     </details>
   );
 }
+

@@ -3,12 +3,11 @@ import { BlockRenderer } from "./BlockRenderer";
 
 export function Home() {
   const { content } = useCMS();
-  const bg = content.background;
+  const blocks = content.pages?.home ?? content.blocks ?? [];
 
   return (
     <div className="relative text-white">
-
-      {content.blocks.map((b) => (
+      {blocks.map((b) => (
         <BlockRenderer key={b.id} block={b} />
       ))}
     </div>

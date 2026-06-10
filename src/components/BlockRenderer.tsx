@@ -209,6 +209,72 @@ export function BlockRenderer({ block }: { block: Block }) {
         </section>
       );
 
+    case "story":
+      return (
+        <section id={anchor} className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+          <div className="max-w-3xl mx-auto text-center mb-16 relative">
+            {d.title && (
+              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
+                {d.title}
+              </h1>
+            )}
+            {d.subtitle && (
+              <h2 className="text-2xl md:text-3xl text-[#64CEFB] font-medium mb-8">
+                {d.subtitle}
+              </h2>
+            )}
+            {d.bodyBeforeQuote && (
+              <p className="text-lg text-white/80 leading-relaxed mb-6 whitespace-pre-line">
+                {d.bodyBeforeQuote}
+              </p>
+            )}
+            {d.quote && (
+              <div className="py-8 my-8 border-y border-white/10 relative">
+                <div className="absolute left-0 top-0 w-1/4 h-px bg-gradient-to-r from-transparent to-[#64CEFB]/50" />
+                <div className="absolute right-0 bottom-0 w-1/4 h-px bg-gradient-to-l from-transparent to-[#64CEFB]/50" />
+                <p className="text-2xl md:text-3xl font-semibold text-white drop-shadow-[0_0_15px_rgba(100,206,251,0.3)]">
+                  {d.quote}
+                </p>
+              </div>
+            )}
+            {d.bodyAfterQuote && (
+              <p className="text-lg text-white/80 leading-relaxed mb-6 whitespace-pre-line">
+                {d.bodyAfterQuote}
+              </p>
+            )}
+          </div>
+        </section>
+      );
+
+    case "profile":
+      return (
+        <section id={anchor} className="py-16 md:py-24 border-t border-white/10 relative">
+          <div className="mt-8 max-w-5xl mx-auto relative px-4 sm:px-6 lg:px-8">
+            <div className="absolute -inset-4 bg-gradient-to-br from-[#64CEFB]/10 to-blue-700/10 blur-2xl -z-10 rounded-full" />
+            {d.title && <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{d.title}</h2>}
+            <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center">
+              <div className="w-56 h-56 md:w-72 md:h-72 shrink-0 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(100,206,251,0.2)] border border-white/15 relative group">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <img src={d.imageUrl || "/ceo.png"} alt={d.name || "Profile"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+              </div>
+              <div className="flex-1">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+                  <div>
+                    <h3 className="text-3xl font-bold mb-2">{d.name}</h3>
+                    <p className="text-[#64CEFB] font-medium text-lg">{d.role}</p>
+                  </div>
+                </div>
+                {d.bio && (
+                  <div className="space-y-4 text-white/80 leading-relaxed text-lg whitespace-pre-line">
+                    {d.bio}
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        </section>
+      );
+
     default:
       return null;
   }
