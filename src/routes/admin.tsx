@@ -144,6 +144,7 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
         {/* Sidebar */}
         <aside className="border-r border-white/10 p-3 space-y-3 max-h-[calc(100vh-57px)] overflow-y-auto">
           <SiteSettings />
+          <BackgroundSettings />
           <NavEditor />
 
           <div>
