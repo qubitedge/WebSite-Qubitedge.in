@@ -21,7 +21,7 @@ export type Block = {
   data: Record<string, any>;
 };
 
-export type NavItem = { id: string; label: string; anchor: string };
+export type NavItem = { id: string; label: string; anchor: string; href?: string; isExternal?: boolean };
 
 export type SiteContent = {
   brand: { name: string };
@@ -32,7 +32,7 @@ export type SiteContent = {
   footer: { copyright: string; links: { label: string; href: string }[] };
 };
 
-const STORAGE_KEY = "qubitedge.cms.v1";
+const STORAGE_KEY = "qubitedge.cms.v5";
 
 /* ---------- Default content (mirrors the existing site) ---------- */
 
@@ -41,11 +41,11 @@ const uid = () => Math.random().toString(36).slice(2, 10);
 export const defaultContent: SiteContent = {
   brand: { name: "Qubitedge" },
   nav: [
-    { id: uid(), label: "Learning", anchor: "learning" },
-    { id: uid(), label: "Manufacturing", anchor: "manufacturing" },
-    { id: uid(), label: "IT Services", anchor: "it-services" },
-    { id: uid(), label: "Workshops/Internships", anchor: "workshops" },
-    { id: uid(), label: "About Us", anchor: "about" },
+    { id: uid(), label: "Learning", anchor: "learning", href: "/learning" },
+    { id: uid(), label: "Manufacturing", anchor: "manufacturing", href: "https://qubitedge.vercel.app/", isExternal: true },
+    { id: uid(), label: "IT Services", anchor: "it-services", href: "/it-services" },
+    { id: uid(), label: "Workshops/Internships", anchor: "workshops", href: "/workshops" },
+    { id: uid(), label: "About Us", anchor: "about", href: "/about" },
   ],
   cta: { label: "Get Started", anchor: "contact" },
   background: {
@@ -131,9 +131,9 @@ export const defaultContent: SiteContent = {
         title: "Insights from the Edge",
         intro: "Stay updated with expert insights and the latest trends.",
         items: [
-          { id: uid(), tag: "Learning", title: "The Rise of Micro-Workshops in Career Building", excerpt: "Why bite-sized, high-impact learning is reshaping how professionals upskill in 2026." },
-          { id: uid(), tag: "Industry", title: "AI in Agriculture: A Quiet Revolution", excerpt: "How emerging tech is transforming farming workflows across rural economies." },
-          { id: uid(), tag: "Business", title: "Hiring for Skills, Not Pedigree", excerpt: "Enterprises are rewriting recruiting playbooks—here's what it means for new graduates." },
+          { id: uid(), tag: "Learning", title: "The Rise of Micro-Workshops in Career Building", excerpt: "Why bite-sized, high-impact learning is reshaping how professionals upskill in 2026.", imageUrl: "/micro-workshops.png" },
+          { id: uid(), tag: "Industry", title: "AI in Agriculture: A Quiet Revolution", excerpt: "How emerging tech is transforming farming workflows across rural economies.", imageUrl: "/AI IN AGRI.png" },
+          { id: uid(), tag: "Business", title: "Hiring for Skills, Not Pedigree", excerpt: "Enterprises are rewriting recruiting playbooks—here's what it means for new graduates.", imageUrl: "/BUSINESS.png" },
         ],
       },
     },
@@ -193,7 +193,21 @@ function loadFromStorage(): SiteContent {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultContent;
     const parsed = JSON.parse(raw) as Partial<SiteContent>;
-    return { ...defaultContent, ...parsed, background: { ...defaultContent.background, ...(parsed.background || {}) } } as SiteContent;
+    const mergedNav = parsed.nav ? parsed.nav.map((item, index) => {
+      const defaultItem = defaultContent.nav[index];
+      return {
+        ...item,
+        href: item.href || defaultItem?.href,
+        isExternal: item.isExternal ?? defaultItem?.isExternal
+      };
+    }) : defaultContent.nav;
+
+    return { 
+      ...defaultContent, 
+      ...parsed, 
+      nav: mergedNav,
+      background: { ...defaultContent.background, ...(parsed.background || {}) } 
+    } as SiteContent;
   } catch {
     return defaultContent;
   }

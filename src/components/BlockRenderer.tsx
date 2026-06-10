@@ -149,7 +149,13 @@ export function BlockRenderer({ block }: { block: Block }) {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {(d.items || []).map((a: any, i: number) => (
                 <motion.div key={a.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }} className="group flex flex-col rounded-2xl border border-white/10 overflow-hidden hover:border-[#64CEFB]/40 transition-all">
-                  <div className="aspect-[16/10] bg-gradient-to-br from-[#64CEFB]/30 via-blue-900/40 to-black" />
+                  {a.imageUrl ? (
+                    <div className="aspect-[16/10] overflow-hidden">
+                      <img src={a.imageUrl} alt={a.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                    </div>
+                  ) : (
+                    <div className="aspect-[16/10] bg-gradient-to-br from-[#64CEFB]/30 via-blue-900/40 to-black" />
+                  )}
                   <div className="p-6 flex-1 flex flex-col">
                     <span className="text-xs uppercase tracking-widest text-[#64CEFB] mb-3">{a.tag}</span>
                     <h3 className="text-xl font-medium mb-3 tracking-tight group-hover:text-[#64CEFB] transition-colors">{a.title}</h3>

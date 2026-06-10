@@ -11,7 +11,40 @@ import { useEffect, type ReactNode } from "react";
 
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
-import { CMSProvider } from "../lib/cms";
+import { CMSProvider, useCMS } from "../lib/cms";
+import { Footer } from "../components/Footer";
+
+function GlobalBackground() {
+  const { content } = useCMS();
+  const bg = content.background;
+  
+  if (!bg?.enabled || (!bg.videoUrl && !bg.imageUrl)) return null;
+
+  return (
+    <div className="fixed inset-0 -z-10 overflow-hidden bg-black pointer-events-none">
+      {bg.videoUrl ? (
+        <video
+          key={bg.videoUrl}
+          className="h-full w-full object-cover"
+          style={{ opacity: bg.opacity ?? 0.25 }}
+          autoPlay
+          loop
+          muted
+          playsInline
+          src={bg.videoUrl}
+        />
+      ) : (
+        <img
+          src={bg.imageUrl}
+          alt=""
+          className="h-full w-full object-cover"
+          style={{ opacity: bg.opacity ?? 0.25 }}
+        />
+      )}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/80" />
+    </div>
+  );
+}
 
 function NotFoundComponent() {
   return (
@@ -93,6 +126,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     ],
     links: [
       {
+        rel: "icon",
+        href: "/logo.png",
+      },
+      {
         rel: "stylesheet",
         href: appCss,
       },
@@ -124,7 +161,11 @@ function RootComponent() {
   return (
     <QueryClientProvider client={queryClient}>
       <CMSProvider>
-        <Outlet />
+        <div className="flex flex-col min-h-screen">
+          <GlobalBackground />
+          <Outlet />
+          <Footer />
+        </div>
       </CMSProvider>
     </QueryClientProvider>
   );

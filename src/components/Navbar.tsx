@@ -1,33 +1,24 @@
 import { useState, useEffect } from "react";
 import { ArrowUpRight, X, Settings, Box } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouterState } from "@tanstack/react-router";
 import { useCMS, scrollToAnchor } from "@/lib/cms";
 
 export function Navbar() {
   const { content } = useCMS();
   const [open, setOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
-  const [activeAnchor, setActiveAnchor] = useState<string | null>(null);
+  const routerState = useRouterState();
+  const activePath = routerState.location.pathname;
 
   useEffect(() => {
     const onScroll = () => {
       setScrolled(window.scrollY > 16);
-      // active section detection
-      let current: string | null = null;
-      for (const item of content.nav) {
-        const el = document.getElementById(item.anchor);
-        if (el) {
-          const top = el.getBoundingClientRect().top;
-          if (top <= 120) current = item.anchor;
-        }
-      }
-      setActiveAnchor(current);
     };
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, [content.nav]);
+  }, []);
 
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
@@ -48,33 +39,39 @@ export function Navbar() {
           } pl-4 pr-2 py-2`}
         >
           {/* Brand */}
-          <button onClick={() => scrollToAnchor(content.blocks[0]?.anchor || "")} className="flex items-center gap-2 shrink-0">
-            <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-[#64CEFB] to-blue-700 shadow-[0_0_20px_rgba(100,206,251,0.4)]">
-              <Box className="h-4 w-4 text-white" />
-            </span>
+          <Link to="/" className="flex items-center gap-2 shrink-0">
+            <img src="/logo.png" alt="Logo" className="h-7 w-7 object-contain drop-shadow-[0_0_15px_rgba(100,206,251,0.4)]" />
             <span className="text-white font-medium tracking-tight">{content.brand.name}</span>
-          </button>
+          </Link>
 
           {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
             {content.nav.map((i) => {
-              const isActive = activeAnchor === i.anchor;
+              const isActive = activePath === i.href;
+              const linkClasses = `relative px-4 py-2 text-sm transition-colors ${
+                isActive ? "text-white" : "text-white/70 hover:text-white"
+              }`;
+              const activeIndicator = isActive && (
+                <motion.span
+                  layoutId="nav-active-dot"
+                  className="absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-1 w-1 rounded-full bg-[#64CEFB]"
+                />
+              );
+
+              if (i.isExternal && i.href) {
+                return (
+                  <a key={i.id} href={i.href} target="_blank" rel="noopener noreferrer" className={linkClasses}>
+                    {i.label}
+                    {activeIndicator}
+                  </a>
+                );
+              }
+
               return (
-                <button
-                  key={i.id}
-                  onClick={() => handleNav(i.anchor)}
-                  className={`relative px-4 py-2 text-sm transition-colors ${
-                    isActive ? "text-white" : "text-white/70 hover:text-white"
-                  }`}
-                >
+                <Link key={i.id} to={i.href || "/"} className={linkClasses}>
                   {i.label}
-                  {isActive && (
-                    <motion.span
-                      layoutId="nav-active-dot"
-                      className="absolute left-1/2 -translate-x-1/2 -bottom-0.5 h-1 w-1 rounded-full bg-[#64CEFB]"
-                    />
-                  )}
-                </button>
+                  {activeIndicator}
+                </Link>
               );
             })}
           </nav>
@@ -88,12 +85,13 @@ export function Navbar() {
             >
               <Settings className="h-4 w-4" />
             </Link>
-            <button
-              onClick={() => handleNav(content.cta.anchor)}
+            <Link
+              to="/"
+              hash={content.cta.anchor}
               className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-white text-black px-5 py-2 text-sm font-medium hover:bg-white/90 transition-colors"
             >
               {content.cta.label}
-            </button>
+            </Link>
 
             {/* Mobile menu trigger */}
             <button
@@ -127,9 +125,7 @@ export function Navbar() {
             >
               <div className="flex items-center justify-between px-5 pt-5 pb-3">
                 <div className="flex items-center gap-2">
-                  <span className="flex h-7 w-7 items-center justify-center rounded-md bg-gradient-to-br from-[#64CEFB] to-blue-700">
-                    <Box className="h-4 w-4 text-white" />
-                  </span>
+                  <img src="/logo.png" alt="Logo" className="h-7 w-7 object-contain" />
                   <span className="text-white font-medium">{content.brand.name}</span>
                 </div>
                 <button
@@ -150,13 +146,27 @@ export function Navbar() {
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: 0.04 + idx * 0.04 }}
                     >
-                      <button
-                        onClick={() => handleNav(i.anchor)}
-                        className="group w-full flex items-center justify-between px-4 py-4 rounded-xl hover:bg-white/5 transition-colors"
-                      >
-                        <span className="text-xl font-medium text-white tracking-tight">{i.label}</span>
-                        <ArrowUpRight className="h-5 w-5 text-white/30 group-hover:text-[#64CEFB] transition-colors" />
-                      </button>
+                      {i.isExternal && i.href ? (
+                        <a
+                          href={i.href}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          onClick={() => setOpen(false)}
+                          className="group w-full flex items-center justify-between px-4 py-4 rounded-xl hover:bg-white/5 transition-colors"
+                        >
+                          <span className="text-xl font-medium text-white tracking-tight">{i.label}</span>
+                          <ArrowUpRight className="h-5 w-5 text-white/30 group-hover:text-[#64CEFB] transition-colors" />
+                        </a>
+                      ) : (
+                        <Link
+                          to={i.href || "/"}
+                          onClick={() => setOpen(false)}
+                          className="group w-full flex items-center justify-between px-4 py-4 rounded-xl hover:bg-white/5 transition-colors"
+                        >
+                          <span className="text-xl font-medium text-white tracking-tight">{i.label}</span>
+                          <ArrowUpRight className="h-5 w-5 text-white/30 group-hover:text-[#64CEFB] transition-colors" />
+                        </Link>
+                      )}
                     </motion.li>
                   ))}
                 </ul>
@@ -170,13 +180,15 @@ export function Navbar() {
                 >
                   <Settings className="h-4 w-4" /> Admin
                 </Link>
-                <button
-                  onClick={() => handleNav(content.cta.anchor)}
+                <Link
+                  to="/"
+                  hash={content.cta.anchor}
+                  onClick={() => setOpen(false)}
                   className="flex-[2] inline-flex items-center justify-center gap-1.5 rounded-full bg-white text-black px-5 py-3 text-sm font-medium hover:bg-white/90"
                 >
                   {content.cta.label}
                   <ArrowUpRight className="h-4 w-4" />
-                </button>
+                </Link>
               </div>
             </motion.aside>
           </>
