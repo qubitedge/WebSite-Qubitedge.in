@@ -231,6 +231,16 @@ export function CMSProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, [content]);
 
+  // Sync across windows/iframes (admin live preview)
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key !== STORAGE_KEY || !e.newValue) return;
+      try { setContentState(JSON.parse(e.newValue)); } catch {}
+    };
+    window.addEventListener("storage", onStorage);
+    return () => window.removeEventListener("storage", onStorage);
+  }, []);
+
   const setContent = useCallback((updater: (c: SiteContent) => SiteContent) => {
     setContentState((c) => updater(c));
   }, []);
