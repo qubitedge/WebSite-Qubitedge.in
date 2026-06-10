@@ -1,12 +1,16 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState } from "react";
-import { ArrowLeft, ChevronUp, ChevronDown, Trash2, Plus, RotateCcw, Save, Eye } from "lucide-react";
+import { useEffect, useRef, useState } from "react";
+import { ArrowLeft, ChevronUp, ChevronDown, Trash2, Plus, RotateCcw, Save, Eye, EyeOff, LogOut, GripVertical, Lock } from "lucide-react";
 import { useCMS, type Block, type BlockType } from "@/lib/cms";
 
 export const Route = createFileRoute("/admin")({
   head: () => ({ meta: [{ title: "Admin — Qubitedge" }] }),
   component: AdminPage,
 });
+
+const ADMIN_EMAIL = "qubitedge@gmail.com";
+const ADMIN_PASSWORD = "Qubitedge@2026";
+const AUTH_KEY = "qubitedge.admin.auth";
 
 const BLOCK_LABELS: Record<BlockType, string> = {
   hero: "Hero",
@@ -20,54 +24,128 @@ const BLOCK_LABELS: Record<BlockType, string> = {
 };
 
 function AdminPage() {
+  const [authed, setAuthed] = useState<boolean>(() => {
+    if (typeof window === "undefined") return false;
+    return window.sessionStorage.getItem(AUTH_KEY) === "1";
+  });
+
+  if (!authed) return <LoginScreen onAuth={() => setAuthed(true)} />;
+  return <AdminApp onLogout={() => { window.sessionStorage.removeItem(AUTH_KEY); setAuthed(false); }} />;
+}
+
+/* ---------- Login screen ---------- */
+
+function LoginScreen({ onAuth }: { onAuth: () => void }) {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState<string | null>(null);
+
+  const submit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (email.trim().toLowerCase() === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
+      window.sessionStorage.setItem(AUTH_KEY, "1");
+      onAuth();
+    } else {
+      setError("Invalid email or password");
+    }
+  };
+
+  return (
+    <div className="min-h-screen bg-[#0a0d12] text-white flex items-center justify-center px-4">
+      <form onSubmit={submit} className="w-full max-w-sm rounded-2xl border border-white/10 bg-white/[0.03] p-6 shadow-2xl">
+        <div className="flex items-center gap-2 mb-5">
+          <div className="h-9 w-9 rounded-lg bg-[#64CEFB]/15 border border-[#64CEFB]/30 flex items-center justify-center">
+            <Lock className="h-4 w-4 text-[#64CEFB]" />
+          </div>
+          <div>
+            <div className="text-sm font-semibold">Qubitedge CMS</div>
+            <div className="text-xs text-white/50">Admin sign-in</div>
+          </div>
+        </div>
+        <label className="block mb-3">
+          <span className="block text-xs uppercase tracking-widest text-white/40 mb-1.5">Email</span>
+          <input value={email} onChange={(e) => setEmail(e.target.value)} type="email" autoFocus className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm focus:outline-none focus:border-[#64CEFB]/60" />
+        </label>
+        <label className="block mb-4">
+          <span className="block text-xs uppercase tracking-widest text-white/40 mb-1.5">Password</span>
+          <input value={password} onChange={(e) => setPassword(e.target.value)} type="password" className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm focus:outline-none focus:border-[#64CEFB]/60" />
+        </label>
+        {error && <div className="mb-3 text-xs text-red-400">{error}</div>}
+        <button type="submit" className="w-full rounded-md bg-[#64CEFB] text-black font-medium py-2 text-sm hover:bg-[#64CEFB]/90">Sign in</button>
+        <Link to="/" className="mt-3 inline-flex items-center gap-1 text-xs text-white/50 hover:text-white">
+          <ArrowLeft className="h-3 w-3" /> Back to site
+        </Link>
+      </form>
+    </div>
+  );
+}
+
+/* ---------- Admin app ---------- */
+
+function AdminApp({ onLogout }: { onLogout: () => void }) {
   const { content, setContent, reset, addBlock, removeBlock, moveBlock, updateBlock } = useCMS();
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [activeId, setActiveId] = useState<string | null>(content.blocks[0]?.id ?? null);
+  const [previewOn, setPreviewOn] = useState(false);
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+  const [overIdx, setOverIdx] = useState<number | null>(null);
+  const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const active = content.blocks.find((b) => b.id === activeId) ?? null;
 
-  const handleSave = () => {
-    // Already auto-saved to localStorage via provider effect; show confirmation.
-    setSavedAt(new Date().toLocaleTimeString());
+  // Force iframe to pick up updates (storage event fires in iframe automatically,
+  // but we also nudge it whenever the structure changes for snappy feel).
+  useEffect(() => {
+    // no-op: storage event handles it
+  }, [content]);
+
+  const handleSave = () => setSavedAt(new Date().toLocaleTimeString());
+
+  const reorder = (from: number, to: number) => {
+    if (from === to || to < 0 || to >= content.blocks.length) return;
+    setContent((c) => {
+      const blocks = [...c.blocks];
+      const [m] = blocks.splice(from, 1);
+      blocks.splice(to, 0, m);
+      return { ...c, blocks };
+    });
   };
 
   return (
     <div className="min-h-screen bg-[#0a0d12] text-white flex flex-col">
-      {/* Top bar */}
       <header className="border-b border-white/10 bg-black/60 backdrop-blur sticky top-0 z-20">
         <div className="px-4 sm:px-6 py-3 flex items-center justify-between gap-2">
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-3 min-w-0">
             <Link to="/" className="flex items-center gap-2 text-sm text-white/70 hover:text-white">
-              <ArrowLeft className="h-4 w-4" /> Back to site
+              <ArrowLeft className="h-4 w-4" /> Site
             </Link>
             <span className="h-5 w-px bg-white/10" />
-            <span className="text-sm font-medium">CMS · Page Editor</span>
+            <span className="text-sm font-medium truncate">CMS · Page Editor</span>
           </div>
           <div className="flex items-center gap-2">
-            {savedAt && <span className="text-xs text-emerald-400">Saved {savedAt}</span>}
+            {savedAt && <span className="text-xs text-emerald-400 hidden sm:inline">Saved {savedAt}</span>}
+            <button onClick={() => setPreviewOn((p) => !p)} className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs ${previewOn ? "border-[#64CEFB]/60 bg-[#64CEFB]/10 text-[#64CEFB]" : "border-white/15 hover:bg-white/5"}`}>
+              {previewOn ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />} Live preview
+            </button>
             <button onClick={() => { if (confirm("Reset to default content?")) reset(); }} className="inline-flex items-center gap-1.5 rounded-md border border-white/15 px-3 py-1.5 text-xs hover:bg-white/5">
               <RotateCcw className="h-3.5 w-3.5" /> Reset
             </button>
-            <Link to="/" className="inline-flex items-center gap-1.5 rounded-md border border-white/15 px-3 py-1.5 text-xs hover:bg-white/5">
-              <Eye className="h-3.5 w-3.5" /> Preview
-            </Link>
             <button onClick={handleSave} className="inline-flex items-center gap-1.5 rounded-md bg-[#64CEFB] text-black font-medium px-3 py-1.5 text-xs hover:bg-[#64CEFB]/90">
               <Save className="h-3.5 w-3.5" /> Save
+            </button>
+            <button onClick={onLogout} title="Sign out" className="inline-flex items-center gap-1.5 rounded-md border border-white/15 px-2 py-1.5 text-xs hover:bg-white/5">
+              <LogOut className="h-3.5 w-3.5" />
             </button>
           </div>
         </div>
       </header>
 
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-[280px_1fr] gap-0">
-        {/* Sidebar: block list + add */}
+      <div className={`flex-1 grid grid-cols-1 ${previewOn ? "lg:grid-cols-[260px_minmax(0,1fr)_minmax(0,1.1fr)]" : "lg:grid-cols-[280px_minmax(0,1fr)]"} gap-0`}>
+        {/* Sidebar */}
         <aside className="border-r border-white/10 p-3 space-y-3 max-h-[calc(100vh-57px)] overflow-y-auto">
-          {/* Site settings */}
           <SiteSettings />
-
-          {/* Nav editor */}
           <NavEditor />
 
-          {/* Blocks list */}
           <div>
             <div className="flex items-center justify-between px-1 py-2">
               <span className="text-xs uppercase tracking-widest text-white/40">Blocks</span>
@@ -75,32 +153,37 @@ function AdminPage() {
             </div>
             <ul className="space-y-1">
               {content.blocks.map((b, i) => (
-                <li key={b.id}>
+                <li
+                  key={b.id}
+                  draggable
+                  onDragStart={(e) => { setDragIdx(i); e.dataTransfer.effectAllowed = "move"; }}
+                  onDragOver={(e) => { e.preventDefault(); setOverIdx(i); }}
+                  onDragLeave={() => setOverIdx((o) => (o === i ? null : o))}
+                  onDrop={(e) => { e.preventDefault(); if (dragIdx !== null) reorder(dragIdx, i); setDragIdx(null); setOverIdx(null); }}
+                  onDragEnd={() => { setDragIdx(null); setOverIdx(null); }}
+                  className={overIdx === i && dragIdx !== null && dragIdx !== i ? "ring-1 ring-[#64CEFB]/60 rounded-lg" : ""}
+                >
                   <div
                     className={`group flex items-center gap-1 rounded-lg px-2 py-2 text-sm cursor-pointer ${
                       activeId === b.id ? "bg-white/10 text-white" : "text-white/70 hover:bg-white/5"
-                    }`}
+                    } ${dragIdx === i ? "opacity-50" : ""}`}
                     onClick={() => setActiveId(b.id)}
                   >
+                    <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab active:cursor-grabbing" />
                     <span className="text-[10px] text-white/40 w-4 shrink-0">{i + 1}</span>
                     <span className="flex-1 truncate">{BLOCK_LABELS[b.type]}</span>
-                    <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded" title="Move up">
-                      <ChevronUp className="h-3.5 w-3.5" />
-                    </button>
-                    <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded" title="Move down">
-                      <ChevronDown className="h-3.5 w-3.5" />
-                    </button>
-                    <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 text-red-400 rounded" title="Delete">
-                      <Trash2 className="h-3.5 w-3.5" />
-                    </button>
+                    <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1); }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
+                    <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1); }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
+                    <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete this block?")) { removeBlock(b.id); if (activeId === b.id) setActiveId(null); } }} className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
                   </div>
                 </li>
               ))}
             </ul>
+            <p className="mt-2 px-1 text-[11px] text-white/30">Tip: drag the handle to reorder.</p>
           </div>
         </aside>
 
-        {/* Editor pane */}
+        {/* Editor */}
         <main className="p-4 sm:p-6 max-h-[calc(100vh-57px)] overflow-y-auto">
           {active ? (
             <BlockEditor
@@ -113,6 +196,17 @@ function AdminPage() {
             <div className="text-white/50 text-sm">Select a block on the left to edit it, or add a new one.</div>
           )}
         </main>
+
+        {/* Live preview */}
+        {previewOn && (
+          <aside className="border-l border-white/10 bg-black max-h-[calc(100vh-57px)] overflow-hidden flex flex-col">
+            <div className="flex items-center justify-between px-3 py-2 border-b border-white/10 text-xs text-white/60">
+              <span>Live preview · updates as you edit</span>
+              <button onClick={() => iframeRef.current?.contentWindow?.location.reload()} className="text-white/60 hover:text-white">Refresh</button>
+            </div>
+            <iframe ref={iframeRef} src="/" title="Live preview" className="flex-1 w-full bg-black" />
+          </aside>
+        )}
       </div>
     </div>
   );
@@ -131,23 +225,13 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
 
 function TextInput({ value, onChange, placeholder }: { value: string; onChange: (v: string) => void; placeholder?: string }) {
   return (
-    <input
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value)}
-      placeholder={placeholder}
-      className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#64CEFB]/60"
-    />
+    <input value={value ?? ""} onChange={(e) => onChange(e.target.value)} placeholder={placeholder} className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#64CEFB]/60" />
   );
 }
 
 function TextArea({ value, onChange, rows = 3 }: { value: string; onChange: (v: string) => void; rows?: number }) {
   return (
-    <textarea
-      value={value ?? ""}
-      onChange={(e) => onChange(e.target.value)}
-      rows={rows}
-      className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#64CEFB]/60 resize-y"
-    />
+    <textarea value={value ?? ""} onChange={(e) => onChange(e.target.value)} rows={rows} className="w-full rounded-md bg-white/5 border border-white/10 px-3 py-2 text-sm text-white placeholder:text-white/30 focus:outline-none focus:border-[#64CEFB]/60 resize-y" />
   );
 }
 
@@ -159,18 +243,10 @@ function SiteSettings() {
     <details className="rounded-lg border border-white/10 bg-white/[0.02] p-3">
       <summary className="cursor-pointer text-xs uppercase tracking-widest text-white/60">Site</summary>
       <div className="mt-3 space-y-3">
-        <Field label="Brand name">
-          <TextInput value={content.brand.name} onChange={(v) => setContent((c) => ({ ...c, brand: { name: v } }))} />
-        </Field>
-        <Field label="CTA label">
-          <TextInput value={content.cta.label} onChange={(v) => setContent((c) => ({ ...c, cta: { ...c.cta, label: v } }))} />
-        </Field>
-        <Field label="CTA scroll target (anchor)">
-          <TextInput value={content.cta.anchor} onChange={(v) => setContent((c) => ({ ...c, cta: { ...c.cta, anchor: v } }))} />
-        </Field>
-        <Field label="Footer copyright">
-          <TextInput value={content.footer.copyright} onChange={(v) => setContent((c) => ({ ...c, footer: { ...c.footer, copyright: v } }))} />
-        </Field>
+        <Field label="Brand name"><TextInput value={content.brand.name} onChange={(v) => setContent((c) => ({ ...c, brand: { name: v } }))} /></Field>
+        <Field label="CTA label"><TextInput value={content.cta.label} onChange={(v) => setContent((c) => ({ ...c, cta: { ...c.cta, label: v } }))} /></Field>
+        <Field label="CTA scroll target (anchor)"><TextInput value={content.cta.anchor} onChange={(v) => setContent((c) => ({ ...c, cta: { ...c.cta, anchor: v } }))} /></Field>
+        <Field label="Footer copyright"><TextInput value={content.footer.copyright} onChange={(v) => setContent((c) => ({ ...c, footer: { ...c.footer, copyright: v } }))} /></Field>
       </div>
     </details>
   );
@@ -302,24 +378,44 @@ function ItemListEditor({ block, onChange }: { block: Block; onChange: (d: Recor
     [next[idx], next[ni]] = [next[ni], next[idx]];
     onChange({ items: next });
   };
+  const reorder = (from: number, to: number) => {
+    if (from === to || to < 0 || to >= items.length) return;
+    const next = [...items];
+    const [m] = next.splice(from, 1);
+    next.splice(to, 0, m);
+    onChange({ items: next });
+  };
   const add = () => {
     const blank: any = { id: Math.random().toString(36).slice(2, 10) };
     fields.forEach((f) => (blank[f.key] = ""));
     onChange({ items: [...items, blank] });
   };
 
+  const [dragIdx, setDragIdx] = useState<number | null>(null);
+
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between">
-        <span className="text-xs uppercase tracking-widest text-white/40">Items</span>
+        <span className="text-xs uppercase tracking-widest text-white/40">Items · drag to reorder</span>
         <button onClick={add} className="inline-flex items-center gap-1 text-xs rounded-md bg-white/10 hover:bg-white/15 px-2 py-1">
           <Plus className="h-3.5 w-3.5" /> Add item
         </button>
       </div>
       {items.map((it, idx) => (
-        <details key={it.id || idx} className="rounded-lg border border-white/10 bg-white/[0.02]">
+        <details
+          key={it.id || idx}
+          draggable
+          onDragStart={() => setDragIdx(idx)}
+          onDragOver={(e) => e.preventDefault()}
+          onDrop={() => { if (dragIdx !== null) reorder(dragIdx, idx); setDragIdx(null); }}
+          onDragEnd={() => setDragIdx(null)}
+          className={`rounded-lg border border-white/10 bg-white/[0.02] ${dragIdx === idx ? "opacity-50" : ""}`}
+        >
           <summary className="cursor-pointer px-3 py-2 text-sm flex items-center justify-between gap-2">
-            <span className="truncate">{it[fields[0]?.key] || `Item ${idx + 1}`}</span>
+            <span className="flex items-center gap-1.5 min-w-0">
+              <GripVertical className="h-3.5 w-3.5 text-white/30 cursor-grab" />
+              <span className="truncate">{it[fields[0]?.key] || `Item ${idx + 1}`}</span>
+            </span>
             <span className="flex items-center gap-1 shrink-0">
               <button onClick={(e) => { e.preventDefault(); move(idx, -1); }} className="p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
               <button onClick={(e) => { e.preventDefault(); move(idx, 1); }} className="p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
