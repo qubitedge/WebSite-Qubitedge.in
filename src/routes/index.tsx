@@ -16,7 +16,7 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="bg-black min-h-screen relative">
+    <main className="min-h-screen bg-black">
       <Navbar />
       <Home />
     </main>
