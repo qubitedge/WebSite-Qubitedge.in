@@ -88,7 +88,7 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
   const [activeId, setActiveId] = useState<string | null>(content.blocks[0]?.id ?? null);
   const [previewOn, setPreviewOn] = useState(false);
   const [dragIdx, setDragIdx] = useState<number | null>(null);
-  const [overIdx, setOverIdx] = useState<number | null>(null);
+  const [overPos, setOverPos] = useState<{ idx: number; pos: "before" | "after" } | null>(null);
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const active = content.blocks.find((b) => b.id === activeId) ?? null;
