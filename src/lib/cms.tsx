@@ -192,7 +192,8 @@ function loadFromStorage(): SiteContent {
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultContent;
-    return JSON.parse(raw) as SiteContent;
+    const parsed = JSON.parse(raw) as Partial<SiteContent>;
+    return { ...defaultContent, ...parsed, background: { ...defaultContent.background, ...(parsed.background || {}) } } as SiteContent;
   } catch {
     return defaultContent;
   }
