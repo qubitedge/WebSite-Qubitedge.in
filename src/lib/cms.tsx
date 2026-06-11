@@ -231,7 +231,7 @@ export const defaultContent: SiteContent = {
               title: "Learning to Make Data-Driven Decisions Through Machine Learning and PowerBI",
               body: "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
               cta: "Learn More",
-              mediaUrl: ""
+              mediaUrl: "/data-ml.png"
             }
           ]
         }
