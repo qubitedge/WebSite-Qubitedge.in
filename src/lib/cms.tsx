@@ -223,7 +223,7 @@ export const defaultContent: SiteContent = {
               title: "Foundations of Quantum Technologies: Physics and Linear Algebra in Action",
               body: "Explore the fundamental principles of quantum technologies, focusing on physics and linear algebra. This module bridges theory with practical applications.",
               cta: "Learn More",
-              mediaUrl: "https://www.youtube.com/watch?v=q2mOLaAenwI"
+              mediaUrl: "/quantum.png"
             },
             {
               id: uid(),
@@ -316,6 +316,25 @@ function loadFromStorage(): SiteContent {
       if (pages.workshops?.length === 1 && pages.workshops[0].type === "hero") {
          pages.workshops = defaultContent.pages.workshops;
          window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...parsed, pages }));
+      } else if (pages.workshops) {
+         // Force update the missing mediaUrl if it's empty
+         const wBlock = pages.workshops.find((b: any) => b.type === "workshops");
+         if (wBlock && wBlock.data?.items) {
+           const mlItem = wBlock.data.items.find((it: any) => it.tag === "Data & ML");
+           const quantumItem = wBlock.data.items.find((it: any) => it.tag === "Quantum");
+           let updated = false;
+           if (mlItem && !mlItem.mediaUrl) {
+             mlItem.mediaUrl = "/data-ml.png";
+             updated = true;
+           }
+           if (quantumItem && quantumItem.mediaUrl === "https://www.youtube.com/watch?v=q2mOLaAenwI") {
+             quantumItem.mediaUrl = "/quantum.png";
+             updated = true;
+           }
+           if (updated) {
+             window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...parsed, pages }));
+           }
+         }
       }
     } else if (parsed.blocks) {
       // Fallback for transition from single to multi page
