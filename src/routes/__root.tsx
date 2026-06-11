@@ -13,37 +13,16 @@ import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CMSProvider, useCMS } from "../lib/cms";
 import { Footer } from "../components/Footer";
+import { Aurora } from "../components/Aurora";
+import { useSectionAccent } from "../hooks/useSectionAccent";
 
 function GlobalBackground() {
   const { content } = useCMS();
   const bg = content.background;
   
-  if (!bg?.enabled || (!bg.videoUrl && !bg.imageUrl)) return null;
+  if (!bg?.enabled) return null;
 
-  return (
-    <div className="fixed inset-0 -z-10 overflow-hidden bg-black pointer-events-none">
-      {bg.videoUrl ? (
-        <video
-          key={bg.videoUrl}
-          className="h-full w-full object-cover"
-          style={{ opacity: bg.opacity ?? 0.25 }}
-          autoPlay
-          loop
-          muted
-          playsInline
-          src={bg.videoUrl}
-        />
-      ) : (
-        <img
-          src={bg.imageUrl}
-          alt=""
-          className="h-full w-full object-cover"
-          style={{ opacity: bg.opacity ?? 0.25 }}
-        />
-      )}
-      <div className="absolute inset-0 bg-gradient-to-b from-black/40 via-black/60 to-black/80" />
-    </div>
-  );
+  return <Aurora videoUrl={bg.videoUrl || undefined} />;
 }
 
 function NotFoundComponent() {
@@ -157,6 +136,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  useSectionAccent();
 
   return (
     <QueryClientProvider client={queryClient}>

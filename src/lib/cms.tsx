@@ -254,6 +254,11 @@ type CMSContext = {
   removeBlock: (id: string, pageId?: string) => void;
   moveBlock: (id: string, dir: -1 | 1, pageId?: string) => void;
   updateBlock: (id: string, data: Record<string, any>, pageId?: string) => void;
+  duplicateBlock: (id: string, pageId?: string) => void;
+  undo: () => void;
+  redo: () => void;
+  canUndo: boolean;
+  canRedo: boolean;
 };
 
 const Ctx = createContext<CMSContext | null>(null);
@@ -335,7 +340,12 @@ function emptyBlock(type: BlockType): Block {
 }
 
 export function CMSProvider({ children }: { children: ReactNode }) {
-  const [content, setContentState] = useState<SiteContent>(() => loadFromStorage());
+  const [state, setState] = useState<{ past: SiteContent[], present: SiteContent, future: SiteContent[] }>(() => {
+    const present = loadFromStorage();
+    return { past: [], present, future: [] };
+  });
+
+  const content = state.present;
 
   useEffect(() => {
     try {
@@ -347,20 +357,53 @@ export function CMSProvider({ children }: { children: ReactNode }) {
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
       if (e.key !== STORAGE_KEY || !e.newValue) return;
-      try { setContentState(JSON.parse(e.newValue)); } catch {}
+      try { 
+        const parsed = JSON.parse(e.newValue);
+        setState({ past: [], present: parsed, future: [] });
+      } catch {}
     };
     window.addEventListener("storage", onStorage);
     return () => window.removeEventListener("storage", onStorage);
   }, []);
 
   const setContent = useCallback((updater: (c: SiteContent) => SiteContent) => {
-    setContentState((c) => {
-      const next = updater(c);
+    setState((s) => {
+      const next = updater(s.present);
       // Keep blocks list in sync with pages.home to avoid breaking components reading c.blocks
       if (next.pages?.home) {
         next.blocks = next.pages.home;
       }
-      return next;
+      return {
+        past: [...s.past, s.present].slice(-50), // keep last 50
+        present: next,
+        future: []
+      };
+    });
+  }, []);
+
+  const undo = useCallback(() => {
+    setState((s) => {
+      if (s.past.length === 0) return s;
+      const previous = s.past[s.past.length - 1];
+      const newPast = s.past.slice(0, s.past.length - 1);
+      return {
+        past: newPast,
+        present: previous,
+        future: [s.present, ...s.future]
+      };
+    });
+  }, []);
+
+  const redo = useCallback(() => {
+    setState((s) => {
+      if (s.future.length === 0) return s;
+      const next = s.future[0];
+      const newFuture = s.future.slice(1);
+      return {
+        past: [...s.past, s.present],
+        present: next,
+        future: newFuture
+      };
     });
   }, []);
 
@@ -368,8 +411,12 @@ export function CMSProvider({ children }: { children: ReactNode }) {
     () => ({
       content,
       setContent,
-      reset: () => setContentState(defaultContent),
-      addBlock: (type, pageId = "home") => setContentState((c) => {
+      reset: () => setState((s) => ({ past: [...s.past, s.present].slice(-50), present: defaultContent, future: [] })),
+      undo,
+      redo,
+      canUndo: state.past.length > 0,
+      canRedo: state.future.length > 0,
+      addBlock: (type, pageId = "home") => setContent((c) => {
         const pageBlocks = c.pages?.[pageId] ?? [];
         const newBlocks = [...pageBlocks, emptyBlock(type)];
         const nextPages = { ...c.pages, [pageId]: newBlocks };
@@ -379,7 +426,7 @@ export function CMSProvider({ children }: { children: ReactNode }) {
           blocks: pageId === "home" ? newBlocks : c.blocks
         };
       }),
-      removeBlock: (id, pageId = "home") => setContentState((c) => {
+      removeBlock: (id, pageId = "home") => setContent((c) => {
         const pageBlocks = c.pages?.[pageId] ?? [];
         const newBlocks = pageBlocks.filter((b) => b.id !== id);
         const nextPages = { ...c.pages, [pageId]: newBlocks };
@@ -389,7 +436,7 @@ export function CMSProvider({ children }: { children: ReactNode }) {
           blocks: pageId === "home" ? newBlocks : c.blocks
         };
       }),
-      moveBlock: (id, dir, pageId = "home") => setContentState((c) => {
+      moveBlock: (id, dir, pageId = "home") => setContent((c) => {
         const pageBlocks = c.pages?.[pageId] ?? [];
         const idx = pageBlocks.findIndex((b) => b.id === id);
         const ni = idx + dir;
@@ -403,7 +450,7 @@ export function CMSProvider({ children }: { children: ReactNode }) {
           blocks: pageId === "home" ? newBlocks : c.blocks
         };
       }),
-      updateBlock: (id, data, pageId = "home") => setContentState((c) => {
+      updateBlock: (id, data, pageId = "home") => setContent((c) => {
         const pageBlocks = c.pages?.[pageId] ?? [];
         const newBlocks = pageBlocks.map((b) => b.id === id ? { ...b, data: { ...b.data, ...data } } : b);
         const nextPages = { ...c.pages, [pageId]: newBlocks };
@@ -413,8 +460,28 @@ export function CMSProvider({ children }: { children: ReactNode }) {
           blocks: pageId === "home" ? newBlocks : c.blocks
         };
       }),
+      duplicateBlock: (id, pageId = "home") => setContent((c) => {
+        const pageBlocks = c.pages?.[pageId] ?? [];
+        const idx = pageBlocks.findIndex((b) => b.id === id);
+        if (idx < 0) return c;
+        const target = pageBlocks[idx];
+        const clone: Block = JSON.parse(JSON.stringify(target));
+        clone.id = uid();
+        // also regenerate IDs for inner items if any
+        if (clone.data?.items && Array.isArray(clone.data.items)) {
+            clone.data.items.forEach((it: any) => { if (it.id) it.id = uid(); });
+        }
+        const newBlocks = [...pageBlocks];
+        newBlocks.splice(idx + 1, 0, clone);
+        const nextPages = { ...c.pages, [pageId]: newBlocks };
+        return {
+          ...c,
+          pages: nextPages,
+          blocks: pageId === "home" ? newBlocks : c.blocks
+        };
+      }),
     }),
-    [content, setContent],
+    [content, setContent, state.past.length, state.future.length, undo, redo],
   );
 
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;

@@ -1,6 +1,6 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ChevronUp, ChevronDown, Trash2, Plus, RotateCcw, Save, Eye, EyeOff, LogOut, GripVertical, Lock } from "lucide-react";
+import { ArrowLeft, ChevronUp, ChevronDown, Trash2, Plus, RotateCcw, Save, Eye, EyeOff, LogOut, GripVertical, Lock, Undo, Redo, Copy } from "lucide-react";
 import { useCMS, type Block, type BlockType } from "@/lib/cms";
 
 export const Route = createFileRoute("/admin")({
@@ -93,7 +93,7 @@ function LoginScreen({ onAuth }: { onAuth: () => void }) {
 /* ---------- Admin app ---------- */
 
 function AdminApp({ onLogout }: { onLogout: () => void }) {
-  const { content, setContent, reset, addBlock, removeBlock, moveBlock, updateBlock } = useCMS();
+  const { content, setContent, reset, addBlock, removeBlock, moveBlock, updateBlock, duplicateBlock, undo, redo, canUndo, canRedo } = useCMS();
   const [savedAt, setSavedAt] = useState<string | null>(null);
   const [activePageId, setActivePageId] = useState<string>("home");
 
@@ -113,6 +113,27 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
   }, [activePageId, content.pages]);
 
   const handleSave = () => setSavedAt(new Date().toLocaleTimeString());
+
+  useEffect(() => {
+    const onKeyDown = (e: KeyboardEvent) => {
+      // ignore if focus is inside an input/textarea
+      if (["INPUT", "TEXTAREA", "SELECT"].includes((e.target as HTMLElement)?.tagName)) {
+        return;
+      }
+      if (e.ctrlKey || e.metaKey) {
+        if (e.key === "z" || e.key === "Z") {
+          e.preventDefault();
+          if (e.shiftKey) redo();
+          else undo();
+        } else if (e.key === "y" || e.key === "Y") {
+          e.preventDefault();
+          redo();
+        }
+      }
+    };
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [undo, redo]);
 
   const reorder = (from: number, to: number) => {
     if (from === to || to < 0 || to >= blocks.length) return;
@@ -142,6 +163,12 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
           </div>
           <div className="flex items-center gap-2">
             {savedAt && <span className="text-xs text-emerald-400 hidden sm:inline">Saved {savedAt}</span>}
+            <button disabled={!canUndo} onClick={undo} title="Undo (Ctrl+Z)" className="inline-flex items-center gap-1.5 rounded-md border border-white/15 px-2 py-1.5 text-xs hover:bg-white/5 disabled:opacity-30">
+              <Undo className="h-3.5 w-3.5" />
+            </button>
+            <button disabled={!canRedo} onClick={redo} title="Redo (Ctrl+Y)" className="inline-flex items-center gap-1.5 rounded-md border border-white/15 px-2 py-1.5 text-xs hover:bg-white/5 disabled:opacity-30">
+              <Redo className="h-3.5 w-3.5" />
+            </button>
             <button onClick={() => setPreviewOn((p) => !p)} className={`inline-flex items-center gap-1.5 rounded-md border px-3 py-1.5 text-xs ${previewOn ? "border-[#64CEFB]/60 bg-[#64CEFB]/10 text-[#64CEFB]" : "border-white/15 hover:bg-white/5"}`}>
               {previewOn ? <EyeOff className="h-3.5 w-3.5" /> : <Eye className="h-3.5 w-3.5" />} Live preview
             </button>
@@ -237,6 +264,7 @@ function AdminApp({ onLogout }: { onLogout: () => void }) {
                       <span className="flex-1 truncate">{BLOCK_LABELS[b.type]}</span>
                       <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, -1, activePageId); }} aria-label="Move up" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronUp className="h-3.5 w-3.5" /></button>
                       <button onClick={(e) => { e.stopPropagation(); moveBlock(b.id, 1, activePageId); }} aria-label="Move down" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-white/10 rounded"><ChevronDown className="h-3.5 w-3.5" /></button>
+                      <button onClick={(e) => { e.stopPropagation(); duplicateBlock(b.id, activePageId); }} aria-label="Duplicate block" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-[#64CEFB]/20 text-[#64CEFB] rounded"><Copy className="h-3.5 w-3.5" /></button>
                       <button onClick={(e) => { e.stopPropagation(); if (confirm("Delete this block?")) { removeBlock(b.id, activePageId); if (activeId === b.id) setActiveId(null); } }} aria-label="Delete block" className="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-500/20 text-red-400 rounded"><Trash2 className="h-3.5 w-3.5" /></button>
                     </div>
                   </li>
