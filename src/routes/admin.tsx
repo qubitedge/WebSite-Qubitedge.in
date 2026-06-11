@@ -612,7 +612,7 @@ function ItemListEditor({ block, onChange }: { block: Block; onChange: (d: Recor
 function itemFieldsFor(type: BlockType): { key: string; label: string; multiline?: boolean }[] {
   switch (type) {
     case "features": return [{ key: "title", label: "Title" }, { key: "body", label: "Body", multiline: true }];
-    case "workshops": return [{ key: "tag", label: "Tag" }, { key: "title", label: "Title" }, { key: "body", label: "Body", multiline: true }, { key: "cta", label: "CTA label" }];
+    case "workshops": return [{ key: "tag", label: "Tag" }, { key: "title", label: "Title" }, { key: "body", label: "Body", multiline: true }, { key: "cta", label: "CTA label" }, { key: "mediaUrl", label: "Media URL (YouTube/Image)" }];
     case "testimonials": return [{ key: "quote", label: "Quote", multiline: true }, { key: "author", label: "Author" }, { key: "role", label: "Role" }];
     case "articles": return [{ key: "tag", label: "Tag" }, { key: "title", label: "Title" }, { key: "excerpt", label: "Excerpt", multiline: true }];
     case "faq": return [{ key: "q", label: "Question" }, { key: "a", label: "Answer", multiline: true }];

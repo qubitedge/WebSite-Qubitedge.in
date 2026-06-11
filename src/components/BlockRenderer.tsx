@@ -95,17 +95,35 @@ export function BlockRenderer({ block }: { block: Block }) {
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }}>{d.title}</h2>
               <p className="text-white/70 text-base md:text-lg">{d.intro}</p>
             </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              {(d.items || []).map((w: any, i: number) => (
-                <TiltCard key={w.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-8 hover:bg-white/[0.04] transition-all" style={{ borderColor: 'var(--accent-color, rgba(255,255,255,0.1))' }}>
-                  <span className="text-xs uppercase tracking-widest mb-6" style={{ color: 'var(--accent-color, #64CEFB)' }}>{w.tag}</span>
-                  <h3 className="text-2xl font-medium mb-4 tracking-tight">{w.title}</h3>
-                  <p className="text-sm text-white/60 leading-relaxed mb-8 flex-1">{w.body}</p>
-                  <span className="group inline-flex items-center gap-2 text-sm font-medium w-fit">
-                    {w.cta} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                  </span>
-                </TiltCard>
-              ))}
+            <div className="flex flex-col gap-12">
+              {(d.items || []).map((w: any, i: number) => {
+                const isEven = i % 2 === 0;
+                return (
+                  <TiltCard key={w.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden hover:bg-white/[0.04] transition-all`} style={{ borderColor: 'var(--accent-color, rgba(255,255,255,0.1))' }}>
+                    <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
+                      <span className="text-xs uppercase tracking-widest mb-6" style={{ color: 'var(--accent-color, #64CEFB)' }}>{w.tag}</span>
+                      <h3 className="text-3xl md:text-4xl font-medium mb-6 tracking-tight">{w.title}</h3>
+                      <p className="text-base text-white/60 leading-relaxed mb-8">{w.body}</p>
+                      <span className="group inline-flex items-center gap-2 text-sm font-medium w-fit cursor-pointer">
+                        {w.cta} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                      </span>
+                    </div>
+                    <div className="flex-1 relative min-h-[300px] md:min-h-full bg-black/50 border-white/10" style={{ borderLeftWidth: isEven ? '1px' : '0', borderRightWidth: isEven ? '0' : '1px' }}>
+                      {w.mediaUrl ? (
+                         w.mediaUrl.includes("youtube.com") || w.mediaUrl.includes("youtu.be") ? (
+                           <iframe className="absolute inset-0 w-full h-full border-none" src={w.mediaUrl.replace("watch?v=", "embed/").replace("youtu.be/", "www.youtube.com/embed/")} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                         ) : (
+                           <img src={w.mediaUrl} alt={w.title} className="absolute inset-0 w-full h-full object-cover" />
+                         )
+                      ) : (
+                        <div className="absolute inset-0 w-full h-full flex items-center justify-center opacity-20" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #64CEFB), transparent)` }}>
+                          <div className="w-full h-full backdrop-blur-3xl" />
+                        </div>
+                      )}
+                    </div>
+                  </TiltCard>
+                );
+              })}
             </div>
           </div>
         </section>

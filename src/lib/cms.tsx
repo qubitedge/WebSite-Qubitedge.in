@@ -201,11 +201,39 @@ export const defaultContent: SiteContent = {
         id: uid(),
         type: "hero",
         data: {
-          eyebrow: "Coming Soon",
-          titleLine1: "Workshops & Internships",
-          titleLine2: "",
-          subtitle: "Discover hands-on workshops and real-world internship opportunities designed to accelerate your career. Our upcoming schedules are being finalized.",
-          primaryCta: { label: "Return Home", anchor: "" }
+          eyebrow: "Explore Our Offerings",
+          titleLine1: "Workshops &",
+          titleLine2: "Internships",
+          subtitle: "Discover hands-on workshops and real-world internship opportunities designed to accelerate your career.",
+          primaryCta: { label: "View Programs", anchor: "programs" }
+        }
+      },
+      {
+        id: uid(),
+        type: "workshops",
+        anchor: "programs",
+        data: {
+          eyebrow: "Our Programs",
+          title: "Deep Dive Modules",
+          intro: "Immersive sessions built for real-world impact.",
+          items: [
+            {
+              id: uid(),
+              tag: "Quantum",
+              title: "Foundations of Quantum Technologies: Physics and Linear Algebra in Action",
+              body: "Explore the fundamental principles of quantum technologies, focusing on physics and linear algebra. This module bridges theory with practical applications.",
+              cta: "Learn More",
+              mediaUrl: "https://www.youtube.com/watch?v=q2mOLaAenwI"
+            },
+            {
+              id: uid(),
+              tag: "Data & ML",
+              title: "Learning to Make Data-Driven Decisions Through Machine Learning and PowerBI",
+              body: "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
+              cta: "Learn More",
+              mediaUrl: ""
+            }
+          ]
         }
       }
     ],
@@ -284,6 +312,11 @@ function loadFromStorage(): SiteContent {
       Object.keys(parsed.pages).forEach((pageId) => {
         pages[pageId] = parsed.pages![pageId] ?? defaultContent.pages[pageId] ?? [];
       });
+      // Auto-migrate workshops page if it only has the hero block
+      if (pages.workshops?.length === 1 && pages.workshops[0].type === "hero") {
+         pages.workshops = defaultContent.pages.workshops;
+         window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...parsed, pages }));
+      }
     } else if (parsed.blocks) {
       // Fallback for transition from single to multi page
       pages.home = parsed.blocks;
