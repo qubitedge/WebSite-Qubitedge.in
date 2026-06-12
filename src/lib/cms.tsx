@@ -205,7 +205,15 @@ export const defaultContent: SiteContent = {
           titleLine1: "Workshops &",
           titleLine2: "Internships",
           subtitle: "Discover hands-on workshops and real-world internship opportunities designed to accelerate your career.",
-          primaryCta: { label: "View Programs", anchor: "programs" }
+          primaryCta: { label: "View Programs", anchor: "programs" },
+          stats: [
+            { value: "500+", label: "Students" },
+            { value: "2+", label: "Workshops" },
+            { value: "10+", label: "Industry Mentors" }
+          ],
+          badges: [
+            "AI/ML", "Python", "Cloud", "Cyber Security", "Quantum", "Data Science", "React", "IoT"
+          ]
         }
       },
       {
@@ -232,6 +240,22 @@ export const defaultContent: SiteContent = {
               body: "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
               cta: "Learn More",
               mediaUrl: "/data-ml.png"
+            },
+            {
+              id: uid(),
+              tag: "Internship",
+              title: "Applied AI and Data Science Bootcamp",
+              body: "Timeline: 18/05/2026 to 26/06/2026",
+              modules: [
+                "Applied AI & Data Science Bootcamp",
+                "Data Foundations",
+                "Python for Data & Automation",
+                "ML/AI",
+                "Internet of Things (IoT)",
+                "CapStone Project"
+              ],
+              cta: "Learn More",
+              mediaUrl: "/Internships.png"
             }
           ]
         }
@@ -331,6 +355,53 @@ function loadFromStorage(): SiteContent {
              quantumItem.mediaUrl = "/quantum.png";
              updated = true;
            }
+           
+           const internshipItem = wBlock.data.items.find((it: any) => it.tag === "Internship");
+           if (!internshipItem) {
+             wBlock.data.items.push({
+               id: uid(),
+               tag: "Internship",
+               title: "Applied AI and Data Science Bootcamp",
+               body: "Timeline: 18/05/2026 to 26/06/2026",
+               modules: [
+                 "Applied AI & Data Science Bootcamp",
+                 "Data Foundations",
+                 "Python for Data & Automation",
+                 "ML/AI",
+                 "Internet of Things (IoT)",
+                 "CapStone Project"
+               ],
+               cta: "Learn More",
+               mediaUrl: "/Internships.png"
+             });
+             updated = true;
+           } else if (!internshipItem.modules || !internshipItem.mediaUrl) {
+             internshipItem.body = "Timeline: 18/05/2026 to 26/06/2026";
+             internshipItem.modules = [
+                 "Applied AI & Data Science Bootcamp",
+                 "Data Foundations",
+                 "Python for Data & Automation",
+                 "ML/AI",
+                 "Internet of Things (IoT)",
+                 "CapStone Project"
+             ];
+             internshipItem.mediaUrl = "/Internships.png";
+             updated = true;
+           }
+           
+           const heroBlock = pages.workshops.find((b: any) => b.type === "hero");
+           if (heroBlock && !heroBlock.data?.stats) {
+             heroBlock.data.stats = [
+               { value: "500+", label: "Students" },
+               { value: "2+", label: "Workshops" },
+               { value: "10+", label: "Industry Mentors" }
+             ];
+             heroBlock.data.badges = [
+               "AI/ML", "Python", "Cloud", "Cyber Security", "Quantum", "Data Science", "React", "IoT"
+             ];
+             updated = true;
+           }
+
            if (updated) {
              window.localStorage.setItem(STORAGE_KEY, JSON.stringify({ ...parsed, pages }));
            }

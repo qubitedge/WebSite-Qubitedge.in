@@ -34,16 +34,20 @@ export function BlockRenderer({ block }: { block: Block }) {
   switch (block.type) {
     case "hero":
       return (
-        <section id={anchor} data-accent="#64CEFB" className="relative min-h-screen w-full overflow-hidden pt-16">
+        <section id={anchor} data-accent="#64CEFB" className="relative w-full overflow-hidden pt-16">
           {d.videoUrl && (
-            <video className="absolute inset-0 h-full w-full object-cover" autoPlay loop muted playsInline src={d.videoUrl} />
+            <>
+              <video className="absolute inset-0 h-full w-full object-cover" autoPlay loop muted playsInline src={d.videoUrl} />
+              <div className="absolute inset-0 bg-black/40" />
+            </>
           )}
-          <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/40 to-black" />
-          <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-24">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-16">
-              <p className="text-sm md:text-base text-white/80 max-w-md">{d.topLeft}</p>
-              <p className="text-sm md:text-base text-white/80 lg:text-right">{d.topRight}</p>
-            </div>
+          <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-12 md:pb-24">
+            {(d.topLeft || d.topRight) && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-16">
+                <p className="text-sm md:text-base text-white/80 max-w-md">{d.topLeft}</p>
+                <p className="text-sm md:text-base text-white/80 lg:text-right">{d.topRight}</p>
+              </div>
+            )}
             <div className="text-center flex flex-col items-center">
               {d.eyebrow && <p className="text-xs md:text-sm uppercase tracking-tight text-white/80 mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }}>{d.eyebrow}</p>}
               <h1 className="tracking-tighter font-medium" style={{ lineHeight: 0.85 }}>
@@ -52,11 +56,53 @@ export function BlockRenderer({ block }: { block: Block }) {
                   <ShinyText text={d.titleLine2 || ""} />
                 </span>
               </h1>
-              {d.subtitle && <p className="mt-8 max-w-2xl text-sm md:text-base text-white/80">{d.subtitle}</p>}
-              <div className="mt-10 flex flex-col sm:flex-row gap-3">
+              {d.subtitle && <p className="mt-6 md:mt-8 max-w-2xl text-sm md:text-base text-white/80">{d.subtitle}</p>}
+              <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 {d.primaryCta?.label && <CTAButton label={d.primaryCta.label} anchor={d.primaryCta.anchor} />}
                 {d.secondaryCta?.label && <CTAButton label={d.secondaryCta.label} anchor={d.secondaryCta.anchor} variant="secondary" />}
               </div>
+              
+              {(d.stats || d.badges) && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.5, duration: 0.8 }}
+                  className="mt-12 md:mt-16 w-full max-w-4xl mx-auto border-t border-white/10 pt-8"
+                >
+                  {d.stats && (
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mb-8">
+                      {d.stats.map((stat: any, i: number) => (
+                        <div key={i} className="flex flex-col items-center justify-center">
+                          <span className="text-3xl md:text-5xl font-bold bg-clip-text text-transparent" style={{ backgroundImage: `linear-gradient(to right, white, var(--accent-color, #64CEFB))` }}>
+                            {stat.value}
+                          </span>
+                          <span className="text-white/60 text-xs md:text-sm mt-2 uppercase tracking-widest">{stat.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {d.badges && (
+                    <div className="flex flex-col items-center">
+                      <p className="text-white/50 text-xs uppercase tracking-widest mb-4">Technologies You'll Learn</p>
+                      <div className="flex flex-wrap justify-center gap-2">
+                        {d.badges.map((badge: string, i: number) => (
+                          <motion.span 
+                            key={i}
+                            initial={{ opacity: 0, scale: 0.8 }}
+                            animate={{ opacity: 1, scale: 1 }}
+                            transition={{ delay: 0.6 + (i * 0.1), type: "spring" }}
+                            className="px-3 py-1.5 md:px-4 md:py-2 rounded-full border border-white/10 bg-white/5 text-white/80 text-xs md:text-sm hover:bg-white/10 hover:border-white/20 transition-all cursor-default"
+                            style={{ boxShadow: `0 0 20px rgba(255,255,255,0.02)` }}
+                          >
+                            {badge}
+                          </motion.span>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </motion.div>
+              )}
             </div>
           </div>
         </section>
@@ -103,7 +149,16 @@ export function BlockRenderer({ block }: { block: Block }) {
                     <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
                       <span className="text-xs uppercase tracking-widest mb-6" style={{ color: 'var(--accent-color, #64CEFB)' }}>{w.tag}</span>
                       <h3 className="text-3xl md:text-4xl font-medium mb-6 tracking-tight">{w.title}</h3>
-                      <p className="text-base text-white/60 leading-relaxed mb-8">{w.body}</p>
+                      {w.body && <p className="text-base text-white/60 leading-relaxed mb-6 whitespace-pre-line">{w.body}</p>}
+                      {w.modules && (
+                        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
+                          {w.modules.map((m: string, idx: number) => (
+                            <div key={idx} className="bg-white/5 border border-white/10 rounded-xl p-3 text-xs md:text-sm text-white/80 text-center flex items-center justify-center shadow-inner hover:bg-white/10 transition-colors">
+                              {m}
+                            </div>
+                          ))}
+                        </div>
+                      )}
                       <span className="group inline-flex items-center gap-2 text-sm font-medium w-fit cursor-pointer">
                         {w.cta} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
                       </span>
