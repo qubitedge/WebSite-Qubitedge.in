@@ -40,7 +40,7 @@ export function Navbar() {
         >
           {/* Brand */}
           <Link to="/" className="flex items-center gap-2 shrink-0">
-            <img src="/logo.png" alt="Logo" className="h-7 w-7 object-contain drop-shadow-[0_0_15px_rgba(100,206,251,0.4)]" />
+            <img src="/logo.webp" alt="Logo" className="h-7 w-7 object-contain drop-shadow-[0_0_15px_rgba(100,206,251,0.4)]" />
             <span className="text-white font-medium tracking-tight">{content.brand.name}</span>
           </Link>
 
@@ -125,7 +125,7 @@ export function Navbar() {
             >
               <div className="flex items-center justify-between px-5 pt-5 pb-3">
                 <div className="flex items-center gap-2">
-                  <img src="/logo.png" alt="Logo" className="h-7 w-7 object-contain" />
+                  <img src="/logo.webp" alt="Logo" className="h-7 w-7 object-contain" />
                   <span className="text-white font-medium">{content.brand.name}</span>
                 </div>
                 <button

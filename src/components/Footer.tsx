@@ -9,7 +9,7 @@ export function Footer() {
           {/* Column 1: Brand & Description */}
           <div className="flex flex-col space-y-6">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="Qubitedge Logo" className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(100,206,251,0.4)]" />
+              <img src="/logo.webp" alt="Qubitedge Logo" className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(100,206,251,0.4)]" />
               <span className="text-xl font-bold tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
                 Qubitedge
               </span>
@@ -18,13 +18,13 @@ export function Footer() {
               Qubitedge helps students build job-ready skills through hands-on training in IT, AI, and communication. We offer workshops, internships, and career support to prepare you for real-world opportunities.
             </p>
             <div className="flex gap-4">
-              <a href="#" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="Instagram">
+              <a href="https://www.instagram.com/qubitedge?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="Instagram">
                 <Instagram size={20} />
               </a>
               <a href="#" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="Facebook">
                 <Facebook size={20} />
               </a>
-              <a href="#" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="LinkedIn">
+              <a href="https://www.linkedin.com/company/qubitedge.in/" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="LinkedIn">
                 <Linkedin size={20} />
               </a>
               <a href="#" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="VK">
@@ -38,7 +38,7 @@ export function Footer() {
               <a href="#" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="X (Twitter)">
                 <Twitter size={20} />
               </a>
-              <a href="#" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="YouTube">
+              <a href="https://youtube.com/@qubitedge?si=LZymEm5dXykJYEHu" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="YouTube">
                 <Youtube size={20} />
               </a>
             </div>

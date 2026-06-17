@@ -90,23 +90,73 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Builds a dynamic, full-screen hero section for a product design education platform." },
-      { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Builds a dynamic, full-screen hero section for a product design education platform." },
+      // Default title — individual routes override this
+      { title: "QubitEdge — Sharpening Potential. Building Futures." },
+      {
+        name: "description",
+        content:
+          "QubitEdge is a growth ecosystem bridging talent and opportunity through hands-on workshops, cutting-edge IT services, internship programs, and enterprise solutions.",
+      },
+      { name: "author", content: "QubitEdge" },
+      { name: "robots", content: "index, follow" },
+      {
+        name: "keywords",
+        content:
+          "QubitEdge, internships, workshops, IT services, AI, quantum computing, data science, machine learning, enterprise solutions, student programs, Hyderabad",
+      },
+      // Open Graph
+      { property: "og:site_name", content: "QubitEdge" },
       { property: "og:type", content: "website" },
-      { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
-      { name: "twitter:title", content: "Lovable App" },
-      { name: "twitter:description", content: "Builds a dynamic, full-screen hero section for a product design education platform." },
-      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/811105d3-a670-456f-b9e0-c204a013367d/id-preview-14a05ee5--647145a8-337f-441b-9db2-e75d2007c6dc.lovable.app-1780551403612.png" },
-      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/811105d3-a670-456f-b9e0-c204a013367d/id-preview-14a05ee5--647145a8-337f-441b-9db2-e75d2007c6dc.lovable.app-1780551403612.png" },
+      { property: "og:url", content: "https://qubitedge.in" },
+      {
+        property: "og:title",
+        content: "QubitEdge — Sharpening Potential. Building Futures.",
+      },
+      {
+        property: "og:description",
+        content:
+          "QubitEdge is a growth ecosystem bridging talent and opportunity through workshops, IT services, and enterprise solutions.",
+      },
+      {
+        property: "og:image",
+        content: "https://qubitedge.in/logo.webp",
+      },
+      { property: "og:image:width", content: "1200" },
+      { property: "og:image:height", content: "630" },
+      { property: "og:locale", content: "en_IN" },
+      // Twitter / X Card
+      { name: "twitter:card", content: "summary_large_image" },
+      { name: "twitter:site", content: "@QubitEdge" },
+      { name: "twitter:creator", content: "@QubitEdge" },
+      {
+        name: "twitter:title",
+        content: "QubitEdge — Sharpening Potential. Building Futures.",
+      },
+      {
+        name: "twitter:description",
+        content:
+          "Workshops, IT services, internships, and enterprise solutions for students, businesses, and leaders.",
+      },
+      {
+        name: "twitter:image",
+        content: "https://qubitedge.in/logo.webp",
+      },
+      // Theme colour for browser chrome
+      { name: "theme-color", content: "#0a0a0a" },
     ],
     links: [
       {
         rel: "icon",
-        href: "/logo.png",
+        type: "image/webp",
+        href: "/logo.webp",
+      },
+      {
+        rel: "apple-touch-icon",
+        href: "/logo.webp",
+      },
+      {
+        rel: "canonical",
+        href: "https://qubitedge.in",
       },
       {
         rel: "stylesheet",

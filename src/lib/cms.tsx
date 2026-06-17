@@ -35,7 +35,7 @@ export type SiteContent = {
   footer: { copyright: string; links: { label: string; href: string }[] };
 };
 
-const STORAGE_KEY = "qubitedge.cms.v6";
+const STORAGE_KEY = "qubitedge.cms.v7";
 
 /* ---------- Default content (mirrors the existing site) ---------- */
 
@@ -89,9 +89,38 @@ const defaultHomeBlocks = [
       intro:
         "Every session is built for real-world impact. From mastering business tools to sharpening strategic thinking, our workshops deliver high-performance skills in just 2 hours.",
       items: [
-        { id: uid(), tag: "Data Analytics & ML", title: "Master Data & AI for Real-World Careers", body: "Step into the future of work with this hands-on webinar designed for students.", cta: "Join us Live !" },
-        { id: uid(), tag: "Accounting", title: "Student Essentials: Accounting Basics", body: "Build a strong foundation in accounting—from balance sheets to budgeting.", cta: "Learn More" },
-        { id: uid(), tag: "Artificial Intelligence", title: "AI Basics: Understand the Future", body: "This course is your gateway into the world of AI, machine learning, and neural networks.", cta: "Learn More" },
+        {
+          id: uid(),
+          tag: "Quantum",
+          title: "Foundations of Quantum Technologies: Physics and Linear Algebra in Action",
+          body: "Explore the fundamental principles of quantum technologies, focusing on physics and linear algebra. This module bridges theory with practical applications.",
+          cta: "Learn More",
+          mediaUrl: "/quantum.webp"
+        },
+        {
+          id: uid(),
+          tag: "Data & ML",
+          title: "Learning to Make Data-Driven Decisions Through Machine Learning and PowerBI",
+          body: "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
+          cta: "Learn More",
+          mediaUrl: "/data-ml.webp"
+        },
+        {
+          id: uid(),
+          tag: "Internship",
+          title: "Applied AI and Data Science Bootcamp",
+          body: "Timeline: 18/05/2026 to 26/06/2026",
+          modules: [
+            "Applied AI & Data Science Bootcamp",
+            "Data Foundations",
+            "Python for Data & Automation",
+            "ML/AI",
+            "Internet of Things (IoT)",
+            "CapStone Project"
+          ],
+          cta: "Learn More",
+          mediaUrl: "/Internships.webp"
+        }
       ],
     },
   },
@@ -118,9 +147,9 @@ const defaultHomeBlocks = [
       title: "Insights from the Edge",
       intro: "Stay updated with expert insights and the latest trends.",
       items: [
-        { id: uid(), tag: "Learning", title: "The Rise of Micro-Workshops in Career Building", excerpt: "Why bite-sized, high-impact learning is reshaping how professionals upskill in 2026.", imageUrl: "/micro-workshops.png" },
-        { id: uid(), tag: "Industry", title: "AI in Agriculture: A Quiet Revolution", excerpt: "How emerging tech is transforming farming workflows across rural economies.", imageUrl: "/AI IN AGRI.png" },
-        { id: uid(), tag: "Business", title: "Hiring for Skills, Not Pedigree", excerpt: "Enterprises are rewriting recruiting playbooks—here's what it means for new graduates.", imageUrl: "/BUSINESS.png" },
+        { id: uid(), tag: "Learning", title: "The Rise of Micro-Workshops in Career Building", excerpt: "Why bite-sized, high-impact learning is reshaping how professionals upskill in 2026.", imageUrl: "/micro-workshops.webp" },
+        { id: uid(), tag: "Industry", title: "AI in Agriculture: A Quiet Revolution", excerpt: "How emerging tech is transforming farming workflows across rural economies.", imageUrl: "/AI IN AGRI.webp" },
+        { id: uid(), tag: "Business", title: "Hiring for Skills, Not Pedigree", excerpt: "Enterprises are rewriting recruiting playbooks—here's what it means for new graduates.", imageUrl: "/BUSINESS.webp" },
       ],
     },
   },
@@ -156,7 +185,7 @@ export const defaultContent: SiteContent = {
   nav: [
     { id: uid(), label: "Learning", anchor: "learning", href: "/learning" },
     { id: uid(), label: "Manufacturing", anchor: "manufacturing", href: "https://qubitedge.vercel.app/", isExternal: true },
-    { id: uid(), label: "IT Services", anchor: "it-services", href: "/it-services" },
+    { id: uid(), label: "IT & Marketing", anchor: "it-marketing", href: "/it-marketing" },
     { id: uid(), label: "Workshops/Internships", anchor: "workshops", href: "/workshops" },
     { id: uid(), label: "About Us", anchor: "about", href: "/about" },
   ],
@@ -183,15 +212,15 @@ export const defaultContent: SiteContent = {
         }
       }
     ],
-    "it-services": [
+    "it-marketing": [
       {
         id: uid(),
         type: "hero",
         data: {
           eyebrow: "Coming Soon",
-          titleLine1: "IT Services",
+          titleLine1: "IT & Marketing",
           titleLine2: "",
-          subtitle: "Our enterprise-class solutions for growth are currently being documented. Check back soon for detailed information on how we empower businesses to scale with precision.",
+          subtitle: "Our solutions for growth are currently being documented. Check back soon for detailed information on how we empower businesses to scale with precision.",
           primaryCta: { label: "Return Home", anchor: "" }
         }
       }
@@ -231,7 +260,7 @@ export const defaultContent: SiteContent = {
               title: "Foundations of Quantum Technologies: Physics and Linear Algebra in Action",
               body: "Explore the fundamental principles of quantum technologies, focusing on physics and linear algebra. This module bridges theory with practical applications.",
               cta: "Learn More",
-              mediaUrl: "/quantum.png"
+              mediaUrl: "/quantum.webp"
             },
             {
               id: uid(),
@@ -239,7 +268,7 @@ export const defaultContent: SiteContent = {
               title: "Learning to Make Data-Driven Decisions Through Machine Learning and PowerBI",
               body: "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
               cta: "Learn More",
-              mediaUrl: "/data-ml.png"
+              mediaUrl: "/data-ml.webp"
             },
             {
               id: uid(),
@@ -255,7 +284,7 @@ export const defaultContent: SiteContent = {
                 "CapStone Project"
               ],
               cta: "Learn More",
-              mediaUrl: "/Internships.png"
+              mediaUrl: "/Internships.webp"
             }
           ]
         }
@@ -280,7 +309,7 @@ export const defaultContent: SiteContent = {
           title: "Meet our Founder",
           name: "Sam Oguri",
           role: "Founder & CEO – Qubitedge",
-          imageUrl: "/ceo.png",
+          imageUrl: "/ceo.webp",
           bio: "With over 25 years of leadership in EdTech and global services, the Founder and CEO of Qubitedge has a proven track record of building high-performing teams, scaling operations, and turning early-stage ventures into market leaders.\n\nAs the founding head of Chegg India, he spearheaded the company's growth from a team of 8 to over 850 professionals. His core expertise spans operational strategy, financial leadership, cross-functional execution, and scaling innovation with structure and precision.\n\nAt Qubitedge, he leads with a singular mission: to empower students with future-ready skills, and to help startups, professionals, and businesses scale smarter—with clarity, purpose, and measurable impact."
         }
       }
@@ -336,6 +365,10 @@ function loadFromStorage(): SiteContent {
       Object.keys(parsed.pages).forEach((pageId) => {
         pages[pageId] = parsed.pages![pageId] ?? defaultContent.pages[pageId] ?? [];
       });
+      // Migrate it-services to it-marketing
+      if (parsed.pages["it-services"] && !parsed.pages["it-marketing"]) {
+        pages["it-marketing"] = parsed.pages["it-services"];
+      }
       // Auto-migrate workshops page if it only has the hero block
       if (pages.workshops?.length === 1 && pages.workshops[0].type === "hero") {
          pages.workshops = defaultContent.pages.workshops;
@@ -348,11 +381,11 @@ function loadFromStorage(): SiteContent {
            const quantumItem = wBlock.data.items.find((it: any) => it.tag === "Quantum");
            let updated = false;
            if (mlItem && !mlItem.mediaUrl) {
-             mlItem.mediaUrl = "/data-ml.png";
+             mlItem.mediaUrl = "/data-ml.webp";
              updated = true;
            }
-           if (quantumItem && quantumItem.mediaUrl === "https://www.youtube.com/watch?v=q2mOLaAenwI") {
-             quantumItem.mediaUrl = "/quantum.png";
+           if (quantumItem) {
+             quantumItem.mediaUrl = "/quantum.webp";
              updated = true;
            }
            
@@ -372,7 +405,7 @@ function loadFromStorage(): SiteContent {
                  "CapStone Project"
                ],
                cta: "Learn More",
-               mediaUrl: "/Internships.png"
+               mediaUrl: "/Internships.webp"
              });
              updated = true;
            } else if (!internshipItem.modules || !internshipItem.mediaUrl) {
@@ -385,7 +418,7 @@ function loadFromStorage(): SiteContent {
                  "Internet of Things (IoT)",
                  "CapStone Project"
              ];
-             internshipItem.mediaUrl = "/Internships.png";
+             internshipItem.mediaUrl = "/Internships.webp";
              updated = true;
            }
            
@@ -453,7 +486,7 @@ function emptyBlock(type: BlockType): Block {
       base.data = { eyebrow: "Section", title: "Heading", body: "Write any text content here." };
       break;
     case "profile":
-      base.data = { title: "Profile Section", name: "Name", role: "Role / Position", imageUrl: "/ceo.png", bio: "Bio details go here." };
+      base.data = { title: "Profile Section", name: "Name", role: "Role / Position", imageUrl: "/ceo.webp", bio: "Bio details go here." };
       break;
     case "story":
       base.data = { title: "Our Story", subtitle: "Subheading", bodyBeforeQuote: "Before quote text.", quote: "Important quote statement.", bodyAfterQuote: "After quote text." };

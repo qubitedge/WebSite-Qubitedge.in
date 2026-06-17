@@ -11,7 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkshopsRouteImport } from './routes/workshops'
 import { Route as LearningRouteImport } from './routes/learning'
-import { Route as ItServicesRouteImport } from './routes/it-services'
+import { Route as ItMarketingRouteImport } from './routes/it-marketing'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -26,9 +26,9 @@ const LearningRoute = LearningRouteImport.update({
   path: '/learning',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ItServicesRoute = ItServicesRouteImport.update({
-  id: '/it-services',
-  path: '/it-services',
+const ItMarketingRoute = ItMarketingRouteImport.update({
+  id: '/it-marketing',
+  path: '/it-marketing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -51,7 +51,7 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/it-services': typeof ItServicesRoute
+  '/it-marketing': typeof ItMarketingRoute
   '/learning': typeof LearningRoute
   '/workshops': typeof WorkshopsRoute
 }
@@ -59,7 +59,7 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/it-services': typeof ItServicesRoute
+  '/it-marketing': typeof ItMarketingRoute
   '/learning': typeof LearningRoute
   '/workshops': typeof WorkshopsRoute
 }
@@ -68,7 +68,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
-  '/it-services': typeof ItServicesRoute
+  '/it-marketing': typeof ItMarketingRoute
   '/learning': typeof LearningRoute
   '/workshops': typeof WorkshopsRoute
 }
@@ -78,17 +78,17 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
-    | '/it-services'
+    | '/it-marketing'
     | '/learning'
     | '/workshops'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/admin' | '/it-services' | '/learning' | '/workshops'
+  to: '/' | '/about' | '/admin' | '/it-marketing' | '/learning' | '/workshops'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/admin'
-    | '/it-services'
+    | '/it-marketing'
     | '/learning'
     | '/workshops'
   fileRoutesById: FileRoutesById
@@ -97,7 +97,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
-  ItServicesRoute: typeof ItServicesRoute
+  ItMarketingRoute: typeof ItMarketingRoute
   LearningRoute: typeof LearningRoute
   WorkshopsRoute: typeof WorkshopsRoute
 }
@@ -118,11 +118,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LearningRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/it-services': {
-      id: '/it-services'
-      path: '/it-services'
-      fullPath: '/it-services'
-      preLoaderRoute: typeof ItServicesRouteImport
+    '/it-marketing': {
+      id: '/it-marketing'
+      path: '/it-marketing'
+      fullPath: '/it-marketing'
+      preLoaderRoute: typeof ItMarketingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -153,7 +153,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
-  ItServicesRoute: ItServicesRoute,
+  ItMarketingRoute: ItMarketingRoute,
   LearningRoute: LearningRoute,
   WorkshopsRoute: WorkshopsRoute,
 }

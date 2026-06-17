@@ -28,7 +28,7 @@ const BLOCK_LABELS: Record<BlockType, string> = {
 const PAGES: Record<string, string> = {
   home: "Homepage",
   learning: "Learning",
-  "it-services": "IT Services",
+  "it-marketing": "IT & Marketing",
   workshops: "Workshops & Internships",
   about: "About Us",
 };

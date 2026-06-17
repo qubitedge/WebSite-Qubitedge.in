@@ -1,6 +1,6 @@
-import { motion } from "framer-motion";
+import { motion, useScroll, useTransform } from "framer-motion";
 import { ArrowRight, ArrowUpRight, Sparkles, Plus, Minus } from "lucide-react";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import type { Block } from "@/lib/cms";
 import { scrollToAnchor } from "@/lib/cms";
 import { ShinyText } from "./ShinyText";
@@ -27,6 +27,21 @@ function CTAButton({ label, anchor, variant = "primary" }: { label: string; anch
   );
 }
 
+function ParallaxContent({ children, offset = 50, className = "", style = {} }: { children: React.ReactNode, offset?: number, className?: string, style?: React.CSSProperties }) {
+  const ref = useRef(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start end", "end start"]
+  });
+  const y = useTransform(scrollYProgress, [0, 1], [-offset, offset]);
+
+  return (
+    <motion.div ref={ref} style={{ y, ...style }} className={className}>
+      {children}
+    </motion.div>
+  );
+}
+
 export function BlockRenderer({ block }: { block: Block }) {
   const d = block.data;
   const anchor = block.anchor;
@@ -36,12 +51,12 @@ export function BlockRenderer({ block }: { block: Block }) {
       return (
         <section id={anchor} data-accent="#64CEFB" className="relative w-full overflow-hidden pt-16">
           {d.videoUrl && (
-            <>
+            <ParallaxContent offset={120} className="absolute inset-0 h-[140%] w-full -top-[20%] z-0">
               <video className="absolute inset-0 h-full w-full object-cover" autoPlay loop muted playsInline src={d.videoUrl} />
               <div className="absolute inset-0 bg-black/40" />
-            </>
+            </ParallaxContent>
           )}
-          <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-12 md:pb-24">
+          <ParallaxContent offset={40} className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-12 md:pb-24">
             {(d.topLeft || d.topRight) && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-16">
                 <p className="text-sm md:text-base text-white/80 max-w-md">{d.topLeft}</p>
@@ -104,14 +119,14 @@ export function BlockRenderer({ block }: { block: Block }) {
                 </motion.div>
               )}
             </div>
-          </div>
+          </ParallaxContent>
         </section>
       );
 
     case "features":
       return (
         <section id={anchor} data-accent="#64CEFB" className="py-24 md:py-32 border-t border-white/10">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <ParallaxContent offset={30} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
               <div>
                 <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }}>{d.eyebrow}</p>
@@ -128,14 +143,14 @@ export function BlockRenderer({ block }: { block: Block }) {
                 </TiltCard>
               ))}
             </div>
-          </div>
+          </ParallaxContent>
         </section>
       );
 
     case "workshops":
       return (
-        <section id={anchor} data-accent="#64CEFB" className="py-24 md:py-32 border-t border-white/10 bg-black/40 backdrop-blur-sm">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <section id={anchor} data-accent="#64CEFB" className="py-24 md:py-32 border-t border-white/10 bg-black/40 backdrop-blur-sm relative overflow-hidden">
+          <ParallaxContent offset={40} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="mb-16 max-w-3xl">
               <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }}>{d.eyebrow}</p>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }}>{d.title}</h2>
@@ -167,6 +182,8 @@ export function BlockRenderer({ block }: { block: Block }) {
                       {w.mediaUrl ? (
                          w.mediaUrl.includes("youtube.com") || w.mediaUrl.includes("youtu.be") ? (
                            <iframe className="absolute inset-0 w-full h-full border-none" src={w.mediaUrl.replace("watch?v=", "embed/").replace("youtu.be/", "www.youtube.com/embed/")} allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen />
+                         ) : w.mediaUrl.includes(".mp4") || w.mediaUrl.includes("/video/upload/") ? (
+                           <video className="absolute inset-0 w-full h-full object-cover" autoPlay loop muted playsInline controls src={w.mediaUrl} />
                          ) : (
                            <img src={w.mediaUrl} alt={w.title} className="absolute inset-0 w-full h-full object-cover" />
                          )
@@ -180,14 +197,14 @@ export function BlockRenderer({ block }: { block: Block }) {
                 );
               })}
             </div>
-          </div>
+          </ParallaxContent>
         </section>
       );
 
     case "testimonials":
       return (
         <section id={anchor} data-accent="#F59E0B" className="py-24 md:py-32 border-t border-white/10">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <ParallaxContent offset={30} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-16 max-w-3xl">
               <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #F59E0B)' }}>{d.eyebrow}</p>
               <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }}>{d.title}</h2>
@@ -207,14 +224,14 @@ export function BlockRenderer({ block }: { block: Block }) {
                 </motion.figure>
               ))}
             </div>
-          </div>
+          </ParallaxContent>
         </section>
       );
 
     case "articles":
       return (
         <section id={anchor} data-accent="#8B5CF6" className="py-24 md:py-32 border-t border-white/10 bg-black/40 backdrop-blur-sm">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <ParallaxContent offset={40} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-16 max-w-3xl">
               <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #8B5CF6)' }}>{d.eyebrow}</p>
               <h2 className="text-4xl md:text-5xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }}>{d.title}</h2>
@@ -238,7 +255,7 @@ export function BlockRenderer({ block }: { block: Block }) {
                 </TiltCard>
               ))}
             </div>
-          </div>
+          </ParallaxContent>
         </section>
       );
 
@@ -248,8 +265,8 @@ export function BlockRenderer({ block }: { block: Block }) {
     case "cta":
       return (
         <section id={anchor} data-accent="#EC4899" className="py-24 md:py-32 border-t border-white/10 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #EC4899), transparent)` }} />
-          <div className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
+          <ParallaxContent offset={60} className="absolute inset-0 opacity-20 -top-[20%] h-[140%] w-full" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #EC4899), transparent)` }} />
+          <ParallaxContent offset={-20} className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }}>
               {d.highlight && d.title?.includes(d.highlight) ? (
                 <>
@@ -268,25 +285,25 @@ export function BlockRenderer({ block }: { block: Block }) {
                 <ArrowRight className="h-5 w-5 transition-transform group-hover:translate-x-1" />
               </MagneticButton>
             )}
-          </div>
+          </ParallaxContent>
         </section>
       );
 
     case "richText":
       return (
         <section id={anchor} data-accent="#64CEFB" className="py-24 md:py-32 border-t border-white/10">
-          <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
+          <ParallaxContent offset={20} className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
             {d.eyebrow && <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }}>{d.eyebrow}</p>}
             {d.title && <h2 className="text-4xl md:text-5xl font-medium tracking-tighter mb-6">{d.title}</h2>}
             {d.body && <p className="text-white/70 text-base md:text-lg whitespace-pre-line leading-relaxed">{d.body}</p>}
-          </div>
+          </ParallaxContent>
         </section>
       );
 
     case "story":
       return (
         <section id={anchor} data-accent="#64CEFB" className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
-          <div className="max-w-3xl mx-auto text-center mb-16 relative">
+          <ParallaxContent offset={30} className="max-w-3xl mx-auto text-center mb-16 relative">
             {d.title && (
               <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
                 {d.title}
@@ -316,20 +333,20 @@ export function BlockRenderer({ block }: { block: Block }) {
                 {d.bodyAfterQuote}
               </p>
             )}
-          </div>
+          </ParallaxContent>
         </section>
       );
 
     case "profile":
       return (
-        <section id={anchor} data-accent="#64CEFB" className="py-16 md:py-24 border-t border-white/10 relative">
-          <div className="mt-8 max-w-5xl mx-auto relative px-4 sm:px-6 lg:px-8">
+        <section id={anchor} data-accent="#64CEFB" className="py-16 md:py-24 border-t border-white/10 relative overflow-hidden">
+          <ParallaxContent offset={20} className="mt-8 max-w-5xl mx-auto relative px-4 sm:px-6 lg:px-8">
             <div className="absolute -inset-4 blur-2xl -z-10 rounded-full opacity-20" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #64CEFB), transparent)` }} />
             {d.title && <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{d.title}</h2>}
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center">
               <div className="w-56 h-56 md:w-72 md:h-72 shrink-0 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.1)] border border-white/15 relative group">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-                <img src={d.imageUrl || "/ceo.png"} alt={d.name || "Profile"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
+                <img src={d.imageUrl || "/ceo.webp"} alt={d.name || "Profile"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               </div>
               <div className="flex-1">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
@@ -345,7 +362,7 @@ export function BlockRenderer({ block }: { block: Block }) {
                 )}
               </div>
             </div>
-          </div>
+          </ParallaxContent>
         </section>
       );
 
