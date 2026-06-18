@@ -188,6 +188,22 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   useSectionAccent();
 
+  useEffect(() => {
+    console.clear();
+    console.log(`
+██╗     ██╗██╗  ██╗██╗██╗████████╗██╗  ██╗
+██║     ██║██║ ██╔╝██║██║╚══██╔══╝██║  ██║
+██║     ██║█████╔╝ ██║██║   ██║   ███████║
+██║     ██║██╔═██╗ ██║██║   ██║   ██╔══██║
+███████╗██║██║  ██╗██║██║   ██║   ██║  ██║
+╚══════╝╚═╝╚═╝  ╚═╝╚═╝╚═╝   ╚═╝   ╚═╝  ╚═╝
+
+🚀 Developed by Likhith
+☕ Coffee | 💻 Code | 🌪️ Chaos
+
+👻 Welcome to QubitEdge`);
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <CMSProvider>

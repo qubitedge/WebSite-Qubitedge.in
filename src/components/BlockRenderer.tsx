@@ -344,7 +344,7 @@ export function BlockRenderer({ block }: { block: Block }) {
             <div className="absolute -inset-4 blur-2xl -z-10 rounded-full opacity-20" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #64CEFB), transparent)` }} />
             {d.title && <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{d.title}</h2>}
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center">
-              <div className="w-56 h-56 md:w-72 md:h-72 shrink-0 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.1)] border border-white/15 relative group">
+              <div className="w-56 h-72 md:w-72 md:h-96 shrink-0 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.1)] border border-white/15 relative group">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
                 <img src={d.imageUrl || "/ceo.webp"} alt={d.name || "Profile"} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
               </div>

@@ -35,7 +35,7 @@ export type SiteContent = {
   footer: { copyright: string; links: { label: string; href: string }[] };
 };
 
-const STORAGE_KEY = "qubitedge.cms.v7";
+const STORAGE_KEY = "qubitedge.cms.v8";
 
 /* ---------- Default content (mirrors the existing site) ---------- */
 
