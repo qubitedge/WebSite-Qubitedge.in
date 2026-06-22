@@ -1,5 +1,5 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Sparkles, Plus, Minus, Trash2, ChevronDown, X } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Sparkles, Plus, Minus, Trash2, ChevronDown, X, Edit2 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useState, useRef } from "react";
 import type { Block } from "@/lib/cms";
@@ -59,6 +59,7 @@ export function BlockRenderer({ block, pageId = "home" }: BlockRendererProps) {
   const { isAdmin } = useAdmin();
   const { updateBlock } = useCMS();
   const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+  const [editingAnnIndex, setEditingAnnIndex] = useState<number | null>(null);
 
   const toggleExpand = (id: string) => {
     setExpandedIds(prev => ({ ...prev, [id]: !prev[id] }));
@@ -127,6 +128,323 @@ export function BlockRenderer({ block, pageId = "home" }: BlockRendererProps) {
                 {d.primaryCta?.label && <CTAButton label={d.primaryCta.label} anchor={d.primaryCta.anchor} />}
                 {d.secondaryCta?.label && <CTAButton label={d.secondaryCta.label} anchor={d.secondaryCta.anchor} variant="secondary" />}
               </div>
+
+              {/* Announcements Section */}
+              {((d.announcements && d.announcements.length > 0) || isAdmin) && (
+                <div className="mt-12 w-full max-w-4xl mx-auto flex flex-col items-center gap-6">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
+                    {(d.announcements || []).map((ann: any, idx: number) => (
+                      <motion.div
+                        key={ann.id || idx}
+                        initial={{ opacity: 0, y: 20 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        whileHover={{ y: -5, scale: 1.02 }}
+                        transition={{ duration: 0.3 }}
+                        className="group relative rounded-2xl overflow-hidden border border-white/10 bg-white/5 backdrop-blur-md p-6 flex flex-col justify-between min-h-[160px] text-left cursor-pointer"
+                        onClick={() => {
+                          if (!isAdmin && ann.link) {
+                            if (ann.link.startsWith("http")) {
+                              window.open(ann.link, "_blank");
+                            } else {
+                              window.location.href = ann.link;
+                            }
+                          }
+                        }}
+                      >
+                        {/* Background media */}
+                        {ann.bgType === "image" && ann.bgUrl && (
+                          <>
+                            <img src={ann.bgUrl} className="absolute inset-0 w-full h-full object-cover z-0 opacity-20 group-hover:opacity-30 transition-opacity" alt="" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-0" />
+                          </>
+                        )}
+                        {ann.bgType === "video" && ann.bgUrl && (
+                          <>
+                            <video src={ann.bgUrl} autoPlay loop muted playsInline className="absolute inset-0 w-full h-full object-cover z-0 opacity-20 group-hover:opacity-30 transition-opacity" />
+                            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-0" />
+                          </>
+                        )}
+                        {ann.bgType !== "image" && ann.bgType !== "video" && (
+                          <div className="absolute inset-0 z-0" style={{ background: ann.bgGradient || 'linear-gradient(135deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0) 100%)' }} />
+                        )}
+
+                        <div className="relative z-10 flex flex-col h-full justify-between gap-4">
+                          <div>
+                            {ann.tag && (
+                              <span className="inline-block px-2.5 py-0.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-3" style={{ backgroundColor: 'var(--accent-color, #64CEFB)', color: '#000' }}>
+                                {ann.tag}
+                              </span>
+                            )}
+                            <h3 className="text-xl font-bold text-white tracking-tight group-hover:text-[var(--accent-color)] transition-colors">
+                              {ann.title}
+                            </h3>
+                            <p className="text-white/60 text-sm mt-1 line-clamp-2">
+                              {ann.description}
+                            </p>
+                          </div>
+                          
+                          {ann.link && (
+                            <div className="flex items-center gap-1 text-xs font-medium text-white/80 group-hover:text-white transition-colors mt-auto">
+                              <span>Learn More</span>
+                              <ArrowUpRight className="h-3.5 w-3.5" />
+                            </div>
+                          )}
+                        </div>
+
+                        {/* Admin Edit/Delete overlays */}
+                        {isAdmin && (
+                          <div className="absolute top-3 right-3 z-20 flex gap-2 opacity-0 group-hover:opacity-100 transition-opacity bg-black/60 backdrop-blur-md p-1.5 rounded-lg border border-white/10">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setEditingAnnIndex(idx);
+                              }}
+                              className="p-1 hover:text-[var(--accent-color)] text-white/85 transition-colors"
+                              title="Edit Announcement"
+                            >
+                              <Edit2 className="h-4 w-4" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                if (confirm("Delete this announcement?")) {
+                                  const next = (d.announcements || []).filter((_: any, i: number) => i !== idx);
+                                  set("announcements", next);
+                                }
+                              }}
+                              className="p-1 hover:text-red-400 text-white/85 transition-colors"
+                              title="Delete"
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </button>
+                          </div>
+                        )}
+                      </motion.div>
+                    ))}
+
+                    {/* Add Announcement Slot (Only visible when count < 2) */}
+                    {isAdmin && (d.announcements || []).length < 2 && (
+                      <button
+                        onClick={() => {
+                          const next = [
+                            ...(d.announcements || []),
+                            {
+                              id: Math.random().toString(36).slice(2, 10),
+                              tag: "NEW",
+                              title: "New Internship Opportunity",
+                              description: "Apply now for our upcoming cohort.",
+                              link: "/workshops",
+                              bgType: "color",
+                              bgUrl: "",
+                              bgGradient: "linear-gradient(135deg, rgba(100, 206, 251, 0.1) 0%, rgba(0,0,0,0) 100%)",
+                            }
+                          ];
+                          set("announcements", next);
+                        }}
+                        className="border border-dashed border-white/20 bg-white/5 hover:bg-white/10 hover:border-white/40 transition-all rounded-2xl p-6 flex flex-col items-center justify-center min-h-[160px] text-white/60 hover:text-white group"
+                      >
+                        <div className="p-3 rounded-full bg-white/5 border border-white/10 group-hover:scale-110 transition-transform mb-2">
+                          <Plus className="h-6 w-6 text-white" />
+                        </div>
+                        <span className="text-sm font-medium">Add Announcement (Max 2)</span>
+                      </button>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {/* Announcement Edit Modal */}
+              {editingAnnIndex !== null && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="w-full max-w-lg bg-white rounded-2xl shadow-2xl overflow-hidden border border-slate-200 text-slate-800 flex flex-col"
+                  >
+                    {/* Header */}
+                    <div className="flex justify-between items-center px-6 py-4 border-b border-slate-100 bg-slate-50/50">
+                      <h3 className="font-semibold text-slate-900 text-lg flex items-center gap-2">
+                        <Edit2 className="h-4 w-4 text-[#64CEFB]" />
+                        Edit Announcement
+                      </h3>
+                      <button
+                        onClick={() => setEditingAnnIndex(null)}
+                        className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-colors"
+                      >
+                        <X className="h-5 w-5" />
+                      </button>
+                    </div>
+
+                    {/* Form Body */}
+                    <div className="p-6 flex flex-col gap-4 overflow-y-auto max-h-[70vh] text-left">
+                      {/* Badge / Tag */}
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                          Badge / Tag
+                        </label>
+                        <input
+                          type="text"
+                          value={d.announcements?.[editingAnnIndex]?.tag || ""}
+                          onChange={(e) => {
+                            const next = [...(d.announcements || [])];
+                            next[editingAnnIndex] = { ...next[editingAnnIndex], tag: e.target.value };
+                            set("announcements", next);
+                          }}
+                          placeholder="e.g. Internship, Announcement, NEW"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#64CEFB]/20 focus:border-[#64CEFB] transition-all"
+                        />
+                      </div>
+
+                      {/* Title */}
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                          Title
+                        </label>
+                        <input
+                          type="text"
+                          value={d.announcements?.[editingAnnIndex]?.title || ""}
+                          onChange={(e) => {
+                            const next = [...(d.announcements || [])];
+                            next[editingAnnIndex] = { ...next[editingAnnIndex], title: e.target.value };
+                            set("announcements", next);
+                          }}
+                          placeholder="Announcement Title"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#64CEFB]/20 focus:border-[#64CEFB] transition-all font-semibold"
+                        />
+                      </div>
+
+                      {/* Description */}
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                          Description
+                        </label>
+                        <textarea
+                          value={d.announcements?.[editingAnnIndex]?.description || ""}
+                          onChange={(e) => {
+                            const next = [...(d.announcements || [])];
+                            next[editingAnnIndex] = { ...next[editingAnnIndex], description: e.target.value };
+                            set("announcements", next);
+                          }}
+                          placeholder="Brief description..."
+                          rows={3}
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#64CEFB]/20 focus:border-[#64CEFB] transition-all resize-none"
+                        />
+                      </div>
+
+                      {/* Link URL */}
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                          Link URL
+                        </label>
+                        <input
+                          type="text"
+                          value={d.announcements?.[editingAnnIndex]?.link || ""}
+                          onChange={(e) => {
+                            const next = [...(d.announcements || [])];
+                            next[editingAnnIndex] = { ...next[editingAnnIndex], link: e.target.value };
+                            set("announcements", next);
+                          }}
+                          placeholder="e.g. /workshops, https://example.com"
+                          className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#64CEFB]/20 focus:border-[#64CEFB] transition-all font-mono"
+                        />
+                      </div>
+
+                      {/* Background Type */}
+                      <div>
+                        <label className="block text-xs font-semibold text-slate-500 uppercase tracking-wider mb-1.5">
+                          Background Style
+                        </label>
+                        <div className="flex gap-2 mb-3">
+                          {[
+                            { value: "color", label: "Gradient Fallback" },
+                            { value: "image", label: "Custom Image" },
+                            { value: "video", label: "Custom Video" },
+                          ].map((opt) => (
+                            <button
+                              key={opt.value}
+                              onClick={() => {
+                                const next = [...(d.announcements || [])];
+                                next[editingAnnIndex] = { ...next[editingAnnIndex], bgType: opt.value };
+                                set("announcements", next);
+                              }}
+                              className={`flex-1 py-1.5 px-3 border rounded-lg text-xs font-medium transition-all ${
+                                d.announcements?.[editingAnnIndex]?.bgType === opt.value
+                                  ? "border-[#64CEFB] bg-[#64CEFB]/10 text-[#1e6180]"
+                                  : "border-slate-200 text-slate-600 hover:bg-slate-50"
+                              }`}
+                            >
+                              {opt.label}
+                            </button>
+                          ))}
+                        </div>
+
+                        {/* Background Media URL (if image or video) */}
+                        {d.announcements?.[editingAnnIndex]?.bgType !== "color" && (
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                              Media Source URL
+                            </label>
+                            <input
+                              type="text"
+                              value={d.announcements?.[editingAnnIndex]?.bgUrl || ""}
+                              onChange={(e) => {
+                                const next = [...(d.announcements || [])];
+                                next[editingAnnIndex] = { ...next[editingAnnIndex], bgUrl: e.target.value };
+                                set("announcements", next);
+                              }}
+                              placeholder="URL to image or video file..."
+                              className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm bg-slate-50 focus:bg-white focus:outline-none focus:ring-2 focus:ring-[#64CEFB]/20 focus:border-[#64CEFB] transition-all font-mono"
+                            />
+                          </div>
+                        )}
+
+                        {/* Background Gradient preset if color */}
+                        {d.announcements?.[editingAnnIndex]?.bgType === "color" && (
+                          <div>
+                            <label className="block text-xs font-semibold text-slate-400 uppercase tracking-wider mb-1.5">
+                              Gradient Colorway
+                            </label>
+                            <div className="flex gap-2">
+                              {[
+                                { value: "linear-gradient(135deg, rgba(100, 206, 251, 0.1) 0%, rgba(0,0,0,0) 100%)", label: "Sky Blue" },
+                                { value: "linear-gradient(135deg, rgba(139, 92, 246, 0.1) 0%, rgba(0,0,0,0) 100%)", label: "Violet" },
+                                { value: "linear-gradient(135deg, rgba(236, 72, 153, 0.1) 0%, rgba(0,0,0,0) 100%)", label: "Pink" },
+                                { value: "linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(0,0,0,0) 100%)", label: "Emerald" },
+                              ].map((grad, i) => (
+                                <button
+                                  key={i}
+                                  onClick={() => {
+                                    const next = [...(d.announcements || [])];
+                                    next[editingAnnIndex] = { ...next[editingAnnIndex], bgGradient: grad.value };
+                                    set("announcements", next);
+                                  }}
+                                  className={`h-8 flex-1 rounded-lg border transition-all ${
+                                    d.announcements?.[editingAnnIndex]?.bgGradient === grad.value
+                                      ? "border-black scale-105 shadow-sm"
+                                      : "border-slate-200 hover:scale-102"
+                                  }`}
+                                  style={{ background: grad.value }}
+                                  title={grad.label}
+                                />
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Footer */}
+                    <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+                      <button
+                        onClick={() => setEditingAnnIndex(null)}
+                        className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-slate-700 text-sm font-semibold rounded-lg transition-colors"
+                      >
+                        Done
+                      </button>
+                    </div>
+                  </motion.div>
+                </div>
+              )}
 
               {(d.stats || d.badges) && (
                 <motion.div
