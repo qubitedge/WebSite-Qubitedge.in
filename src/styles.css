@@ -142,3 +142,34 @@
     color: var(--color-foreground);
   }
 }
+
+/* ---------- Admin inline editing styles ---------- */
+
+/* Editable text hover indicator */
+.editable-text-display {
+  position: relative;
+  transition: all 0.15s ease;
+  border-radius: 4px;
+}
+
+.editable-text-display:hover {
+  box-shadow: inset 0 0 0 1.5px rgba(100, 206, 251, 0.35);
+  background: rgba(100, 206, 251, 0.04);
+  padding: 2px 4px;
+  margin: -2px -4px;
+}
+
+/* Editable text input active state */
+.editable-text-input {
+  display: block;
+}
+
+.editable-text-input:focus {
+  box-shadow: inset 0 0 0 2px rgba(100, 206, 251, 0.6) !important;
+  background: rgba(100, 206, 251, 0.06) !important;
+}
+
+/* Admin toolbar spacing — push content below the toolbar */
+.admin-toolbar ~ div {
+  padding-top: 44px;
+}

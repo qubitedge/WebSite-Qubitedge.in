@@ -1,8 +1,11 @@
-import { motion, useScroll, useTransform } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Sparkles, Plus, Minus } from "lucide-react";
+import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
+import { ArrowRight, ArrowUpRight, Sparkles, Plus, Minus, Trash2, ChevronDown, X } from "lucide-react";
+import ReactMarkdown from "react-markdown";
 import { useState, useRef } from "react";
 import type { Block } from "@/lib/cms";
-import { scrollToAnchor } from "@/lib/cms";
+import { scrollToAnchor, useCMS } from "@/lib/cms";
+import { useAdmin } from "@/lib/AdminContext";
+import { EditableText } from "./EditableText";
 import { ShinyText } from "./ShinyText";
 import { MagneticButton } from "./MagneticButton";
 import { TiltCard } from "./TiltCard";
@@ -42,14 +45,48 @@ function ParallaxContent({ children, offset = 50, className = "", style = {} }: 
   );
 }
 
-export function BlockRenderer({ block }: { block: Block }) {
+/* ---------- Main renderer ---------- */
+
+type BlockRendererProps = {
+  block: Block;
+  /** Page ID for CMS updates */
+  pageId?: string;
+};
+
+export function BlockRenderer({ block, pageId = "home" }: BlockRendererProps) {
   const d = block.data;
   const anchor = block.anchor;
+  const { isAdmin } = useAdmin();
+  const { updateBlock } = useCMS();
+  const [expandedIds, setExpandedIds] = useState<Record<string, boolean>>({});
+
+  const toggleExpand = (id: string) => {
+    setExpandedIds(prev => ({ ...prev, [id]: !prev[id] }));
+  };
+
+  // Helper to update a top-level field on this block
+  const set = (key: string, value: any) => updateBlock(block.id, { [key]: value }, pageId);
+
+  // Helper to update a nested CTA field
+  const setCta = (ctaKey: string, field: string, value: string) =>
+    updateBlock(block.id, { [ctaKey]: { ...d[ctaKey], [field]: value } }, pageId);
+
+  // Helper to update an item in an items array
+  const updateItem = (idx: number, patch: Record<string, any>) =>
+    set("items", (d.items || []).map((it: any, i: number) => (i === idx ? { ...it, ...patch } : it)));
+
+  const removeItem = (idx: number) =>
+    set("items", (d.items || []).filter((_: any, i: number) => i !== idx));
+
+  const addItem = (template: Record<string, any>) =>
+    set("items", [...(d.items || []), { id: Math.random().toString(36).slice(2, 10), ...template }]);
 
   switch (block.type) {
     case "hero":
-      return (
-        <section id={anchor} data-accent="#64CEFB" className="relative w-full overflow-hidden pt-16">
+      {
+        const accent = d.accentColor || "#64CEFB";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="relative w-full overflow-hidden pt-16">
           {d.videoUrl && (
             <ParallaxContent offset={120} className="absolute inset-0 h-[140%] w-full -top-[20%] z-0">
               <video className="absolute inset-0 h-full w-full object-cover" autoPlay loop muted playsInline src={d.videoUrl} />
@@ -57,28 +94,42 @@ export function BlockRenderer({ block }: { block: Block }) {
             </ParallaxContent>
           )}
           <ParallaxContent offset={40} className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 pt-12 pb-12 md:pb-24">
-            {(d.topLeft || d.topRight) && (
+            {(d.topLeft || d.topRight || isAdmin) && (
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 mb-16">
-                <p className="text-sm md:text-base text-white/80 max-w-md">{d.topLeft}</p>
-                <p className="text-sm md:text-base text-white/80 lg:text-right">{d.topRight}</p>
+                <EditableText as="p" className="text-sm md:text-base text-white/80 max-w-md" value={d.topLeft || ""} onChange={(v) => set("topLeft", v)} placeholder="Top left text…" />
+                <EditableText as="p" className="text-sm md:text-base text-white/80 lg:text-right" value={d.topRight || ""} onChange={(v) => set("topRight", v)} placeholder="Top right text…" />
               </div>
             )}
             <div className="text-center flex flex-col items-center">
-              {d.eyebrow && <p className="text-xs md:text-sm uppercase tracking-tight text-white/80 mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }}>{d.eyebrow}</p>}
+              {(d.eyebrow || isAdmin) && (
+                <EditableText as="p" className="text-xs md:text-sm uppercase tracking-tight text-white/80 mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }} value={d.eyebrow || ""} onChange={(v) => set("eyebrow", v)} placeholder="Eyebrow…" />
+              )}
               <h1 className="tracking-tighter font-medium" style={{ lineHeight: 0.85 }}>
-                <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-white">{d.titleLine1}</span>
+                <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-white">
+                  {isAdmin ? (
+                    <EditableText as="span" className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl text-white tracking-tighter font-medium" value={d.titleLine1 || ""} onChange={(v) => set("titleLine1", v)} placeholder="Title line 1…" />
+                  ) : (
+                    d.titleLine1
+                  )}
+                </span>
                 <span className="block text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl">
-                  <ShinyText text={d.titleLine2 || ""} />
+                  {isAdmin ? (
+                    <EditableText as="span" className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-9xl tracking-tighter font-medium bg-gradient-to-r from-white to-[#64CEFB] bg-clip-text text-transparent" value={d.titleLine2 || ""} onChange={(v) => set("titleLine2", v)} placeholder="Title line 2…" />
+                  ) : (
+                    <ShinyText text={d.titleLine2 || ""} />
+                  )}
                 </span>
               </h1>
-              {d.subtitle && <p className="mt-6 md:mt-8 max-w-2xl text-sm md:text-base text-white/80">{d.subtitle}</p>}
+              {(d.subtitle || isAdmin) && (
+                <EditableText as="p" className="mt-6 md:mt-8 max-w-2xl text-sm md:text-base text-white/80" value={d.subtitle || ""} onChange={(v) => set("subtitle", v)} multiline placeholder="Subtitle text…" />
+              )}
               <div className="mt-8 flex flex-col sm:flex-row gap-3">
                 {d.primaryCta?.label && <CTAButton label={d.primaryCta.label} anchor={d.primaryCta.anchor} />}
                 {d.secondaryCta?.label && <CTAButton label={d.secondaryCta.label} anchor={d.secondaryCta.anchor} variant="secondary" />}
               </div>
-              
+
               {(d.stats || d.badges) && (
-                <motion.div 
+                <motion.div
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5, duration: 0.8 }}
@@ -96,13 +147,12 @@ export function BlockRenderer({ block }: { block: Block }) {
                       ))}
                     </div>
                   )}
-
                   {d.badges && (
                     <div className="flex flex-col items-center">
                       <p className="text-white/50 text-xs uppercase tracking-widest mb-4">Technologies You'll Learn</p>
                       <div className="flex flex-wrap justify-center gap-2">
                         {d.badges.map((badge: string, i: number) => (
-                          <motion.span 
+                          <motion.span
                             key={i}
                             initial={{ opacity: 0, scale: 0.8 }}
                             animate={{ opacity: 1, scale: 1 }}
@@ -122,49 +172,75 @@ export function BlockRenderer({ block }: { block: Block }) {
           </ParallaxContent>
         </section>
       );
+    }
 
     case "features":
-      return (
-        <section id={anchor} data-accent="#64CEFB" className="py-24 md:py-32 border-t border-white/10">
+      {
+        const accent = d.accentColor || "#64CEFB";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-24 md:py-32 border-t border-white/10">
           <ParallaxContent offset={30} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 mb-16">
               <div>
-                <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }}>{d.eyebrow}</p>
-                <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter" style={{ lineHeight: 0.95 }}>{d.title}</h2>
+                <EditableText as="p" className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }} value={d.eyebrow || ""} onChange={(v) => set("eyebrow", v)} placeholder="Eyebrow…" />
+                <EditableText as="h2" className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter" style={{ lineHeight: 0.95 }} value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Title…" />
               </div>
-              <p className="text-white/70 text-base md:text-lg self-end">{d.intro}</p>
+              <EditableText as="p" className="text-white/70 text-base md:text-lg self-end" value={d.intro || ""} onChange={(v) => set("intro", v)} multiline placeholder="Intro text…" />
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-px bg-white/10 border border-white/10 rounded-2xl overflow-hidden">
               {(d.items || []).map((f: any, i: number) => (
-                <TiltCard key={f.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }} className="bg-black p-8 hover:bg-white/[0.03] transition-colors">
+                <TiltCard key={f.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }} className="bg-black p-8 hover:bg-white/[0.03] transition-colors relative group/item">
+                  {isAdmin && (
+                    <button onClick={() => removeItem(i)} title="Remove item" className="absolute top-2 right-2 p-1.5 rounded-md bg-red-500/10 text-red-400 opacity-0 group-hover/item:opacity-100 hover:bg-red-500/20 transition-all z-10">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                   <Sparkles className="h-6 w-6 mb-6" style={{ color: 'var(--accent-color, #64CEFB)' }} />
-                  <h3 className="text-lg font-medium mb-3">{f.title}</h3>
-                  <p className="text-sm text-white/60 leading-relaxed">{f.body}</p>
+                  <EditableText as="h3" className="text-lg font-medium mb-3" value={f.title || ""} onChange={(v) => updateItem(i, { title: v })} placeholder="Feature title…" />
+                  <EditableText as="p" className="text-sm text-white/60 leading-relaxed" value={f.body || ""} onChange={(v) => updateItem(i, { body: v })} multiline placeholder="Feature description…" />
                 </TiltCard>
               ))}
             </div>
+            {isAdmin && (
+              <button
+                onClick={() => addItem({ title: "New Feature", body: "Describe the feature." })}
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 py-4 text-sm text-white/40 hover:text-[#64CEFB] hover:border-[#64CEFB]/30 transition-all"
+              >
+                <Plus className="h-4 w-4" /> Add Feature Item
+              </button>
+            )}
           </ParallaxContent>
         </section>
       );
+    }
 
     case "workshops":
-      return (
-        <section id={anchor} data-accent="#64CEFB" className="py-24 md:py-32 border-t border-white/10 bg-black/40 backdrop-blur-sm relative overflow-hidden">
+      {
+        const accent = d.accentColor || "#64CEFB";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-24 md:py-32 border-t border-white/10 bg-black/40 backdrop-blur-sm relative overflow-hidden">
           <ParallaxContent offset={40} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
             <div className="mb-16 max-w-3xl">
-              <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }}>{d.eyebrow}</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }}>{d.title}</h2>
-              <p className="text-white/70 text-base md:text-lg">{d.intro}</p>
+              <EditableText as="p" className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }} value={d.eyebrow || ""} onChange={(v) => set("eyebrow", v)} placeholder="Eyebrow…" />
+              <EditableText as="h2" className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }} value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Title…" />
+              <EditableText as="p" className="text-white/70 text-base md:text-lg" value={d.intro || ""} onChange={(v) => set("intro", v)} multiline placeholder="Intro text…" />
             </div>
             <div className="flex flex-col gap-12">
               {(d.items || []).map((w: any, i: number) => {
                 const isEven = i % 2 === 0;
                 return (
-                  <TiltCard key={w.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden hover:bg-white/[0.04] transition-all`} style={{ borderColor: 'var(--accent-color, rgba(255,255,255,0.1))' }}>
+                  <TiltCard key={w.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.1 }} className={`flex flex-col ${isEven ? 'md:flex-row' : 'md:flex-row-reverse'} rounded-3xl border border-white/10 bg-white/[0.02] overflow-hidden hover:bg-white/[0.04] transition-all relative group/item`} style={{ borderColor: 'var(--accent-color, rgba(255,255,255,0.1))' }}>
+                    {isAdmin && (
+                      <button onClick={() => removeItem(i)} title="Remove item" className="absolute top-3 right-3 p-1.5 rounded-md bg-red-500/10 text-red-400 opacity-0 group-hover/item:opacity-100 hover:bg-red-500/20 transition-all z-10">
+                        <Trash2 className="h-3.5 w-3.5" />
+                      </button>
+                    )}
                     <div className="flex-1 p-8 md:p-12 flex flex-col justify-center">
-                      <span className="text-xs uppercase tracking-widest mb-6" style={{ color: 'var(--accent-color, #64CEFB)' }}>{w.tag}</span>
-                      <h3 className="text-3xl md:text-4xl font-medium mb-6 tracking-tight">{w.title}</h3>
-                      {w.body && <p className="text-base text-white/60 leading-relaxed mb-6 whitespace-pre-line">{w.body}</p>}
+                      <EditableText as="span" className="text-xs uppercase tracking-widest mb-6" style={{ color: 'var(--accent-color, #64CEFB)' }} value={w.tag || ""} onChange={(v) => updateItem(i, { tag: v })} placeholder="Tag…" />
+                      <EditableText as="h3" className="text-3xl md:text-4xl font-medium mb-6 tracking-tight" value={w.title || ""} onChange={(v) => updateItem(i, { title: v })} placeholder="Workshop title…" />
+                      {(w.body || isAdmin) && (
+                        <EditableText as="p" className="text-base text-white/60 leading-relaxed mb-6 whitespace-pre-line" value={w.body || ""} onChange={(v) => updateItem(i, { body: v })} multiline placeholder="Body text…" />
+                      )}
                       {w.modules && (
                         <div className="grid grid-cols-2 md:grid-cols-3 gap-3 mb-8">
                           {w.modules.map((m: string, idx: number) => (
@@ -174,9 +250,47 @@ export function BlockRenderer({ block }: { block: Block }) {
                           ))}
                         </div>
                       )}
-                      <span className="group inline-flex items-center gap-2 text-sm font-medium w-fit cursor-pointer">
-                        {w.cta} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-                      </span>
+                      {w.longDescription ? (
+                        <div className="flex flex-col gap-4">
+                          <button
+                            onClick={() => toggleExpand(w.id || i.toString())}
+                            className="group inline-flex items-center gap-2 text-sm font-medium w-fit cursor-pointer text-white/80 hover:text-white transition-colors"
+                          >
+                            {expandedIds[w.id || i.toString()] ? "Show Less" : w.cta}
+                            <ChevronDown className={`h-4 w-4 transition-transform duration-300 ${expandedIds[w.id || i.toString()] ? "rotate-180" : ""}`} />
+                          </button>
+                          <AnimatePresence initial={false}>
+                            {expandedIds[w.id || i.toString()] && (
+                              <motion.div
+                                initial={{ height: 0, opacity: 0 }}
+                                animate={{ height: "auto", opacity: 1 }}
+                                exit={{ height: 0, opacity: 0 }}
+                                transition={{ duration: 0.3, ease: "easeInOut" }}
+                                className="overflow-hidden"
+                              >
+                                <div className="mt-4 pt-6 border-t border-white/10 text-white/70">
+                                  <ReactMarkdown
+                                    components={{
+                                      h1: ({node, ...props}) => <h1 className="text-xl md:text-2xl font-bold mb-4 text-white tracking-tight" {...props} />,
+                                      h2: ({node, ...props}) => <h2 className="text-base md:text-lg font-semibold mb-3 mt-6 text-white tracking-tight" {...props} />,
+                                      p: ({node, ...props}) => <p className="mb-4 leading-relaxed" {...props} />,
+                                      ul: ({node, ...props}) => <ul className="list-disc pl-5 mb-4 space-y-1.5 marker:text-white/30" {...props} />,
+                                      li: ({node, ...props}) => <li className="pl-1" {...props} />,
+                                      strong: ({node, ...props}) => <strong className="text-white font-semibold" {...props} />,
+                                    }}
+                                  >
+                                    {w.longDescription}
+                                  </ReactMarkdown>
+                                </div>
+                              </motion.div>
+                            )}
+                          </AnimatePresence>
+                        </div>
+                      ) : (
+                        <span className="group inline-flex items-center gap-2 text-sm font-medium w-fit cursor-pointer">
+                          {w.cta} <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
+                        </span>
+                      )}
                     </div>
                     <div className="flex-1 relative min-h-[300px] md:min-h-full bg-black/50 border-white/10" style={{ borderLeftWidth: isEven ? '1px' : '0', borderRightWidth: isEven ? '0' : '1px' }}>
                       {w.mediaUrl ? (
@@ -197,49 +311,87 @@ export function BlockRenderer({ block }: { block: Block }) {
                 );
               })}
             </div>
+            {isAdmin && (
+              <button
+                onClick={() => addItem({ tag: "Tag", title: "New Workshop", body: "Workshop description.", cta: "Learn More" })}
+                className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 py-4 text-sm text-white/40 hover:text-[#64CEFB] hover:border-[#64CEFB]/30 transition-all"
+              >
+                <Plus className="h-4 w-4" /> Add Workshop Item
+              </button>
+            )}
           </ParallaxContent>
         </section>
       );
+    }
 
     case "testimonials":
-      return (
-        <section id={anchor} data-accent="#F59E0B" className="py-24 md:py-32 border-t border-white/10">
+      {
+        const accent = d.accentColor || "#F59E0B";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-24 md:py-32 border-t border-white/10">
           <ParallaxContent offset={30} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-16 max-w-3xl">
-              <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #F59E0B)' }}>{d.eyebrow}</p>
-              <h2 className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }}>{d.title}</h2>
-              {d.intro && <p className="text-white/70 text-base md:text-lg">{d.intro}</p>}
+              <EditableText as="p" className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #F59E0B)' }} value={d.eyebrow || ""} onChange={(v) => set("eyebrow", v)} placeholder="Eyebrow…" />
+              <EditableText as="h2" className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }} value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Title…" />
+              {(d.intro || isAdmin) && (
+                <EditableText as="p" className="text-white/70 text-base md:text-lg" value={d.intro || ""} onChange={(v) => set("intro", v)} multiline placeholder="Intro text…" />
+              )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {(d.items || []).map((t: any, i: number) => (
-                <motion.figure key={t.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }} className="rounded-2xl border border-white/10 p-8 bg-white/[0.02]">
-                  <blockquote className="text-lg md:text-xl text-white/90 leading-relaxed mb-6">"{t.quote}"</blockquote>
+                <motion.figure key={t.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }} className="rounded-2xl border border-white/10 p-8 bg-white/[0.02] relative group/item">
+                  {isAdmin && (
+                    <button onClick={() => removeItem(i)} title="Remove item" className="absolute top-2 right-2 p-1.5 rounded-md bg-red-500/10 text-red-400 opacity-0 group-hover/item:opacity-100 hover:bg-red-500/20 transition-all z-10">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+                  <blockquote className="text-lg md:text-xl text-white/90 leading-relaxed mb-6">
+                    "<EditableText as="span" className="text-lg md:text-xl text-white/90 leading-relaxed" value={t.quote || ""} onChange={(v) => updateItem(i, { quote: v })} multiline placeholder="Quote text…" />"
+                  </blockquote>
                   <figcaption className="flex items-center gap-3 text-sm text-white/60">
                     <div className="h-10 w-10 rounded-full" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #F59E0B), rgba(255,255,255,0.1))` }} />
                     <div>
-                      <div className="text-white">{t.author}</div>
-                      <div className="text-xs">{t.role}</div>
+                      <EditableText as="div" className="text-white" value={t.author || ""} onChange={(v) => updateItem(i, { author: v })} placeholder="Author name…" />
+                      <EditableText as="div" className="text-xs" value={t.role || ""} onChange={(v) => updateItem(i, { role: v })} placeholder="Role…" />
                     </div>
                   </figcaption>
                 </motion.figure>
               ))}
             </div>
+            {isAdmin && (
+              <button
+                onClick={() => addItem({ quote: "Great work.", author: "Name", role: "Role" })}
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 py-4 text-sm text-white/40 hover:text-[#64CEFB] hover:border-[#64CEFB]/30 transition-all"
+              >
+                <Plus className="h-4 w-4" /> Add Testimonial
+              </button>
+            )}
           </ParallaxContent>
         </section>
       );
+    }
 
     case "articles":
-      return (
-        <section id={anchor} data-accent="#8B5CF6" className="py-24 md:py-32 border-t border-white/10 bg-black/40 backdrop-blur-sm">
+      {
+        const accent = d.accentColor || "#8B5CF6";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-24 md:py-32 border-t border-white/10 bg-black/40 backdrop-blur-sm">
           <ParallaxContent offset={40} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             <div className="mb-16 max-w-3xl">
-              <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #8B5CF6)' }}>{d.eyebrow}</p>
-              <h2 className="text-4xl md:text-5xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }}>{d.title}</h2>
-              {d.intro && <p className="text-white/70">{d.intro}</p>}
+              <EditableText as="p" className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #8B5CF6)' }} value={d.eyebrow || ""} onChange={(v) => set("eyebrow", v)} placeholder="Eyebrow…" />
+              <EditableText as="h2" className="text-4xl md:text-5xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }} value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Title…" />
+              {(d.intro || isAdmin) && (
+                <EditableText as="p" className="text-white/70" value={d.intro || ""} onChange={(v) => set("intro", v)} multiline placeholder="Intro text…" />
+              )}
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               {(d.items || []).map((a: any, i: number) => (
-                <TiltCard key={a.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }} className="group flex flex-col rounded-2xl border border-white/10 overflow-hidden transition-all" style={{ borderColor: 'var(--accent-color, rgba(255,255,255,0.1))' }}>
+                <TiltCard key={a.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.08 }} className="group flex flex-col rounded-2xl border border-white/10 overflow-hidden transition-all relative group/item" style={{ borderColor: 'var(--accent-color, rgba(255,255,255,0.1))' }}>
+                  {isAdmin && (
+                    <button onClick={() => removeItem(i)} title="Remove item" className="absolute top-2 right-2 p-1.5 rounded-md bg-red-500/10 text-red-400 opacity-0 group-hover/item:opacity-100 hover:bg-red-500/20 transition-all z-10">
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
                   {a.imageUrl ? (
                     <div className="aspect-[16/10] overflow-hidden">
                       <img src={a.imageUrl} alt={a.title} className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105" />
@@ -248,37 +400,52 @@ export function BlockRenderer({ block }: { block: Block }) {
                     <div className="aspect-[16/10]" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #8B5CF6), black)` }} />
                   )}
                   <div className="p-6 flex-1 flex flex-col">
-                    <span className="text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--accent-color, #8B5CF6)' }}>{a.tag}</span>
-                    <h3 className="text-xl font-medium mb-3 tracking-tight transition-colors" style={{ color: 'var(--accent-color, #8B5CF6)' }}>{a.title}</h3>
-                    <p className="text-sm text-white/60 leading-relaxed">{a.excerpt}</p>
+                    <EditableText as="span" className="text-xs uppercase tracking-widest mb-3" style={{ color: 'var(--accent-color, #8B5CF6)' }} value={a.tag || ""} onChange={(v) => updateItem(i, { tag: v })} placeholder="Tag…" />
+                    <EditableText as="h3" className="text-xl font-medium mb-3 tracking-tight transition-colors" style={{ color: 'var(--accent-color, #8B5CF6)' }} value={a.title || ""} onChange={(v) => updateItem(i, { title: v })} placeholder="Article title…" />
+                    <EditableText as="p" className="text-sm text-white/60 leading-relaxed" value={a.excerpt || ""} onChange={(v) => updateItem(i, { excerpt: v })} multiline placeholder="Excerpt…" />
                   </div>
                 </TiltCard>
               ))}
             </div>
+            {isAdmin && (
+              <button
+                onClick={() => addItem({ tag: "Tag", title: "New Article", excerpt: "Article excerpt." })}
+                className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 py-4 text-sm text-white/40 hover:text-[#64CEFB] hover:border-[#64CEFB]/30 transition-all"
+              >
+                <Plus className="h-4 w-4" /> Add Article
+              </button>
+            )}
           </ParallaxContent>
         </section>
       );
+    }
 
     case "faq":
-      return <FAQBlock block={block} />;
+      return <FAQBlock block={block} pageId={pageId} />;
 
     case "cta":
-      return (
-        <section id={anchor} data-accent="#EC4899" className="py-24 md:py-32 border-t border-white/10 relative overflow-hidden">
-          <ParallaxContent offset={60} className="absolute inset-0 opacity-20 -top-[20%] h-[140%] w-full" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #EC4899), transparent)` }} />
+      {
+        const accent = d.accentColor || "#EC4899";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-24 md:py-32 border-t border-white/10 relative overflow-hidden">
+          <ParallaxContent offset={60} className="absolute inset-0 opacity-20 -top-[20%] h-[140%] w-full" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #EC4899), transparent)` }}><span /></ParallaxContent>
           <ParallaxContent offset={-20} className="relative mx-auto max-w-5xl px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tighter mb-6" style={{ lineHeight: 0.95 }}>
-              {d.highlight && d.title?.includes(d.highlight) ? (
-                <>
-                  {d.title.split(d.highlight)[0]}
-                  <ShinyText text={d.highlight} />
-                  {d.title.split(d.highlight)[1]}
-                </>
+              {isAdmin ? (
+                <EditableText as="span" className="text-4xl md:text-6xl lg:text-7xl font-medium tracking-tighter" value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Title…" />
               ) : (
-                d.title
+                d.highlight && d.title?.includes(d.highlight) ? (
+                  <>
+                    {d.title.split(d.highlight)[0]}
+                    <ShinyText text={d.highlight} />
+                    {d.title.split(d.highlight)[1]}
+                  </>
+                ) : (
+                  d.title
+                )
               )}
             </h2>
-            <p className="text-white/70 text-base md:text-lg max-w-2xl mx-auto mb-10">{d.body}</p>
+            <EditableText as="p" className="text-white/70 text-base md:text-lg max-w-2xl mx-auto mb-10" value={d.body || ""} onChange={(v) => set("body", v)} multiline placeholder="Body text…" />
             {d.ctaLabel && (
               <MagneticButton className="group inline-flex items-center gap-2 rounded-full bg-white text-black px-8 py-4 text-base hover:bg-white/90 transition-colors">
                 {d.ctaLabel}
@@ -288,61 +455,60 @@ export function BlockRenderer({ block }: { block: Block }) {
           </ParallaxContent>
         </section>
       );
+    }
 
     case "richText":
-      return (
-        <section id={anchor} data-accent="#64CEFB" className="py-24 md:py-32 border-t border-white/10">
+      {
+        const accent = d.accentColor || "#64CEFB";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-24 md:py-32 border-t border-white/10">
           <ParallaxContent offset={20} className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-            {d.eyebrow && <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }}>{d.eyebrow}</p>}
-            {d.title && <h2 className="text-4xl md:text-5xl font-medium tracking-tighter mb-6">{d.title}</h2>}
-            {d.body && <p className="text-white/70 text-base md:text-lg whitespace-pre-line leading-relaxed">{d.body}</p>}
+            {(d.eyebrow || isAdmin) && <EditableText as="p" className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }} value={d.eyebrow || ""} onChange={(v) => set("eyebrow", v)} placeholder="Eyebrow…" />}
+            {(d.title || isAdmin) && <EditableText as="h2" className="text-4xl md:text-5xl font-medium tracking-tighter mb-6" value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Title…" />}
+            {(d.body || isAdmin) && <EditableText as="p" className="text-white/70 text-base md:text-lg whitespace-pre-line leading-relaxed" value={d.body || ""} onChange={(v) => set("body", v)} multiline placeholder="Body text…" />}
           </ParallaxContent>
         </section>
       );
+    }
 
     case "story":
-      return (
-        <section id={anchor} data-accent="#64CEFB" className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
+      {
+        const accent = d.accentColor || "#64CEFB";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="pt-24 pb-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto border-t border-white/10">
           <ParallaxContent offset={30} className="max-w-3xl mx-auto text-center mb-16 relative">
-            {d.title && (
-              <h1 className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent">
-                {d.title}
-              </h1>
+            {(d.title || isAdmin) && (
+              <EditableText as="h1" className="text-4xl md:text-6xl font-bold tracking-tight mb-6 bg-gradient-to-r from-white to-white/60 bg-clip-text text-transparent" value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Title…" />
             )}
-            {d.subtitle && (
-              <h2 className="text-2xl md:text-3xl font-medium mb-8" style={{ color: 'var(--accent-color, #64CEFB)' }}>
-                {d.subtitle}
-              </h2>
+            {(d.subtitle || isAdmin) && (
+              <EditableText as="h2" className="text-2xl md:text-3xl font-medium mb-8" style={{ color: 'var(--accent-color, #64CEFB)' }} value={d.subtitle || ""} onChange={(v) => set("subtitle", v)} placeholder="Subtitle…" />
             )}
-            {d.bodyBeforeQuote && (
-              <p className="text-lg text-white/80 leading-relaxed mb-6 whitespace-pre-line">
-                {d.bodyBeforeQuote}
-              </p>
+            {(d.bodyBeforeQuote || isAdmin) && (
+              <EditableText as="p" className="text-lg text-white/80 leading-relaxed mb-6 whitespace-pre-line" value={d.bodyBeforeQuote || ""} onChange={(v) => set("bodyBeforeQuote", v)} multiline placeholder="Body before quote…" />
             )}
-            {d.quote && (
+            {(d.quote || isAdmin) && (
               <div className="py-8 my-8 border-y border-white/10 relative">
                 <div className="absolute left-0 top-0 w-1/4 h-px" style={{ background: `linear-gradient(to right, transparent, var(--accent-color, #64CEFB))` }} />
                 <div className="absolute right-0 bottom-0 w-1/4 h-px" style={{ background: `linear-gradient(to left, transparent, var(--accent-color, #64CEFB))` }} />
-                <p className="text-2xl md:text-3xl font-semibold text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
-                  {d.quote}
-                </p>
+                <EditableText as="p" className="text-2xl md:text-3xl font-semibold text-white drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]" value={d.quote || ""} onChange={(v) => set("quote", v)} multiline placeholder="Quote text…" />
               </div>
             )}
-            {d.bodyAfterQuote && (
-              <p className="text-lg text-white/80 leading-relaxed mb-6 whitespace-pre-line">
-                {d.bodyAfterQuote}
-              </p>
+            {(d.bodyAfterQuote || isAdmin) && (
+              <EditableText as="p" className="text-lg text-white/80 leading-relaxed mb-6 whitespace-pre-line" value={d.bodyAfterQuote || ""} onChange={(v) => set("bodyAfterQuote", v)} multiline placeholder="Body after quote…" />
             )}
           </ParallaxContent>
         </section>
       );
+    }
 
     case "profile":
-      return (
-        <section id={anchor} data-accent="#64CEFB" className="py-16 md:py-24 border-t border-white/10 relative overflow-hidden">
+      {
+        const accent = d.accentColor || "#64CEFB";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-16 md:py-24 border-t border-white/10 relative overflow-hidden">
           <ParallaxContent offset={20} className="mt-8 max-w-5xl mx-auto relative px-4 sm:px-6 lg:px-8">
             <div className="absolute -inset-4 blur-2xl -z-10 rounded-full opacity-20" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #64CEFB), transparent)` }} />
-            {d.title && <h2 className="text-3xl md:text-4xl font-bold text-center mb-12">{d.title}</h2>}
+            {(d.title || isAdmin) && <EditableText as="h2" className="text-3xl md:text-4xl font-bold text-center mb-12" value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Section title…" />}
             <div className="bg-white/5 border border-white/10 rounded-3xl overflow-hidden backdrop-blur-xl p-8 md:p-12 flex flex-col md:flex-row gap-10 items-center">
               <div className="w-56 h-72 md:w-72 md:h-96 shrink-0 rounded-2xl overflow-hidden shadow-[0_0_40px_rgba(255,255,255,0.1)] border border-white/15 relative group">
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent z-10 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -351,48 +517,446 @@ export function BlockRenderer({ block }: { block: Block }) {
               <div className="flex-1">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
                   <div>
-                    <h3 className="text-3xl font-bold mb-2">{d.name}</h3>
-                    <p className="font-medium text-lg" style={{ color: 'var(--accent-color, #64CEFB)' }}>{d.role}</p>
+                    <EditableText as="h3" className="text-3xl font-bold mb-2" value={d.name || ""} onChange={(v) => set("name", v)} placeholder="Name…" />
+                    <EditableText as="p" className="font-medium text-lg" style={{ color: 'var(--accent-color, #64CEFB)' }} value={d.role || ""} onChange={(v) => set("role", v)} placeholder="Role…" />
                   </div>
                 </div>
-                {d.bio && (
-                  <div className="space-y-4 text-white/80 leading-relaxed text-lg whitespace-pre-line">
-                    {d.bio}
-                  </div>
+                {(d.bio || isAdmin) && (
+                  <EditableText as="div" className="space-y-4 text-white/80 leading-relaxed text-lg whitespace-pre-line" value={d.bio || ""} onChange={(v) => set("bio", v)} multiline placeholder="Biography…" />
                 )}
               </div>
             </div>
           </ParallaxContent>
         </section>
       );
+    }
+
+    case "customLayout":
+      {
+        const accent = d.accentColor || "#64CEFB";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-20 md:py-28 border-t border-white/10 relative overflow-hidden">
+          {/* Admin configuration header */}
+          {isAdmin && (
+            <div className="mx-auto max-w-4xl mb-10 p-5 rounded-2xl border border-slate-200 bg-white/95 backdrop-blur-xl flex flex-wrap items-center justify-between gap-6 text-xs text-slate-800 shadow-[0_4px_30px_rgba(0,0,0,0.06)] relative z-30">
+              <div className="flex items-center gap-3">
+                <span className="text-slate-400 uppercase tracking-wider font-semibold">Shape / Layout:</span>
+                <div className="flex bg-slate-50 rounded-lg p-0.5 border border-slate-200">
+                  {(["centered", "split-left", "split-right", "grid"] as const).map((s) => (
+                    <button
+                      key={s}
+                      onClick={() => set("shape", s)}
+                      className={`px-3 py-1.5 rounded-md capitalize transition-all ${
+                        d.shape === s ? "bg-[#64CEFB] text-black font-semibold shadow-[0_0_15px_rgba(100,206,251,0.3)]" : "hover:text-black text-slate-600 hover:bg-slate-100/50"
+                      }`}
+                    >
+                      {s.replace("-", " ")}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              <div className="flex items-center gap-4 flex-wrap">
+                <span className="text-slate-400 uppercase tracking-wider font-semibold">Insert Elements:</span>
+                <label className="flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-colors font-medium">
+                  <input
+                    type="checkbox"
+                    checked={!!d.showTitle}
+                    onChange={(e) => set("showTitle", e.target.checked)}
+                    className="rounded text-[#64CEFB] border-slate-300 bg-white focus:ring-0 focus:ring-offset-0"
+                  />
+                  <span>Title</span>
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-colors font-medium">
+                  <input
+                    type="checkbox"
+                    checked={!!d.showSubtitle}
+                    onChange={(e) => set("showSubtitle", e.target.checked)}
+                    className="rounded text-[#64CEFB] border-slate-300 bg-white focus:ring-0 focus:ring-offset-0"
+                  />
+                  <span>Subtitle</span>
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-colors font-medium">
+                  <input
+                    type="checkbox"
+                    checked={!!d.showCta}
+                    onChange={(e) => set("showCta", e.target.checked)}
+                    className="rounded text-[#64CEFB] border-slate-300 bg-white focus:ring-0 focus:ring-offset-0"
+                  />
+                  <span>CTA Button</span>
+                </label>
+                {d.shape !== "grid" && (
+                  <label className="flex items-center gap-1.5 cursor-pointer hover:text-slate-900 transition-colors font-medium">
+                    <input
+                      type="checkbox"
+                      checked={!!d.showMedia}
+                      onChange={(e) => set("showMedia", e.target.checked)}
+                      className="rounded text-[#64CEFB] border-slate-300 bg-white focus:ring-0 focus:ring-offset-0"
+                    />
+                    <span>Media</span>
+                  </label>
+                )}
+              </div>
+            </div>
+          )}
+
+          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+            {d.shape === "centered" && (
+              <div className="text-center flex flex-col items-center max-w-3xl mx-auto">
+                {d.showTitle && (
+                  <EditableText
+                    as="h2"
+                    className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter mb-6 text-white"
+                    value={d.title || ""}
+                    onChange={(v) => set("title", v)}
+                    placeholder="Custom Title..."
+                  />
+                )}
+                {d.showSubtitle && (
+                  <EditableText
+                    as="p"
+                    className="text-white/70 text-base md:text-lg mb-8 leading-relaxed"
+                    value={d.subtitle || ""}
+                    onChange={(v) => set("subtitle", v)}
+                    multiline
+                    placeholder="Custom Subtitle..."
+                  />
+                )}
+                {d.showCta && (
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center items-center">
+                    <EditableText
+                      as="span"
+                      className="bg-white text-black hover:bg-white/90 rounded-full px-6 py-3 text-sm font-semibold transition-colors cursor-pointer"
+                      value={d.ctaLabel || "Get Started"}
+                      onChange={(v) => set("ctaLabel", v)}
+                      placeholder="CTA Label..."
+                    />
+                    {isAdmin && (
+                      <input
+                        type="text"
+                        placeholder="CTA Link/Anchor..."
+                        value={d.ctaAnchor || ""}
+                        onChange={(e) => set("ctaAnchor", e.target.value)}
+                        className="bg-white border border-slate-200 rounded-full px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#64CEFB] w-48 font-mono"
+                      />
+                    )}
+                  </div>
+                )}
+                {d.showMedia && (
+                  <div className="mt-10 w-full rounded-2xl overflow-hidden border border-white/15 bg-white/5 aspect-video relative group">
+                    {d.mediaType === "video" ? (
+                      <video src={d.mediaUrl} className="w-full h-full object-cover" autoPlay loop muted playsInline />
+                    ) : (
+                      <img src={d.mediaUrl} className="w-full h-full object-cover" alt="Media" />
+                    )}
+                    {isAdmin && (
+                      <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center gap-3 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-slate-800 text-xs font-bold uppercase tracking-wider">Media Settings</span>
+                        <input
+                          type="text"
+                          value={d.mediaUrl || ""}
+                          onChange={(e) => set("mediaUrl", e.target.value)}
+                          className="bg-white border border-slate-200 rounded px-3 py-1.5 text-xs text-slate-800 w-2/3 focus:outline-none focus:border-[#64CEFB] font-mono"
+                          placeholder="Media URL..."
+                        />
+                        <select
+                          value={d.mediaType || "image"}
+                          onChange={(e) => set("mediaType", e.target.value)}
+                          className="bg-white border border-slate-200 rounded px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#64CEFB] cursor-pointer"
+                        >
+                          <option value="image">Image</option>
+                          <option value="video">Video</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {d.shape === "split-left" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="flex flex-col items-start text-left">
+                  {d.showTitle && (
+                    <EditableText
+                      as="h2"
+                      className="text-4xl md:text-5xl font-medium tracking-tighter mb-6 text-left text-white"
+                      value={d.title || ""}
+                      onChange={(v) => set("title", v)}
+                      placeholder="Custom Title..."
+                    />
+                  )}
+                  {d.showSubtitle && (
+                    <EditableText
+                      as="p"
+                      className="text-white/70 text-base md:text-lg mb-8 leading-relaxed text-left"
+                      value={d.subtitle || ""}
+                      onChange={(v) => set("subtitle", v)}
+                      multiline
+                      placeholder="Custom Subtitle..."
+                    />
+                  )}
+                  {d.showCta && (
+                    <div className="flex flex-col sm:flex-row gap-3 items-center">
+                      <EditableText
+                        as="span"
+                        className="bg-white text-black hover:bg-white/90 rounded-full px-6 py-3 text-sm font-semibold transition-colors cursor-pointer"
+                        value={d.ctaLabel || "Get Started"}
+                        onChange={(v) => set("ctaLabel", v)}
+                        placeholder="CTA Label..."
+                      />
+                      {isAdmin && (
+                        <input
+                          type="text"
+                          placeholder="CTA Link/Anchor..."
+                          value={d.ctaAnchor || ""}
+                          onChange={(e) => set("ctaAnchor", e.target.value)}
+                          className="bg-white border border-slate-200 rounded-full px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#64CEFB] w-40 font-mono"
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+                {d.showMedia && (
+                  <div className="w-full rounded-2xl overflow-hidden border border-white/15 bg-white/5 aspect-[4/3] relative group">
+                    {d.mediaType === "video" ? (
+                      <video src={d.mediaUrl} className="w-full h-full object-cover" autoPlay loop muted playsInline />
+                    ) : (
+                      <img src={d.mediaUrl} className="w-full h-full object-cover" alt="Media" />
+                    )}
+                    {isAdmin && (
+                      <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center gap-3 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <span className="text-slate-800 text-xs font-bold uppercase tracking-wider">Media Settings</span>
+                        <input
+                          type="text"
+                          value={d.mediaUrl || ""}
+                          onChange={(e) => set("mediaUrl", e.target.value)}
+                          className="bg-white border border-slate-200 rounded px-3 py-1.5 text-xs text-slate-800 w-2/3 focus:outline-none focus:border-[#64CEFB] font-mono"
+                          placeholder="Media URL..."
+                        />
+                        <select
+                          value={d.mediaType || "image"}
+                          onChange={(e) => set("mediaType", e.target.value)}
+                          className="bg-white border border-slate-200 rounded px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#64CEFB] cursor-pointer"
+                        >
+                          <option value="image">Image</option>
+                          <option value="video">Video</option>
+                        </select>
+                      </div>
+                    )}
+                  </div>
+                )}
+              </div>
+            )}
+
+            {d.shape === "split-right" && (
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+                <div className="order-2 lg:order-1">
+                  {d.showMedia && (
+                    <div className="w-full rounded-2xl overflow-hidden border border-white/15 bg-white/5 aspect-[4/3] relative group">
+                      {d.mediaType === "video" ? (
+                        <video src={d.mediaUrl} className="w-full h-full object-cover" autoPlay loop muted playsInline />
+                      ) : (
+                        <img src={d.mediaUrl} className="w-full h-full object-cover" alt="Media" />
+                      )}
+                      {isAdmin && (
+                        <div className="absolute inset-0 bg-white/95 flex flex-col items-center justify-center gap-3 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
+                          <span className="text-slate-800 text-xs font-bold uppercase tracking-wider">Media Settings</span>
+                          <input
+                            type="text"
+                            value={d.mediaUrl || ""}
+                            onChange={(e) => set("mediaUrl", e.target.value)}
+                            className="bg-white border border-slate-200 rounded px-3 py-1.5 text-xs text-slate-800 w-2/3 focus:outline-none focus:border-[#64CEFB] font-mono"
+                            placeholder="Media URL..."
+                          />
+                          <select
+                            value={d.mediaType || "image"}
+                            onChange={(e) => set("mediaType", e.target.value)}
+                            className="bg-white border border-slate-200 rounded px-3 py-1.5 text-xs text-slate-800 focus:outline-none focus:border-[#64CEFB] cursor-pointer"
+                          >
+                            <option value="image">Image</option>
+                            <option value="video">Video</option>
+                          </select>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+                <div className="flex flex-col items-start text-left order-1 lg:order-2">
+                  {d.showTitle && (
+                    <EditableText
+                      as="h2"
+                      className="text-4xl md:text-5xl font-medium tracking-tighter mb-6 text-left text-white"
+                      value={d.title || ""}
+                      onChange={(v) => set("title", v)}
+                      placeholder="Custom Title..."
+                    />
+                  )}
+                  {d.showSubtitle && (
+                    <EditableText
+                      as="p"
+                      className="text-white/70 text-base md:text-lg mb-8 leading-relaxed text-left"
+                      value={d.subtitle || ""}
+                      onChange={(v) => set("subtitle", v)}
+                      multiline
+                      placeholder="Custom Subtitle..."
+                    />
+                  )}
+                  {d.showCta && (
+                    <div className="flex flex-col sm:flex-row gap-3 items-center">
+                      <EditableText
+                        as="span"
+                        className="bg-white text-black hover:bg-white/90 rounded-full px-6 py-3 text-sm font-semibold transition-colors cursor-pointer"
+                        value={d.ctaLabel || "Get Started"}
+                        onChange={(v) => set("ctaLabel", v)}
+                        placeholder="CTA Label..."
+                      />
+                      {isAdmin && (
+                        <input
+                          type="text"
+                          placeholder="CTA Link/Anchor..."
+                          value={d.ctaAnchor || ""}
+                          onChange={(e) => set("ctaAnchor", e.target.value)}
+                          className="bg-white border border-slate-200 rounded-full px-4 py-2 text-xs text-slate-800 focus:outline-none focus:border-[#64CEFB] w-40 font-mono"
+                        />
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {d.shape === "grid" && (
+              <div>
+                <div className="text-center max-w-2xl mx-auto mb-16">
+                  {d.showTitle && (
+                    <EditableText
+                      as="h2"
+                      className="text-4xl md:text-5xl font-medium tracking-tighter mb-6 text-white"
+                      value={d.title || ""}
+                      onChange={(v) => set("title", v)}
+                      placeholder="Custom Title..."
+                    />
+                  )}
+                  {d.showSubtitle && (
+                    <EditableText
+                      as="p"
+                      className="text-white/70 text-base"
+                      value={d.subtitle || ""}
+                      onChange={(v) => set("subtitle", v)}
+                      multiline
+                      placeholder="Custom Subtitle..."
+                    />
+                  )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {(d.items || []).map((it: any, i: number) => (
+                    <TiltCard key={it.id || i} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: i * 0.05 }} className="bg-white/5 border border-white/10 rounded-2xl p-6 relative group/grid-item hover:bg-white/[0.08] transition-all">
+                      {isAdmin && (
+                        <button
+                          onClick={() => removeItem(i)}
+                          title="Remove item"
+                          className="absolute top-2 right-2 p-1.5 rounded-md bg-red-500/10 text-red-400 opacity-0 group-hover/grid-item:opacity-100 hover:bg-red-500/20 transition-all z-10"
+                        >
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </button>
+                      )}
+                      <EditableText
+                        as="h3"
+                        className="text-lg font-medium text-white mb-2"
+                        value={it.title || ""}
+                        onChange={(v) => updateItem(i, { title: v })}
+                        placeholder="Item Title..."
+                      />
+                      <EditableText
+                        as="p"
+                        className="text-sm text-white/60 leading-relaxed font-light"
+                        value={it.body || ""}
+                        onChange={(v) => updateItem(i, { body: v })}
+                        multiline
+                        placeholder="Item Description..."
+                      />
+                    </TiltCard>
+                  ))}
+                  {isAdmin && (
+                    <button
+                      onClick={() => addItem({ title: "New Item", body: "Description goes here." })}
+                      className="h-full min-h-[180px] rounded-2xl border-2 border-dashed border-white/15 flex flex-col items-center justify-center text-white/40 hover:text-[#64CEFB] hover:border-[#64CEFB]/40 transition-all p-6 gap-2 hover:bg-white/5"
+                    >
+                      <Plus className="h-5 w-5" /> Add Grid Item
+                    </button>
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+        </section>
+      );
+    }
 
     default:
       return null;
   }
 }
 
-function FAQBlock({ block }: { block: Block }) {
+function FAQBlock({ block, pageId }: { block: Block; pageId: string }) {
   const d = block.data;
   const [open, setOpen] = useState<string | null>(null);
+  const { isAdmin } = useAdmin();
+  const { updateBlock } = useCMS();
+
+  const set = (key: string, value: any) => updateBlock(block.id, { [key]: value }, pageId);
+  const updateItem = (idx: number, patch: Record<string, any>) =>
+    set("items", (d.items || []).map((it: any, i: number) => (i === idx ? { ...it, ...patch } : it)));
+  const removeItem = (idx: number) =>
+    set("items", (d.items || []).filter((_: any, i: number) => i !== idx));
+  const addItem = () =>
+    set("items", [...(d.items || []), { id: Math.random().toString(36).slice(2, 10), q: "New question?", a: "Answer here." }]);
+
+  const accent = d.accentColor || "#10B981";
   return (
-    <section id={block.anchor} data-accent="#10B981" className="py-24 md:py-32 border-t border-white/10">
+    <section id={block.anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-24 md:py-32 border-t border-white/10">
       <div className="mx-auto max-w-4xl px-4 sm:px-6 lg:px-8">
-        <p className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #10B981)' }}>{d.eyebrow}</p>
-        <h2 className="text-4xl md:text-5xl font-medium tracking-tighter mb-10" style={{ lineHeight: 0.95 }}>{d.title}</h2>
+        <EditableText as="p" className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #10B981)' }} value={d.eyebrow || ""} onChange={(v) => set("eyebrow", v)} placeholder="Eyebrow…" />
+        <EditableText as="h2" className="text-4xl md:text-5xl font-medium tracking-tighter mb-10" style={{ lineHeight: 0.95 }} value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Title…" />
         <div className="divide-y divide-white/10 border-y border-white/10">
-          {(d.items || []).map((f: any) => {
+          {(d.items || []).map((f: any, i: number) => {
             const isOpen = open === f.id;
             return (
-              <button key={f.id} onClick={() => setOpen(isOpen ? null : f.id)} className="w-full text-left py-6 flex items-start gap-4">
-                <span className="flex-1">
-                  <span className="block text-lg font-medium">{f.q}</span>
-                  {isOpen && <span className="mt-3 block text-white/70 text-sm md:text-base leading-relaxed">{f.a}</span>}
-                </span>
-                {isOpen ? <Minus className="h-5 w-5 mt-1 shrink-0" style={{ color: 'var(--accent-color, #10B981)' }} /> : <Plus className="h-5 w-5 mt-1 shrink-0" />}
-              </button>
+              <div key={f.id} className="relative group/item">
+                {isAdmin && (
+                  <button onClick={() => removeItem(i)} title="Remove item" className="absolute top-4 right-0 p-1.5 rounded-md bg-red-500/10 text-red-400 opacity-0 group-hover/item:opacity-100 hover:bg-red-500/20 transition-all z-10">
+                    <Trash2 className="h-3.5 w-3.5" />
+                  </button>
+                )}
+                <button onClick={() => setOpen(isOpen ? null : f.id)} className="w-full text-left py-6 flex items-start gap-4">
+                  <span className="flex-1">
+                    <span className="block text-lg font-medium">
+                      {isAdmin ? (
+                        <EditableText as="span" className="text-lg font-medium" value={f.q || ""} onChange={(v) => updateItem(i, { q: v })} placeholder="Question…" />
+                      ) : f.q}
+                    </span>
+                    {isOpen && (
+                      <span className="mt-3 block text-white/70 text-sm md:text-base leading-relaxed">
+                        {isAdmin ? (
+                          <EditableText as="span" className="text-white/70 text-sm md:text-base leading-relaxed" value={f.a || ""} onChange={(v) => updateItem(i, { a: v })} multiline placeholder="Answer…" />
+                        ) : f.a}
+                      </span>
+                    )}
+                  </span>
+                  {isOpen ? <Minus className="h-5 w-5 mt-1 shrink-0" style={{ color: 'var(--accent-color, #10B981)' }} /> : <Plus className="h-5 w-5 mt-1 shrink-0" />}
+                </button>
+              </div>
             );
           })}
         </div>
+        {isAdmin && (
+          <button
+            onClick={addItem}
+            className="mt-4 w-full inline-flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 py-4 text-sm text-white/40 hover:text-[var(--accent-color,#10B981)] hover:border-[var(--accent-color,#10B981)]/30 transition-all"
+          >
+            <Plus className="h-4 w-4" /> Add FAQ Item
+          </button>
+        )}
       </div>
     </section>
   );

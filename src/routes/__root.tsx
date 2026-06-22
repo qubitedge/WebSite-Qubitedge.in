@@ -12,7 +12,10 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { CMSProvider, useCMS } from "../lib/cms";
+import { getCMSContent } from "../lib/api/cms.functions";
+import { AdminProvider } from "../lib/AdminContext";
 import { Footer } from "../components/Footer";
+import { AdminToolbar } from "../components/AdminToolbar";
 import { Aurora } from "../components/Aurora";
 import { useSectionAccent } from "../hooks/useSectionAccent";
 
@@ -91,31 +94,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       // Default title — individual routes override this
-      { title: "QubitEdge — Sharpening Potential. Building Futures." },
+      { title: "Qubitedge — Sharpening Potential. Building Futures." },
       {
         name: "description",
         content:
-          "QubitEdge is a growth ecosystem bridging talent and opportunity through hands-on workshops, cutting-edge IT services, internship programs, and enterprise solutions.",
+          "Qubitedge is a growth ecosystem bridging talent and opportunity through hands-on workshops, cutting-edge IT services, internship programs, and enterprise solutions.",
       },
-      { name: "author", content: "QubitEdge" },
+      { name: "author", content: "Qubitedge" },
       { name: "robots", content: "index, follow" },
       {
         name: "keywords",
         content:
-          "QubitEdge, internships, workshops, IT services, AI, quantum computing, data science, machine learning, enterprise solutions, student programs, Hyderabad",
+          "Qubitedge, internships, workshops, IT services, AI, quantum computing, data science, machine learning, enterprise solutions, student programs, Hyderabad",
       },
       // Open Graph
-      { property: "og:site_name", content: "QubitEdge" },
+      { property: "og:site_name", content: "Qubitedge" },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://qubitedge.in" },
       {
         property: "og:title",
-        content: "QubitEdge — Sharpening Potential. Building Futures.",
+        content: "Qubitedge — Sharpening Potential. Building Futures.",
       },
       {
         property: "og:description",
         content:
-          "QubitEdge is a growth ecosystem bridging talent and opportunity through workshops, IT services, and enterprise solutions.",
+          "Qubitedge is a growth ecosystem bridging talent and opportunity through workshops, IT services, and enterprise solutions.",
       },
       {
         property: "og:image",
@@ -126,11 +129,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale", content: "en_IN" },
       // Twitter / X Card
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@QubitEdge" },
-      { name: "twitter:creator", content: "@QubitEdge" },
+      { name: "twitter:site", content: "@Qubitedge" },
+      { name: "twitter:creator", content: "@Qubitedge" },
       {
         name: "twitter:title",
-        content: "QubitEdge — Sharpening Potential. Building Futures.",
+        content: "Qubitedge — Sharpening Potential. Building Futures.",
       },
       {
         name: "twitter:description",
@@ -164,6 +167,10 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       },
     ],
   }),
+  loader: async () => {
+    const initialContent = await getCMSContent();
+    return { initialContent };
+  },
   shellComponent: RootShell,
   component: RootComponent,
   notFoundComponent: NotFoundComponent,
@@ -186,6 +193,7 @@ function RootShell({ children }: { children: ReactNode }) {
 
 function RootComponent() {
   const { queryClient } = Route.useRouteContext();
+  const { initialContent } = Route.useLoaderData();
   useSectionAccent();
 
   useEffect(() => {
@@ -201,17 +209,20 @@ function RootComponent() {
 🚀 Developed by Likhith
 ☕ Coffee | 💻 Code | 🌪️ Chaos
 
-👻 Welcome to QubitEdge`);
+👻 Welcome to Qubitedge`);
   }, []);
 
   return (
     <QueryClientProvider client={queryClient}>
-      <CMSProvider>
-        <div className="flex flex-col min-h-screen">
-          <GlobalBackground />
-          <Outlet />
-          <Footer />
-        </div>
+      <CMSProvider initialContent={initialContent}>
+        <AdminProvider>
+          <AdminToolbar />
+          <div className="flex flex-col min-h-screen">
+            <GlobalBackground />
+            <Outlet />
+            <Footer />
+          </div>
+        </AdminProvider>
       </CMSProvider>
     </QueryClientProvider>
   );

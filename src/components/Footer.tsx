@@ -1,7 +1,13 @@
 import { Link } from "@tanstack/react-router";
 import { Facebook, Instagram, Linkedin, Twitter, Youtube } from "lucide-react";
+import { useAdmin } from "@/lib/AdminContext";
+import { useCMS } from "@/lib/cms";
+import { EditableText } from "./EditableText";
 
 export function Footer() {
+  const { isAdmin } = useAdmin();
+  const { content, setContent } = useCMS();
+
   return (
     <footer className="relative border-t border-white/10 bg-black/60 backdrop-blur-md pt-20 pb-10 mt-auto">
       <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
@@ -9,10 +15,20 @@ export function Footer() {
           {/* Column 1: Brand & Description */}
           <div className="flex flex-col space-y-6">
             <div className="flex items-center gap-3">
-              <img src="/logo.webp" alt="Qubitedge Logo" className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(100,206,251,0.4)]" />
-              <span className="text-xl font-bold tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
-                Qubitedge
-              </span>
+              <img src="/logo.png" alt="Qubitedge Logo" className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(100,206,251,0.4)]" />
+              {isAdmin ? (
+                <EditableText
+                  as="span"
+                  className="text-xl font-bold tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]"
+                  value={content.brand.name}
+                  onChange={(v) => setContent((c) => ({ ...c, brand: { name: v } }))}
+                  placeholder="Brand name…"
+                />
+              ) : (
+                <span className="text-xl font-bold tracking-tight text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.3)]">
+                  {content.brand.name}
+                </span>
+              )}
             </div>
             <p className="text-white/60 text-sm leading-relaxed max-w-xs">
               Qubitedge helps students build job-ready skills through hands-on training in IT, AI, and communication. We offer workshops, internships, and career support to prepare you for real-world opportunities.
@@ -73,7 +89,17 @@ export function Footer() {
         </div>
         
         <div className="border-t border-white/10 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-white/40">
-          <p>© {new Date().getFullYear()} Qubitedge. All rights reserved.</p>
+          {isAdmin ? (
+            <EditableText
+              as="p"
+              className="text-xs text-white/40"
+              value={content.footer.copyright}
+              onChange={(v) => setContent((c) => ({ ...c, footer: { ...c.footer, copyright: v } }))}
+              placeholder="Copyright text…"
+            />
+          ) : (
+            <p>{content.footer.copyright || `© ${new Date().getFullYear()} Qubitedge. All rights reserved.`}</p>
+          )}
         </div>
       </div>
     </footer>

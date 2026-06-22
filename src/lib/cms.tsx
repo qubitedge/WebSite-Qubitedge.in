@@ -1,4 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
+import { updateCMSContent } from "./api/cms.functions";
 
 /* ---------- Types ---------- */
 
@@ -12,7 +13,8 @@ export type BlockType =
   | "cta"
   | "richText"
   | "profile"
-  | "story";
+  | "story"
+  | "customLayout";
 
 export type Block = {
   id: string;
@@ -35,7 +37,7 @@ export type SiteContent = {
   footer: { copyright: string; links: { label: string; href: string }[] };
 };
 
-const STORAGE_KEY = "qubitedge.cms.v8";
+const STORAGE_KEY = "qubitedge.cms.v13";
 
 /* ---------- Default content (mirrors the existing site) ---------- */
 
@@ -91,6 +93,23 @@ const defaultHomeBlocks = [
       items: [
         {
           id: uid(),
+          tag: "Internship",
+          title: "Applied AI and Data Science Bootcamp",
+          body: "Timeline: 18/05/2026 to 26/06/2026",
+          modules: [
+            "Applied AI & Data Science Bootcamp",
+            "Data Foundations",
+            "Python for Data & Automation",
+            "ML/AI",
+            "Internet of Things (IoT)",
+            "CapStone Project"
+          ],
+          cta: "Learn More",
+          mediaUrl: "/Internships.webp",
+          longDescription: `# About the Internship Program\n\nThe **Applied AI & Data Science Internship Program**, organized by **Qubitedge Global Services Pvt. Ltd.**, was conducted from **18 May 2026 to 26 June 2026** with the objective of providing students with practical exposure to emerging technologies and industry-relevant skills.\n\nThe program witnessed an overwhelming response, with **250+ students** participating from various engineering colleges and universities across different regions. Throughout the internship, participants engaged in a structured learning journey designed to bridge the gap between academic knowledge and real-world applications.\n\nThe internship covered a wide range of advanced topics including **Artificial Intelligence, Machine Learning, Data Science, Neural Networks, Convolutional Neural Networks (CNNs), Internet of Things (IoT), Large Language Models (LLMs), Generative AI, Prompt Engineering, AI Applications, and Project Development Methodologies**.\n\nParticipants had access to:\n\n* Live expert-led sessions\n* Recorded video lectures\n* Comprehensive study notes\n* Interactive quizzes and assessments\n* Hands-on learning activities\n* Industry-oriented mini projects\n* Capstone project opportunities\n* Mentor-guided project development\n\nThe program was designed and delivered by a team of **academicians, industry professionals, researchers, and technology experts**, ensuring that students gained both theoretical understanding and practical insights into modern technologies.\n\nAs an extension of the internship, selected participants were given the opportunity to join a **6-Month Advanced Bootcamp Program**, where they continue to receive mentorship, project guidance, advanced technical training, and exposure to industry practices.\n\nThe internship successfully created a collaborative learning environment that encouraged innovation, teamwork, problem-solving, and continuous skill development, helping students prepare for future careers in Artificial Intelligence, Data Science, and emerging technologies.\n\n**Duration:** 18 May 2026 – 26 June 2026\n\n**Participants:** 250+ Students from Multiple Colleges and Universities\n\n**Organized By:** Qubitedge Global Services Pvt. Ltd.\n\n**Mode:** Online Live Sessions, Recorded Content, Assessments, and Project-Based Learning`
+        },
+        {
+          id: uid(),
           tag: "Quantum",
           title: "Foundations of Quantum Technologies: Physics and Linear Algebra in Action",
           body: "Explore the fundamental principles of quantum technologies, focusing on physics and linear algebra. This module bridges theory with practical applications.",
@@ -104,22 +123,6 @@ const defaultHomeBlocks = [
           body: "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
           cta: "Learn More",
           mediaUrl: "/data-ml.webp"
-        },
-        {
-          id: uid(),
-          tag: "Internship",
-          title: "Applied AI and Data Science Bootcamp",
-          body: "Timeline: 18/05/2026 to 26/06/2026",
-          modules: [
-            "Applied AI & Data Science Bootcamp",
-            "Data Foundations",
-            "Python for Data & Automation",
-            "ML/AI",
-            "Internet of Things (IoT)",
-            "CapStone Project"
-          ],
-          cta: "Learn More",
-          mediaUrl: "/Internships.webp"
         }
       ],
     },
@@ -256,6 +259,23 @@ export const defaultContent: SiteContent = {
           items: [
             {
               id: uid(),
+              tag: "Internship",
+              title: "Applied AI and Data Science Bootcamp",
+              body: "Timeline: 18/05/2026 to 26/06/2026",
+              modules: [
+                "Applied AI & Data Science Bootcamp",
+                "Data Foundations",
+                "Python for Data & Automation",
+                "ML/AI",
+                "Internet of Things (IoT)",
+                "CapStone Project"
+              ],
+              cta: "Learn More",
+              mediaUrl: "/Internships.webp",
+              longDescription: `# About the Internship Program\n\nThe **Applied AI & Data Science Internship Program**, organized by **Qubitedge Global Services Pvt. Ltd.**, was conducted from **18 May 2026 to 26 June 2026** with the objective of providing students with practical exposure to emerging technologies and industry-relevant skills.\n\nThe program witnessed an overwhelming response, with **250+ students** participating from various engineering colleges and universities across different regions. Throughout the internship, participants engaged in a structured learning journey designed to bridge the gap between academic knowledge and real-world applications.\n\nThe internship covered a wide range of advanced topics including **Artificial Intelligence, Machine Learning, Data Science, Neural Networks, Convolutional Neural Networks (CNNs), Internet of Things (IoT), Large Language Models (LLMs), Generative AI, Prompt Engineering, AI Applications, and Project Development Methodologies**.\n\nParticipants had access to:\n\n* Live expert-led sessions\n* Recorded video lectures\n* Comprehensive study notes\n* Interactive quizzes and assessments\n* Hands-on learning activities\n* Industry-oriented mini projects\n* Capstone project opportunities\n* Mentor-guided project development\n\nThe program was designed and delivered by a team of **academicians, industry professionals, researchers, and technology experts**, ensuring that students gained both theoretical understanding and practical insights into modern technologies.\n\nAs an extension of the internship, selected participants were given the opportunity to join a **6-Month Advanced Bootcamp Program**, where they continue to receive mentorship, project guidance, advanced technical training, and exposure to industry practices.\n\nThe internship successfully created a collaborative learning environment that encouraged innovation, teamwork, problem-solving, and continuous skill development, helping students prepare for future careers in Artificial Intelligence, Data Science, and emerging technologies.\n\n**Duration:** 18 May 2026 – 26 June 2026\n\n**Participants:** 250+ Students from Multiple Colleges and Universities\n\n**Organized By:** Qubitedge Global Services Pvt. Ltd.\n\n**Mode:** Online Live Sessions, Recorded Content, Assessments, and Project-Based Learning`
+            },
+            {
+              id: uid(),
               tag: "Quantum",
               title: "Foundations of Quantum Technologies: Physics and Linear Algebra in Action",
               body: "Explore the fundamental principles of quantum technologies, focusing on physics and linear algebra. This module bridges theory with practical applications.",
@@ -269,22 +289,6 @@ export const defaultContent: SiteContent = {
               body: "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
               cta: "Learn More",
               mediaUrl: "/data-ml.webp"
-            },
-            {
-              id: uid(),
-              tag: "Internship",
-              title: "Applied AI and Data Science Bootcamp",
-              body: "Timeline: 18/05/2026 to 26/06/2026",
-              modules: [
-                "Applied AI & Data Science Bootcamp",
-                "Data Foundations",
-                "Python for Data & Automation",
-                "ML/AI",
-                "Internet of Things (IoT)",
-                "CapStone Project"
-              ],
-              cta: "Learn More",
-              mediaUrl: "/Internships.webp"
             }
           ]
         }
@@ -340,6 +344,7 @@ type CMSContext = {
   redo: () => void;
   canUndo: boolean;
   canRedo: boolean;
+  savingStatus: "idle" | "saving" | "saved" | "error";
 };
 
 const Ctx = createContext<CMSContext | null>(null);
@@ -491,22 +496,72 @@ function emptyBlock(type: BlockType): Block {
     case "story":
       base.data = { title: "Our Story", subtitle: "Subheading", bodyBeforeQuote: "Before quote text.", quote: "Important quote statement.", bodyAfterQuote: "After quote text." };
       break;
+    case "customLayout":
+      base.data = {
+        shape: "centered",
+        showTitle: true,
+        showSubtitle: true,
+        showCta: false,
+        showMedia: false,
+        title: "Custom Block Title",
+        subtitle: "This is a custom block subtitle that you can edit.",
+        ctaLabel: "Get Started",
+        ctaAnchor: "",
+        mediaUrl: "https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=600",
+        mediaType: "image",
+        items: [
+          { id: uid(), title: "Grid Item 1", body: "Description for item 1." },
+          { id: uid(), title: "Grid Item 2", body: "Description for item 2." },
+          { id: uid(), title: "Grid Item 3", body: "Description for item 3." }
+        ]
+      };
+      break;
   }
   return base;
 }
 
-export function CMSProvider({ children }: { children: ReactNode }) {
+export function CMSProvider({ children, initialContent }: { children: ReactNode; initialContent?: SiteContent }) {
   const [state, setState] = useState<{ past: SiteContent[], present: SiteContent, future: SiteContent[] }>(() => {
-    const present = loadFromStorage();
+    const present = initialContent || loadFromStorage();
     return { past: [], present, future: [] };
   });
 
   const content = state.present;
+  const [savingStatus, setSavingStatus] = useState<"idle" | "saving" | "saved" | "error">("idle");
 
   useEffect(() => {
     try {
       window.localStorage.setItem(STORAGE_KEY, JSON.stringify(content));
     } catch {}
+  }, [content]);
+
+  // Sync to server-side JSON file (debounced)
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    // Check if the user is authenticated as admin
+    const isAdmin = window.sessionStorage.getItem("qubitedge.admin.auth") === "1";
+    if (!isAdmin) return;
+
+    setSavingStatus("saving");
+    const timer = setTimeout(async () => {
+      try {
+        const res = await updateCMSContent({ data: content });
+        if (res.success) {
+          setSavingStatus("saved");
+          // Reset to idle after 3 seconds
+          const idleTimer = setTimeout(() => setSavingStatus("idle"), 3000);
+          return () => clearTimeout(idleTimer);
+        } else {
+          setSavingStatus("error");
+        }
+      } catch (err) {
+        console.error("Failed to save CMS changes to server:", err);
+        setSavingStatus("error");
+      }
+    }, 1000); // 1-second debounce
+
+    return () => clearTimeout(timer);
   }, [content]);
 
   // Sync across windows/iframes (admin live preview)
@@ -608,7 +663,15 @@ export function CMSProvider({ children }: { children: ReactNode }) {
       }),
       updateBlock: (id, data, pageId = "home") => setContent((c) => {
         const pageBlocks = c.pages?.[pageId] ?? [];
-        const newBlocks = pageBlocks.map((b) => b.id === id ? { ...b, data: { ...b.data, ...data } } : b);
+        const newBlocks = pageBlocks.map((b) => {
+          if (b.id !== id) return b;
+          const { anchor, ...dataFields } = data;
+          const updated = { ...b, data: { ...b.data, ...dataFields } };
+          if (anchor !== undefined) {
+            updated.anchor = anchor;
+          }
+          return updated;
+        });
         const nextPages = { ...c.pages, [pageId]: newBlocks };
         return {
           ...c,
@@ -616,31 +679,32 @@ export function CMSProvider({ children }: { children: ReactNode }) {
           blocks: pageId === "home" ? newBlocks : c.blocks
         };
       }),
-      duplicateBlock: (id, pageId = "home") => setContent((c) => {
-        const pageBlocks = c.pages?.[pageId] ?? [];
-        const idx = pageBlocks.findIndex((b) => b.id === id);
-        if (idx < 0) return c;
-        const target = pageBlocks[idx];
-        const clone: Block = JSON.parse(JSON.stringify(target));
-        clone.id = uid();
-        // also regenerate IDs for inner items if any
-        if (clone.data?.items && Array.isArray(clone.data.items)) {
-            clone.data.items.forEach((it: any) => { if (it.id) it.id = uid(); });
-        }
-        const newBlocks = [...pageBlocks];
-        newBlocks.splice(idx + 1, 0, clone);
-        const nextPages = { ...c.pages, [pageId]: newBlocks };
-        return {
-          ...c,
-          pages: nextPages,
-          blocks: pageId === "home" ? newBlocks : c.blocks
-        };
+        duplicateBlock: (id, pageId = "home") => setContent((c) => {
+          const pageBlocks = c.pages?.[pageId] ?? [];
+          const idx = pageBlocks.findIndex((b) => b.id === id);
+          if (idx < 0) return c;
+          const target = pageBlocks[idx];
+          const clone: Block = JSON.parse(JSON.stringify(target));
+          clone.id = uid();
+          // also regenerate IDs for inner items if any
+          if (clone.data?.items && Array.isArray(clone.data.items)) {
+              clone.data.items.forEach((it: any) => { if (it.id) it.id = uid(); });
+          }
+          const newBlocks = [...pageBlocks];
+          newBlocks.splice(idx + 1, 0, clone);
+          const nextPages = { ...c.pages, [pageId]: newBlocks };
+          return {
+            ...c,
+            pages: nextPages,
+            blocks: pageId === "home" ? newBlocks : c.blocks
+          };
+        }),
+        savingStatus,
       }),
-    }),
-    [content, setContent, state.past.length, state.future.length, undo, redo],
-  );
+      [content, setContent, state.past.length, state.future.length, undo, redo, savingStatus],
+    );
 
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
+    return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
 export function useCMS() {

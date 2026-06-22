@@ -1,0 +1,724 @@
+{
+  "brand": {
+    "name": "Qubitedge"
+  },
+  "nav": [
+    {
+      "id": "fize5bxz",
+      "label": "Learning",
+      "anchor": "learning",
+      "href": "/learning"
+    },
+    {
+      "id": "dbs8cse8",
+      "label": "Manufacturing",
+      "anchor": "manufacturing",
+      "href": "https://qubitedge.vercel.app/",
+      "isExternal": true
+    },
+    {
+      "id": "qmojud99",
+      "label": "IT & Marketing",
+      "anchor": "it-marketing",
+      "href": "/it-marketing"
+    },
+    {
+      "id": "01cicilv",
+      "label": "Workshops/Internships",
+      "anchor": "workshops",
+      "href": "/workshops"
+    },
+    {
+      "id": "wpoepn8k",
+      "label": "About Us",
+      "anchor": "about",
+      "href": "/about"
+    },
+    {
+      "id": "vzdozipd",
+      "label": "New",
+      "anchor": ""
+    }
+  ],
+  "cta": {
+    "label": "Get Started",
+    "anchor": "contact"
+  },
+  "background": {
+    "enabled": true,
+    "videoUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_105406_16f4600d-7a92-4292-b96e-b19156c7830a.mp4",
+    "opacity": 0.25
+  },
+  "blocks": [
+    {
+      "id": "6i0q6qdd",
+      "type": "hero",
+      "anchor": "learning",
+      "data": {
+        "eyebrow": "Learn from Leaders",
+        "topLeft": "Qubitedge is an ecosystem for growth, bridging the gap between talent and opportunity.",
+        "topRight": "8000+ Learners. Real careers. Real impact.",
+        "titleLine1": "Sharpening Potential.",
+        "titleLine2": "Building Futures.",
+        "subtitle": "We empower students with job-ready skills and provide businesses with world-class technology, finance, and staffing solutions.",
+        "primaryCta": {
+          "label": "Explore our Workshops",
+          "anchor": "workshops"
+        },
+        "secondaryCta": {
+          "label": "Partner With Us",
+          "anchor": "contact"
+        },
+        "videoUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_105406_16f4600d-7a92-4292-b96e-b19156c7830a.mp4"
+      }
+    },
+    {
+      "id": "222twlx3",
+      "type": "features",
+      "anchor": "about",
+      "data": {
+        "eyebrow": "Why Choose Qubitedge",
+        "title": "The Qubitedge Difference",
+        "intro": "At Qubitedge, we blend real-world expertise, future-ready skills, and direct industry access to create transformational growth for students, businesses, and visionary leaders alike.",
+        "items": [
+          {
+            "id": "v59s6yae",
+            "title": "Built by Practitioners, Not Just Trainers",
+            "body": "We bring real-world experience into every engagement. Our team includes seasoned professionals who've led tech innovations, built businesses, and advised global enterprises."
+          },
+          {
+            "id": "r2zery3o",
+            "title": "Beyond Technical: Whole-Person Development",
+            "body": "We fuse hard skills with human skills. Alongside IT and AI training, we build communication, leadership, and emotional intelligence."
+          },
+          {
+            "id": "veck7qxf",
+            "title": "Fast-Track Learning, Maximum ROI",
+            "body": "Our 2-hour workshop model delivers concentrated, actionable knowledge at an accessible price."
+          },
+          {
+            "id": "2cuznl8u",
+            "title": "Direct Pathways to Opportunity",
+            "body": "We connect students to real internships, corporate partners, and placement pipelines."
+          },
+          {
+            "id": "yo4v2uhp",
+            "title": "Enterprise-Class Solutions for Growth",
+            "body": "From tech implementation to financial strategy and workforce solutions, we empower businesses to scale with precision."
+          },
+          {
+            "id": "vztwguku",
+            "title": "Innovation Across Sectors",
+            "body": "Whether it's using AI in agriculture, streaming high-impact events, or coaching CXOs, our innovation mindset drives value."
+          }
+        ]
+      }
+    },
+    {
+      "id": "kgwnglyv",
+      "type": "workshops",
+      "anchor": "workshops",
+      "data": {
+        "eyebrow": "Workshops",
+        "title": "Workshops That Move Careers Forward",
+        "intro": "Every session is built for real-world impact. From mastering business tools to sharpening strategic thinking, our workshops deliver high-performance skills in just 2 hours.",
+        "items": [
+          {
+            "id": "6uxyez9y",
+            "tag": "Internship",
+            "title": "Applied AI and Data Science Bootcamp",
+            "body": "Timeline: 18/05/2026 to 26/06/2026",
+            "modules": [
+              "Applied AI & Data Science Bootcamp",
+              "Data Foundations",
+              "Python for Data & Automation",
+              "ML/AI",
+              "Internet of Things (IoT)",
+              "CapStone Project"
+            ],
+            "cta": "Learn More",
+            "mediaUrl": "/Internships.webp",
+            "longDescription": "# About the Internship Program\n\nThe **Applied AI & Data Science Internship Program**, organized by **Qubitedge Global Services Pvt. Ltd.**, was conducted from **18 May 2026 to 26 June 2026** with the objective of providing students with practical exposure to emerging technologies and industry-relevant skills.\n\nThe program witnessed an overwhelming response, with **250+ students** participating from various engineering colleges and universities across different regions. Throughout the internship, participants engaged in a structured learning journey designed to bridge the gap between academic knowledge and real-world applications.\n\nThe internship covered a wide range of advanced topics including **Artificial Intelligence, Machine Learning, Data Science, Neural Networks, Convolutional Neural Networks (CNNs), Internet of Things (IoT), Large Language Models (LLMs), Generative AI, Prompt Engineering, AI Applications, and Project Development Methodologies**.\n\nParticipants had access to:\n\n* Live expert-led sessions\n* Recorded video lectures\n* Comprehensive study notes\n* Interactive quizzes and assessments\n* Hands-on learning activities\n* Industry-oriented mini projects\n* Capstone project opportunities\n* Mentor-guided project development\n\nThe program was designed and delivered by a team of **academicians, industry professionals, researchers, and technology experts**, ensuring that students gained both theoretical understanding and practical insights into modern technologies.\n\nAs an extension of the internship, selected participants were given the opportunity to join a **6-Month Advanced Bootcamp Program**, where they continue to receive mentorship, project guidance, advanced technical training, and exposure to industry practices.\n\nThe internship successfully created a collaborative learning environment that encouraged innovation, teamwork, problem-solving, and continuous skill development, helping students prepare for future careers in Artificial Intelligence, Data Science, and emerging technologies.\n\n**Duration:** 18 May 2026 – 26 June 2026\n\n**Participants:** 250+ Students from Multiple Colleges and Universities\n\n**Organized By:** Qubitedge Global Services Pvt. Ltd.\n\n**Mode:** Online Live Sessions, Recorded Content, Assessments, and Project-Based Learning"
+          },
+          {
+            "id": "gg88g03b",
+            "tag": "Quantum",
+            "title": "Foundations of Quantum Technologies: Physics and Linear Algebra in Action",
+            "body": "Explore the fundamental principles of quantum technologies, focusing on physics and linear algebra. This module bridges theory with practical applications.",
+            "cta": "Learn More",
+            "mediaUrl": "/quantum.webp"
+          },
+          {
+            "id": "arrptk3c",
+            "tag": "Data & ML",
+            "title": "Learning to Make Data-Driven Decisions Through Machine Learning and PowerBI",
+            "body": "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
+            "cta": "Learn More",
+            "mediaUrl": "/data-ml.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "csw96ke0",
+      "type": "testimonials",
+      "data": {
+        "eyebrow": "Testimonials & Reviews",
+        "title": "People. Progress. Proof.",
+        "intro": "Hear what respected professionals say about partnering with Qubitedge.",
+        "items": [
+          {
+            "id": "0yqzeonq",
+            "quote": "Qubitedge is solving a real gap—bridging academic knowledge with skills companies actually hire for.",
+            "author": "Industry Leader",
+            "role": "Tech"
+          },
+          {
+            "id": "jq2265sp",
+            "quote": "The clarity and focus in Qubitedge's sessions are rare.",
+            "author": "Industry Leader",
+            "role": "AI"
+          },
+          {
+            "id": "elurojcx",
+            "quote": "Workshops like these are what the industry needs—short, impactful, and led by people who've actually done the work.",
+            "author": "Industry Leader",
+            "role": "Education"
+          },
+          {
+            "id": "hj5pi0o2",
+            "quote": "We've hired interns from Qubitedge programs and were impressed by their practical skills and readiness.",
+            "author": "Industry Leader",
+            "role": "HR"
+          }
+        ]
+      }
+    },
+    {
+      "id": "lk0su2t2",
+      "type": "articles",
+      "data": {
+        "eyebrow": "Latest News & Articles",
+        "title": "Insights from the Edge",
+        "intro": "Stay updated with expert insights and the latest trends.",
+        "items": [
+          {
+            "id": "nyiif997",
+            "tag": "Learning",
+            "title": "The Rise of Micro-Workshops in Career Building",
+            "excerpt": "Why bite-sized, high-impact learning is reshaping how professionals upskill in 2026.",
+            "imageUrl": "/micro-workshops.webp"
+          },
+          {
+            "id": "3djb34gi",
+            "tag": "Industry",
+            "title": "AI in Agriculture: A Quiet Revolution",
+            "excerpt": "How emerging tech is transforming farming workflows across rural economies.",
+            "imageUrl": "/AI IN AGRI.webp"
+          },
+          {
+            "id": "606kipd9",
+            "tag": "Business",
+            "title": "Hiring for Skills, Not Pedigree",
+            "excerpt": "Enterprises are rewriting recruiting playbooks—here's what it means for new graduates.",
+            "imageUrl": "/BUSINESS.webp"
+          }
+        ]
+      }
+    },
+    {
+      "id": "oa0rwlno",
+      "type": "faq",
+      "data": {
+        "eyebrow": "FAQ",
+        "title": "Questions, Answered",
+        "items": [
+          {
+            "id": "q036r8bp",
+            "q": "What types of workshops does Qubitedge offer?",
+            "a": "We run focused, 2-hour live online workshops on Power BI, Excel, AI, communication, and leadership."
+          },
+          {
+            "id": "6vclsccx",
+            "q": "How do I register for a Qubitedge workshop?",
+            "a": "Registration links are shared via Gmail and WhatsApp."
+          },
+          {
+            "id": "78ynsx8u",
+            "q": "Who can attend your workshops?",
+            "a": "Students, recent graduates, and professionals across all fields."
+          },
+          {
+            "id": "8xew2e3o",
+            "q": "Is there a fee to attend the workshops?",
+            "a": "Yes. A small nominal fee keeps sessions accessible while ensuring high quality."
+          }
+        ]
+      }
+    },
+    {
+      "id": "0l73e33c",
+      "type": "cta",
+      "anchor": "contact",
+      "data": {
+        "title": "Let's Build Your Future—Together",
+        "highlight": "Future",
+        "body": "Whether you're starting your career, scaling a business, or launching a bold idea—Qubitedge is here for your next step.",
+        "ctaLabel": "Let's Build Something Great"
+      }
+    },
+    {
+      "id": "lgjd5of3",
+      "type": "features",
+      "data": {
+        "eyebrow": "Features",
+        "title": "Why Us",
+        "intro": "Our differentiators.",
+        "items": [
+          {
+            "id": "k1zn8c5d",
+            "title": "Feature one",
+            "body": "Describe the feature."
+          }
+        ]
+      }
+    },
+    {
+      "id": "2qa5sdvm",
+      "type": "hero",
+      "data": {
+        "eyebrow": "New Eyebrow",
+        "titleLine1": "Big Title",
+        "titleLine2": "Goes Here.",
+        "subtitle": "Subtitle text.",
+        "topLeft": "",
+        "topRight": "",
+        "primaryCta": {
+          "label": "Get Started",
+          "anchor": "contact"
+        },
+        "secondaryCta": {
+          "label": "Learn More",
+          "anchor": "about"
+        },
+        "videoUrl": ""
+      }
+    }
+  ],
+  "pages": {
+    "home": [
+      {
+        "id": "6i0q6qdd",
+        "type": "hero",
+        "anchor": "learning",
+        "data": {
+          "eyebrow": "Learn from Leaders",
+          "topLeft": "Qubitedge is an ecosystem for growth, bridging the gap between talent and opportunity.",
+          "topRight": "8000+ Learners. Real careers. Real impact.",
+          "titleLine1": "Sharpening Potential.",
+          "titleLine2": "Building Futures.",
+          "subtitle": "We empower students with job-ready skills and provide businesses with world-class technology, finance, and staffing solutions.",
+          "primaryCta": {
+            "label": "Explore our Workshops",
+            "anchor": "workshops"
+          },
+          "secondaryCta": {
+            "label": "Partner With Us",
+            "anchor": "contact"
+          },
+          "videoUrl": "https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260328_105406_16f4600d-7a92-4292-b96e-b19156c7830a.mp4"
+        }
+      },
+      {
+        "id": "222twlx3",
+        "type": "features",
+        "anchor": "about",
+        "data": {
+          "eyebrow": "Why Choose Qubitedge",
+          "title": "The Qubitedge Difference",
+          "intro": "At Qubitedge, we blend real-world expertise, future-ready skills, and direct industry access to create transformational growth for students, businesses, and visionary leaders alike.",
+          "items": [
+            {
+              "id": "v59s6yae",
+              "title": "Built by Practitioners, Not Just Trainers",
+              "body": "We bring real-world experience into every engagement. Our team includes seasoned professionals who've led tech innovations, built businesses, and advised global enterprises."
+            },
+            {
+              "id": "r2zery3o",
+              "title": "Beyond Technical: Whole-Person Development",
+              "body": "We fuse hard skills with human skills. Alongside IT and AI training, we build communication, leadership, and emotional intelligence."
+            },
+            {
+              "id": "veck7qxf",
+              "title": "Fast-Track Learning, Maximum ROI",
+              "body": "Our 2-hour workshop model delivers concentrated, actionable knowledge at an accessible price."
+            },
+            {
+              "id": "2cuznl8u",
+              "title": "Direct Pathways to Opportunity",
+              "body": "We connect students to real internships, corporate partners, and placement pipelines."
+            },
+            {
+              "id": "yo4v2uhp",
+              "title": "Enterprise-Class Solutions for Growth",
+              "body": "From tech implementation to financial strategy and workforce solutions, we empower businesses to scale with precision."
+            },
+            {
+              "id": "vztwguku",
+              "title": "Innovation Across Sectors",
+              "body": "Whether it's using AI in agriculture, streaming high-impact events, or coaching CXOs, our innovation mindset drives value."
+            }
+          ]
+        }
+      },
+      {
+        "id": "kgwnglyv",
+        "type": "workshops",
+        "anchor": "workshops",
+        "data": {
+          "eyebrow": "Workshops",
+          "title": "Workshops That Move Careers Forward",
+          "intro": "Every session is built for real-world impact. From mastering business tools to sharpening strategic thinking, our workshops deliver high-performance skills in just 2 hours.",
+          "items": [
+            {
+              "id": "6uxyez9y",
+              "tag": "Internship",
+              "title": "Applied AI and Data Science Bootcamp",
+              "body": "Timeline: 18/05/2026 to 26/06/2026",
+              "modules": [
+                "Applied AI & Data Science Bootcamp",
+                "Data Foundations",
+                "Python for Data & Automation",
+                "ML/AI",
+                "Internet of Things (IoT)",
+                "CapStone Project"
+              ],
+              "cta": "Learn More",
+              "mediaUrl": "/Internships.webp",
+              "longDescription": "# About the Internship Program\n\nThe **Applied AI & Data Science Internship Program**, organized by **Qubitedge Global Services Pvt. Ltd.**, was conducted from **18 May 2026 to 26 June 2026** with the objective of providing students with practical exposure to emerging technologies and industry-relevant skills.\n\nThe program witnessed an overwhelming response, with **250+ students** participating from various engineering colleges and universities across different regions. Throughout the internship, participants engaged in a structured learning journey designed to bridge the gap between academic knowledge and real-world applications.\n\nThe internship covered a wide range of advanced topics including **Artificial Intelligence, Machine Learning, Data Science, Neural Networks, Convolutional Neural Networks (CNNs), Internet of Things (IoT), Large Language Models (LLMs), Generative AI, Prompt Engineering, AI Applications, and Project Development Methodologies**.\n\nParticipants had access to:\n\n* Live expert-led sessions\n* Recorded video lectures\n* Comprehensive study notes\n* Interactive quizzes and assessments\n* Hands-on learning activities\n* Industry-oriented mini projects\n* Capstone project opportunities\n* Mentor-guided project development\n\nThe program was designed and delivered by a team of **academicians, industry professionals, researchers, and technology experts**, ensuring that students gained both theoretical understanding and practical insights into modern technologies.\n\nAs an extension of the internship, selected participants were given the opportunity to join a **6-Month Advanced Bootcamp Program**, where they continue to receive mentorship, project guidance, advanced technical training, and exposure to industry practices.\n\nThe internship successfully created a collaborative learning environment that encouraged innovation, teamwork, problem-solving, and continuous skill development, helping students prepare for future careers in Artificial Intelligence, Data Science, and emerging technologies.\n\n**Duration:** 18 May 2026 – 26 June 2026\n\n**Participants:** 250+ Students from Multiple Colleges and Universities\n\n**Organized By:** Qubitedge Global Services Pvt. Ltd.\n\n**Mode:** Online Live Sessions, Recorded Content, Assessments, and Project-Based Learning"
+            },
+            {
+              "id": "gg88g03b",
+              "tag": "Quantum",
+              "title": "Foundations of Quantum Technologies: Physics and Linear Algebra in Action",
+              "body": "Explore the fundamental principles of quantum technologies, focusing on physics and linear algebra. This module bridges theory with practical applications.",
+              "cta": "Learn More",
+              "mediaUrl": "/quantum.webp"
+            },
+            {
+              "id": "arrptk3c",
+              "tag": "Data & ML",
+              "title": "Learning to Make Data-Driven Decisions Through Machine Learning and PowerBI",
+              "body": "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
+              "cta": "Learn More",
+              "mediaUrl": "/data-ml.webp"
+            }
+          ]
+        }
+      },
+      {
+        "id": "csw96ke0",
+        "type": "testimonials",
+        "data": {
+          "eyebrow": "Testimonials & Reviews",
+          "title": "People. Progress. Proof.",
+          "intro": "Hear what respected professionals say about partnering with Qubitedge.",
+          "items": [
+            {
+              "id": "0yqzeonq",
+              "quote": "Qubitedge is solving a real gap—bridging academic knowledge with skills companies actually hire for.",
+              "author": "Industry Leader",
+              "role": "Tech"
+            },
+            {
+              "id": "jq2265sp",
+              "quote": "The clarity and focus in Qubitedge's sessions are rare.",
+              "author": "Industry Leader",
+              "role": "AI"
+            },
+            {
+              "id": "elurojcx",
+              "quote": "Workshops like these are what the industry needs—short, impactful, and led by people who've actually done the work.",
+              "author": "Industry Leader",
+              "role": "Education"
+            },
+            {
+              "id": "hj5pi0o2",
+              "quote": "We've hired interns from Qubitedge programs and were impressed by their practical skills and readiness.",
+              "author": "Industry Leader",
+              "role": "HR"
+            }
+          ]
+        }
+      },
+      {
+        "id": "lk0su2t2",
+        "type": "articles",
+        "data": {
+          "eyebrow": "Latest News & Articles",
+          "title": "Insights from the Edge",
+          "intro": "Stay updated with expert insights and the latest trends.",
+          "items": [
+            {
+              "id": "nyiif997",
+              "tag": "Learning",
+              "title": "The Rise of Micro-Workshops in Career Building",
+              "excerpt": "Why bite-sized, high-impact learning is reshaping how professionals upskill in 2026.",
+              "imageUrl": "/micro-workshops.webp"
+            },
+            {
+              "id": "3djb34gi",
+              "tag": "Industry",
+              "title": "AI in Agriculture: A Quiet Revolution",
+              "excerpt": "How emerging tech is transforming farming workflows across rural economies.",
+              "imageUrl": "/AI IN AGRI.webp"
+            },
+            {
+              "id": "606kipd9",
+              "tag": "Business",
+              "title": "Hiring for Skills, Not Pedigree",
+              "excerpt": "Enterprises are rewriting recruiting playbooks—here's what it means for new graduates.",
+              "imageUrl": "/BUSINESS.webp"
+            }
+          ]
+        }
+      },
+      {
+        "id": "oa0rwlno",
+        "type": "faq",
+        "data": {
+          "eyebrow": "FAQ",
+          "title": "Questions, Answered",
+          "items": [
+            {
+              "id": "q036r8bp",
+              "q": "What types of workshops does Qubitedge offer?",
+              "a": "We run focused, 2-hour live online workshops on Power BI, Excel, AI, communication, and leadership."
+            },
+            {
+              "id": "6vclsccx",
+              "q": "How do I register for a Qubitedge workshop?",
+              "a": "Registration links are shared via Gmail and WhatsApp."
+            },
+            {
+              "id": "78ynsx8u",
+              "q": "Who can attend your workshops?",
+              "a": "Students, recent graduates, and professionals across all fields."
+            },
+            {
+              "id": "8xew2e3o",
+              "q": "Is there a fee to attend the workshops?",
+              "a": "Yes. A small nominal fee keeps sessions accessible while ensuring high quality."
+            }
+          ]
+        }
+      },
+      {
+        "id": "0l73e33c",
+        "type": "cta",
+        "anchor": "contact",
+        "data": {
+          "title": "Let's Build Your Future—Together",
+          "highlight": "Future",
+          "body": "Whether you're starting your career, scaling a business, or launching a bold idea—Qubitedge is here for your next step.",
+          "ctaLabel": "Let's Build Something Great"
+        }
+      },
+      {
+        "id": "lgjd5of3",
+        "type": "features",
+        "data": {
+          "eyebrow": "Features",
+          "title": "Why Us",
+          "intro": "Our differentiators.",
+          "items": [
+            {
+              "id": "k1zn8c5d",
+              "title": "Feature one",
+              "body": "Describe the feature."
+            }
+          ]
+        }
+      },
+      {
+        "id": "2qa5sdvm",
+        "type": "hero",
+        "data": {
+          "eyebrow": "New Eyebrow",
+          "titleLine1": "Big Title",
+          "titleLine2": "Goes Here.",
+          "subtitle": "Subtitle text.",
+          "topLeft": "",
+          "topRight": "",
+          "primaryCta": {
+            "label": "Get Started",
+            "anchor": "contact"
+          },
+          "secondaryCta": {
+            "label": "Learn More",
+            "anchor": "about"
+          },
+          "videoUrl": ""
+        }
+      }
+    ],
+    "learning": [
+      {
+        "id": "ge4lxg5o",
+        "type": "hero",
+        "data": {
+          "eyebrow": "Coming Soon",
+          "titleLine1": "Learning Paths",
+          "titleLine2": "",
+          "subtitle": "We are currently building our comprehensive learning resources. Check back soon for courses, tutorials, and materials designed to bridge the gap between talent and opportunity.",
+          "primaryCta": {
+            "label": "Return Home",
+            "anchor": ""
+          }
+        }
+      }
+    ],
+    "it-marketing": [
+      {
+        "id": "guseqtuo",
+        "type": "hero",
+        "data": {
+          "eyebrow": "Coming Soon",
+          "titleLine1": "IT & Marketing",
+          "titleLine2": "",
+          "subtitle": "Our solutions for growth are currently being documented. Check back soon for detailed information on how we empower businesses to scale with precision.",
+          "primaryCta": {
+            "label": "Return Home",
+            "anchor": ""
+          }
+        }
+      }
+    ],
+    "workshops": [
+      {
+        "id": "up9fd1hp",
+        "type": "hero",
+        "data": {
+          "eyebrow": "Explore Our Offerings",
+          "titleLine1": "Workshops &",
+          "titleLine2": "Internships",
+          "subtitle": "Discover hands-on workshops and real-world internship opportunities designed to accelerate your career.",
+          "primaryCta": {
+            "label": "View Programs",
+            "anchor": "programs"
+          },
+          "stats": [
+            {
+              "value": "500+",
+              "label": "Students"
+            },
+            {
+              "value": "2+",
+              "label": "Workshops"
+            },
+            {
+              "value": "10+",
+              "label": "Industry Mentors"
+            }
+          ],
+          "badges": [
+            "AI/ML",
+            "Python",
+            "Cloud",
+            "Cyber Security",
+            "Quantum",
+            "Data Science",
+            "React",
+            "IoT"
+          ]
+        }
+      },
+      {
+        "id": "eq1oxss6",
+        "type": "workshops",
+        "anchor": "programs",
+        "data": {
+          "eyebrow": "Our Programs",
+          "title": "Deep Dive Modules",
+          "intro": "Immersive sessions built for real-world impact.",
+          "items": [
+            {
+              "id": "fh8nwnmy",
+              "tag": "Internship",
+              "title": "Applied AI and Data Science Bootcamp",
+              "body": "Timeline: 18/05/2026 to 26/06/2026",
+              "modules": [
+                "Applied AI & Data Science Bootcamp",
+                "Data Foundations",
+                "Python for Data & Automation",
+                "ML/AI",
+                "Internet of Things (IoT)",
+                "CapStone Project"
+              ],
+              "cta": "Learn More",
+              "mediaUrl": "/Internships.webp",
+              "longDescription": "# About the Internship Program\n\nThe **Applied AI & Data Science Internship Program**, organized by **Qubitedge Global Services Pvt. Ltd.**, was conducted from **18 May 2026 to 26 June 2026** with the objective of providing students with practical exposure to emerging technologies and industry-relevant skills.\n\nThe program witnessed an overwhelming response, with **250+ students** participating from various engineering colleges and universities across different regions. Throughout the internship, participants engaged in a structured learning journey designed to bridge the gap between academic knowledge and real-world applications.\n\nThe internship covered a wide range of advanced topics including **Artificial Intelligence, Machine Learning, Data Science, Neural Networks, Convolutional Neural Networks (CNNs), Internet of Things (IoT), Large Language Models (LLMs), Generative AI, Prompt Engineering, AI Applications, and Project Development Methodologies**.\n\nParticipants had access to:\n\n* Live expert-led sessions\n* Recorded video lectures\n* Comprehensive study notes\n* Interactive quizzes and assessments\n* Hands-on learning activities\n* Industry-oriented mini projects\n* Capstone project opportunities\n* Mentor-guided project development\n\nThe program was designed and delivered by a team of **academicians, industry professionals, researchers, and technology experts**, ensuring that students gained both theoretical understanding and practical insights into modern technologies.\n\nAs an extension of the internship, selected participants were given the opportunity to join a **6-Month Advanced Bootcamp Program**, where they continue to receive mentorship, project guidance, advanced technical training, and exposure to industry practices.\n\nThe internship successfully created a collaborative learning environment that encouraged innovation, teamwork, problem-solving, and continuous skill development, helping students prepare for future careers in Artificial Intelligence, Data Science, and emerging technologies.\n\n**Duration:** 18 May 2026 – 26 June 2026\n\n**Participants:** 250+ Students from Multiple Colleges and Universities\n\n**Organized By:** Qubitedge Global Services Pvt. Ltd.\n\n**Mode:** Online Live Sessions, Recorded Content, Assessments, and Project-Based Learning"
+            },
+            {
+              "id": "jiu69nmz",
+              "tag": "Quantum",
+              "title": "Foundations of Quantum Technologies: Physics and Linear Algebra in Action",
+              "body": "Explore the fundamental principles of quantum technologies, focusing on physics and linear algebra. This module bridges theory with practical applications.",
+              "cta": "Learn More",
+              "mediaUrl": "/quantum.webp"
+            },
+            {
+              "id": "12xsamli",
+              "tag": "Data & ML",
+              "title": "Learning to Make Data-Driven Decisions Through Machine Learning and PowerBI",
+              "body": "Master the art of data-driven decisions. Learn how to leverage Machine Learning algorithms and PowerBI visualizations to drive actionable insights.",
+              "cta": "Learn More",
+              "mediaUrl": "/data-ml.webp"
+            }
+          ]
+        }
+      }
+    ],
+    "about": [
+      {
+        "id": "8npmkqxk",
+        "type": "story",
+        "data": {
+          "title": "Our Story",
+          "subtitle": "Built to Bridge the Gap",
+          "bodyBeforeQuote": "Qubitedge was founded with a simple but powerful belief.",
+          "quote": "Talent is everywhere, but opportunity is not.",
+          "bodyAfterQuote": "What began as a mission to equip students with practical, future-ready skills has grown into a full-scale ecosystem supporting learners, startups, and businesses alike.\n\nFounded by Sam Oguri with over 25 years of global experience, Qubitedge is proudly headquartered in The Jewel of the East Coast—Visakhapatnam, with a growing network of partners and clients worldwide.\n\nFrom hands-on workshops and tech services to executive mentoring and startup incubation, our journey is rooted in one core vision: to turn potential into performance—at every stage of growth."
+        }
+      },
+      {
+        "id": "2hi7o0wl",
+        "type": "profile",
+        "data": {
+          "title": "Meet our Founder",
+          "name": "Sam Oguri",
+          "role": "Founder & CEO – Qubitedge",
+          "imageUrl": "/ceo.webp",
+          "bio": "With over 25 years of leadership in EdTech and global services, the Founder and CEO of Qubitedge has a proven track record of building high-performing teams, scaling operations, and turning early-stage ventures into market leaders.\n\nAs the founding head of Chegg India, he spearheaded the company's growth from a team of 8 to over 850 professionals. His core expertise spans operational strategy, financial leadership, cross-functional execution, and scaling innovation with structure and precision.\n\nAt Qubitedge, he leads with a singular mission: to empower students with future-ready skills, and to help startups, professionals, and businesses scale smarter—with clarity, purpose, and measurable impact."
+        }
+      }
+    ]
+  },
+  "footer": {
+    "copyright": "© 2026 Qubitedge. All rights reserved.",
+    "links": [
+      {
+        "label": "Privacy",
+        "href": "#"
+      },
+      {
+        "label": "Terms",
+        "href": "#"
+      },
+      {
+        "label": "Contact",
+        "href": "#contact"
+      }
+    ]
+  }
+}

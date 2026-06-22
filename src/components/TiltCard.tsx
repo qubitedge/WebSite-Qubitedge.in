@@ -53,9 +53,9 @@ export function TiltCard({ children, className, style, ...props }: TiltCardProps
       {children}
       {/* Soft glare follow */}
       <motion.div
-        className="pointer-events-none absolute mix-blend-overlay opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-50 rounded-2xl"
+        className="pointer-events-none absolute mix-blend-overlay opacity-0 group-hover:opacity-50 transition-opacity duration-300 z-50 rounded-2xl"
         style={{
-          background: "radial-gradient(circle at center, rgba(255,255,255,0.3) 0%, transparent 60%)",
+          background: "radial-gradient(circle at center, rgba(255,255,255,0.15) 0%, transparent 60%)",
           left: glareX,
           top: glareY,
           transform: "translate(-50%, -50%)",

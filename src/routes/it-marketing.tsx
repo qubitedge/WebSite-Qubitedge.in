@@ -1,7 +1,9 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { Navbar } from "@/components/Navbar";
 import { useCMS } from "@/lib/cms";
+import { useAdmin } from "@/lib/AdminContext";
 import { BlockRenderer } from "@/components/BlockRenderer";
+import { BlockWrapper } from "@/components/BlockWrapper";
 import { motion } from "framer-motion";
 import { 
   Play, 
@@ -17,21 +19,21 @@ import {
 export const Route = createFileRoute("/it-marketing")({
   head: () => ({
     meta: [
-      { title: "IT & Marketing Projects — QubitEdge" },
+      { title: "IT & Marketing Projects — Qubitedge" },
       {
         name: "description",
         content:
-          "Explore QubitEdge's IT & marketing showcase: from the JNTU GV 3D Campus Navigator with A* pathfinding to custom web systems, spatial apps, and enterprise-grade digital solutions.",
+          "Explore Qubitedge's IT & marketing showcase: from the JNTU GV 3D Campus Navigator with A* pathfinding to custom web systems, spatial apps, and enterprise-grade digital solutions.",
       },
       { name: "robots", content: "index, follow" },
       {
         name: "keywords",
         content:
-          "QubitEdge IT services, web development Hyderabad, campus navigator, 3D mapping, digital marketing, enterprise software, React Three.js projects, spatial web",
+          "Qubitedge IT services, web development Hyderabad, campus navigator, 3D mapping, digital marketing, enterprise software, React Three.js projects, spatial web",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://qubitedge.in/it-marketing" },
-      { property: "og:title", content: "IT & Marketing Projects — QubitEdge" },
+      { property: "og:title", content: "IT & Marketing Projects — Qubitedge" },
       {
         property: "og:description",
         content:
@@ -39,7 +41,7 @@ export const Route = createFileRoute("/it-marketing")({
       },
       { property: "og:image", content: "https://qubitedge.in/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "IT & Marketing Projects — QubitEdge" },
+      { name: "twitter:title", content: "IT & Marketing Projects — Qubitedge" },
       {
         name: "twitter:description",
         content:
@@ -54,6 +56,7 @@ export const Route = createFileRoute("/it-marketing")({
 
 function ITMarketing() {
   const { content } = useCMS();
+  const { isAdmin } = useAdmin();
   const blocks = content.pages?.["it-marketing"] ?? [];
 
   return (
@@ -203,8 +206,14 @@ function ITMarketing() {
           <div className="mt-20">
             <h3 className="text-2xl font-bold tracking-tight text-center mb-10 text-white/60">More from IT & Marketing</h3>
             <div className="divide-y divide-white/5">
-              {blocks.map((b) => (
-                <BlockRenderer key={b.id} block={b} />
+              {blocks.map((b, i) => (
+                isAdmin ? (
+                  <BlockWrapper key={b.id} blockId={b.id} blockType={b.type} pageId="it-marketing" index={i} total={blocks.length}>
+                    <BlockRenderer block={b} pageId="it-marketing" />
+                  </BlockWrapper>
+                ) : (
+                  <BlockRenderer key={b.id} block={b} pageId="it-marketing" />
+                )
               ))}
             </div>
           </div>
