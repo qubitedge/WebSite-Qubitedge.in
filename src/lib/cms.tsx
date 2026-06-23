@@ -50,7 +50,7 @@ const defaultHomeBlocks = [
     anchor: "learning",
     data: {
       eyebrow: "Learn from Leaders",
-      topLeft: "Qubitedge is an ecosystem for growth, bridging the gap between talent and opportunity.",
+      topLeft: "qubitedge is an ecosystem for growth, bridging the gap between talent and opportunity.",
       topRight: "8000+ Learners. Real careers. Real impact.",
       titleLine1: "Sharpening Potential.",
       titleLine2: "Building Futures.",
@@ -67,10 +67,10 @@ const defaultHomeBlocks = [
     type: "features" as const,
     anchor: "about",
     data: {
-      eyebrow: "Why Choose Qubitedge",
-      title: "The Qubitedge Difference",
+      eyebrow: "Why Choose qubitedge",
+      title: "The qubitedge Difference",
       intro:
-        "At Qubitedge, we blend real-world expertise, future-ready skills, and direct industry access to create transformational growth for students, businesses, and visionary leaders alike.",
+        "At qubitedge, we blend real-world expertise, future-ready skills, and direct industry access to create transformational growth for students, businesses, and visionary leaders alike.",
       items: [
         { id: uid(), title: "Built by Practitioners, Not Just Trainers", body: "We bring real-world experience into every engagement. Our team includes seasoned professionals who've led tech innovations, built businesses, and advised global enterprises." },
         { id: uid(), title: "Beyond Technical: Whole-Person Development", body: "We fuse hard skills with human skills. Alongside IT and AI training, we build communication, leadership, and emotional intelligence." },
@@ -106,7 +106,7 @@ const defaultHomeBlocks = [
           ],
           cta: "Learn More",
           mediaUrl: "/Internships.webp",
-          longDescription: `# About the Internship Program\n\nThe **Applied AI & Data Science Internship Program**, organized by **Qubitedge Global Services Pvt. Ltd.**, was conducted from **18 May 2026 to 26 June 2026** with the objective of providing students with practical exposure to emerging technologies and industry-relevant skills.\n\nThe program witnessed an overwhelming response, with **250+ students** participating from various engineering colleges and universities across different regions. Throughout the internship, participants engaged in a structured learning journey designed to bridge the gap between academic knowledge and real-world applications.\n\nThe internship covered a wide range of advanced topics including **Artificial Intelligence, Machine Learning, Data Science, Neural Networks, Convolutional Neural Networks (CNNs), Internet of Things (IoT), Large Language Models (LLMs), Generative AI, Prompt Engineering, AI Applications, and Project Development Methodologies**.\n\nParticipants had access to:\n\n* Live expert-led sessions\n* Recorded video lectures\n* Comprehensive study notes\n* Interactive quizzes and assessments\n* Hands-on learning activities\n* Industry-oriented mini projects\n* Capstone project opportunities\n* Mentor-guided project development\n\nThe program was designed and delivered by a team of **academicians, industry professionals, researchers, and technology experts**, ensuring that students gained both theoretical understanding and practical insights into modern technologies.\n\nAs an extension of the internship, selected participants were given the opportunity to join a **6-Month Advanced Bootcamp Program**, where they continue to receive mentorship, project guidance, advanced technical training, and exposure to industry practices.\n\nThe internship successfully created a collaborative learning environment that encouraged innovation, teamwork, problem-solving, and continuous skill development, helping students prepare for future careers in Artificial Intelligence, Data Science, and emerging technologies.\n\n**Duration:** 18 May 2026 – 26 June 2026\n\n**Participants:** 250+ Students from Multiple Colleges and Universities\n\n**Organized By:** Qubitedge Global Services Pvt. Ltd.\n\n**Mode:** Online Live Sessions, Recorded Content, Assessments, and Project-Based Learning`
+          longDescription: `# About the Internship Program\n\nThe **Applied AI & Data Science Internship Program**, organized by **qubitedge Global Services Pvt. Ltd.**, was conducted from **18 May 2026 to 26 June 2026** with the objective of providing students with practical exposure to emerging technologies and industry-relevant skills.\n\nThe program witnessed an overwhelming response, with **250+ students** participating from various engineering colleges and universities across different regions. Throughout the internship, participants engaged in a structured learning journey designed to bridge the gap between academic knowledge and real-world applications.\n\nThe internship covered a wide range of advanced topics including **Artificial Intelligence, Machine Learning, Data Science, Neural Networks, Convolutional Neural Networks (CNNs), Internet of Things (IoT), Large Language Models (LLMs), Generative AI, Prompt Engineering, AI Applications, and Project Development Methodologies**.\n\nParticipants had access to:\n\n* Live expert-led sessions\n* Recorded video lectures\n* Comprehensive study notes\n* Interactive quizzes and assessments\n* Hands-on learning activities\n* Industry-oriented mini projects\n* Capstone project opportunities\n* Mentor-guided project development\n\nThe program was designed and delivered by a team of **academicians, industry professionals, researchers, and technology experts**, ensuring that students gained both theoretical understanding and practical insights into modern technologies.\n\nAs an extension of the internship, selected participants were given the opportunity to join a **6-Month Advanced Bootcamp Program**, where they continue to receive mentorship, project guidance, advanced technical training, and exposure to industry practices.\n\nThe internship successfully created a collaborative learning environment that encouraged innovation, teamwork, problem-solving, and continuous skill development, helping students prepare for future careers in Artificial Intelligence, Data Science, and emerging technologies.\n\n**Duration:** 18 May 2026 – 26 June 2026\n\n**Participants:** 250+ Students from Multiple Colleges and Universities\n\n**Organized By:** qubitedge Global Services Pvt. Ltd.\n\n**Mode:** Online Live Sessions, Recorded Content, Assessments, and Project-Based Learning`
         },
         {
           id: uid(),
@@ -133,12 +133,12 @@ const defaultHomeBlocks = [
     data: {
       eyebrow: "Testimonials & Reviews",
       title: "People. Progress. Proof.",
-      intro: "Hear what respected professionals say about partnering with Qubitedge.",
+      intro: "Hear what respected professionals say about partnering with qubitedge.",
       items: [
-        { id: uid(), quote: "Qubitedge is solving a real gap—bridging academic knowledge with skills companies actually hire for.", author: "Industry Leader", role: "Tech" },
-        { id: uid(), quote: "The clarity and focus in Qubitedge's sessions are rare.", author: "Industry Leader", role: "AI" },
+        { id: uid(), quote: "qubitedge is solving a real gap—bridging academic knowledge with skills companies actually hire for.", author: "Industry Leader", role: "Tech" },
+        { id: uid(), quote: "The clarity and focus in qubitedge's sessions are rare.", author: "Industry Leader", role: "AI" },
         { id: uid(), quote: "Workshops like these are what the industry needs—short, impactful, and led by people who've actually done the work.", author: "Industry Leader", role: "Education" },
-        { id: uid(), quote: "We've hired interns from Qubitedge programs and were impressed by their practical skills and readiness.", author: "Industry Leader", role: "HR" },
+        { id: uid(), quote: "We've hired interns from qubitedge programs and were impressed by their practical skills and readiness.", author: "Industry Leader", role: "HR" },
       ],
     },
   },
@@ -163,8 +163,8 @@ const defaultHomeBlocks = [
       eyebrow: "FAQ",
       title: "Questions, Answered",
       items: [
-        { id: uid(), q: "What types of workshops does Qubitedge offer?", a: "We run focused, 2-hour live online workshops on Power BI, Excel, AI, communication, and leadership." },
-        { id: uid(), q: "How do I register for a Qubitedge workshop?", a: "Registration links are shared via Gmail and WhatsApp." },
+        { id: uid(), q: "What types of workshops does qubitedge offer?", a: "We run focused, 2-hour live online workshops on Power BI, Excel, AI, communication, and leadership." },
+        { id: uid(), q: "How do I register for a qubitedge workshop?", a: "Registration links are shared via Gmail and WhatsApp." },
         { id: uid(), q: "Who can attend your workshops?", a: "Students, recent graduates, and professionals across all fields." },
         { id: uid(), q: "Is there a fee to attend the workshops?", a: "Yes. A small nominal fee keeps sessions accessible while ensuring high quality." },
       ],
@@ -177,14 +177,14 @@ const defaultHomeBlocks = [
     data: {
       title: "Let's Build Your Future—Together",
       highlight: "Future",
-      body: "Whether you're starting your career, scaling a business, or launching a bold idea—Qubitedge is here for your next step.",
+      body: "Whether you're starting your career, scaling a business, or launching a bold idea—qubitedge is here for your next step.",
       ctaLabel: "Let's Build Something Great",
     },
   },
 ];
 
 export const defaultContent: SiteContent = {
-  brand: { name: "Qubitedge" },
+  brand: { name: "qubitedge" },
   nav: [
     { id: uid(), label: "Learning", anchor: "learning", href: "/learning" },
     { id: uid(), label: "Manufacturing", anchor: "manufacturing", href: "https://qubitedge.vercel.app/", isExternal: true },
@@ -272,7 +272,7 @@ export const defaultContent: SiteContent = {
               ],
               cta: "Learn More",
               mediaUrl: "/Internships.webp",
-              longDescription: `# About the Internship Program\n\nThe **Applied AI & Data Science Internship Program**, organized by **Qubitedge Global Services Pvt. Ltd.**, was conducted from **18 May 2026 to 26 June 2026** with the objective of providing students with practical exposure to emerging technologies and industry-relevant skills.\n\nThe program witnessed an overwhelming response, with **250+ students** participating from various engineering colleges and universities across different regions. Throughout the internship, participants engaged in a structured learning journey designed to bridge the gap between academic knowledge and real-world applications.\n\nThe internship covered a wide range of advanced topics including **Artificial Intelligence, Machine Learning, Data Science, Neural Networks, Convolutional Neural Networks (CNNs), Internet of Things (IoT), Large Language Models (LLMs), Generative AI, Prompt Engineering, AI Applications, and Project Development Methodologies**.\n\nParticipants had access to:\n\n* Live expert-led sessions\n* Recorded video lectures\n* Comprehensive study notes\n* Interactive quizzes and assessments\n* Hands-on learning activities\n* Industry-oriented mini projects\n* Capstone project opportunities\n* Mentor-guided project development\n\nThe program was designed and delivered by a team of **academicians, industry professionals, researchers, and technology experts**, ensuring that students gained both theoretical understanding and practical insights into modern technologies.\n\nAs an extension of the internship, selected participants were given the opportunity to join a **6-Month Advanced Bootcamp Program**, where they continue to receive mentorship, project guidance, advanced technical training, and exposure to industry practices.\n\nThe internship successfully created a collaborative learning environment that encouraged innovation, teamwork, problem-solving, and continuous skill development, helping students prepare for future careers in Artificial Intelligence, Data Science, and emerging technologies.\n\n**Duration:** 18 May 2026 – 26 June 2026\n\n**Participants:** 250+ Students from Multiple Colleges and Universities\n\n**Organized By:** Qubitedge Global Services Pvt. Ltd.\n\n**Mode:** Online Live Sessions, Recorded Content, Assessments, and Project-Based Learning`
+              longDescription: `# About the Internship Program\n\nThe **Applied AI & Data Science Internship Program**, organized by **qubitedge Global Services Pvt. Ltd.**, was conducted from **18 May 2026 to 26 June 2026** with the objective of providing students with practical exposure to emerging technologies and industry-relevant skills.\n\nThe program witnessed an overwhelming response, with **250+ students** participating from various engineering colleges and universities across different regions. Throughout the internship, participants engaged in a structured learning journey designed to bridge the gap between academic knowledge and real-world applications.\n\nThe internship covered a wide range of advanced topics including **Artificial Intelligence, Machine Learning, Data Science, Neural Networks, Convolutional Neural Networks (CNNs), Internet of Things (IoT), Large Language Models (LLMs), Generative AI, Prompt Engineering, AI Applications, and Project Development Methodologies**.\n\nParticipants had access to:\n\n* Live expert-led sessions\n* Recorded video lectures\n* Comprehensive study notes\n* Interactive quizzes and assessments\n* Hands-on learning activities\n* Industry-oriented mini projects\n* Capstone project opportunities\n* Mentor-guided project development\n\nThe program was designed and delivered by a team of **academicians, industry professionals, researchers, and technology experts**, ensuring that students gained both theoretical understanding and practical insights into modern technologies.\n\nAs an extension of the internship, selected participants were given the opportunity to join a **6-Month Advanced Bootcamp Program**, where they continue to receive mentorship, project guidance, advanced technical training, and exposure to industry practices.\n\nThe internship successfully created a collaborative learning environment that encouraged innovation, teamwork, problem-solving, and continuous skill development, helping students prepare for future careers in Artificial Intelligence, Data Science, and emerging technologies.\n\n**Duration:** 18 May 2026 – 26 June 2026\n\n**Participants:** 250+ Students from Multiple Colleges and Universities\n\n**Organized By:** qubitedge Global Services Pvt. Ltd.\n\n**Mode:** Online Live Sessions, Recorded Content, Assessments, and Project-Based Learning`
             },
             {
               id: uid(),
@@ -301,9 +301,9 @@ export const defaultContent: SiteContent = {
         data: {
           title: "Our Story",
           subtitle: "Built to Bridge the Gap",
-          bodyBeforeQuote: "Qubitedge was founded with a simple but powerful belief.",
+          bodyBeforeQuote: "qubitedge was founded with a simple but powerful belief.",
           quote: "Talent is everywhere, but opportunity is not.",
-          bodyAfterQuote: "What began as a mission to equip students with practical, future-ready skills has grown into a full-scale ecosystem supporting learners, startups, and businesses alike.\n\nFounded by Sam Oguri with over 25 years of global experience, Qubitedge is proudly headquartered in The Jewel of the East Coast—Visakhapatnam, with a growing network of partners and clients worldwide.\n\nFrom hands-on workshops and tech services to executive mentoring and startup incubation, our journey is rooted in one core vision: to turn potential into performance—at every stage of growth."
+          bodyAfterQuote: "What began as a mission to equip students with practical, future-ready skills has grown into a full-scale ecosystem supporting learners, startups, and businesses alike.\n\nFounded by Sam Oguri with over 25 years of global experience, qubitedge is proudly headquartered in The Jewel of the East Coast—Visakhapatnam, with a growing network of partners and clients worldwide.\n\nFrom hands-on workshops and tech services to executive mentoring and startup incubation, our journey is rooted in one core vision: to turn potential into performance—at every stage of growth."
         }
       },
       {
@@ -312,15 +312,15 @@ export const defaultContent: SiteContent = {
         data: {
           title: "Meet our Founder",
           name: "Sam Oguri",
-          role: "Founder & CEO – Qubitedge",
+          role: "Founder & CEO – qubitedge",
           imageUrl: "/ceo.webp",
-          bio: "With over 25 years of leadership in EdTech and global services, the Founder and CEO of Qubitedge has a proven track record of building high-performing teams, scaling operations, and turning early-stage ventures into market leaders.\n\nAs the founding head of Chegg India, he spearheaded the company's growth from a team of 8 to over 850 professionals. His core expertise spans operational strategy, financial leadership, cross-functional execution, and scaling innovation with structure and precision.\n\nAt Qubitedge, he leads with a singular mission: to empower students with future-ready skills, and to help startups, professionals, and businesses scale smarter—with clarity, purpose, and measurable impact."
+          bio: "With over 25 years of leadership in EdTech and global services, the Founder and CEO of qubitedge has a proven track record of building high-performing teams, scaling operations, and turning early-stage ventures into market leaders.\n\nAs the founding head of Chegg India, he spearheaded the company's growth from a team of 8 to over 850 professionals. His core expertise spans operational strategy, financial leadership, cross-functional execution, and scaling innovation with structure and precision.\n\nAt qubitedge, he leads with a singular mission: to empower students with future-ready skills, and to help startups, professionals, and businesses scale smarter—with clarity, purpose, and measurable impact."
         }
       }
     ]
   },
   footer: {
-    copyright: "© 2026 Qubitedge. All rights reserved.",
+    copyright: "© 2026 qubitedge. All rights reserved.",
     links: [
       { label: "Privacy", href: "#" },
       { label: "Terms", href: "#" },

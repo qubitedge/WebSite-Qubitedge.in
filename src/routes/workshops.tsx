@@ -8,21 +8,21 @@ import { BlockWrapper } from "@/components/BlockWrapper";
 export const Route = createFileRoute("/workshops")({
   head: () => ({
     meta: [
-      { title: "Workshops — Qubitedge" },
+      { title: "Workshops — qubitedge" },
       {
         name: "description",
         content:
-          "Join Qubitedge's micro-workshops and skill-building sessions in AI, quantum computing, data science, business analytics, and more. Short, intensive, and industry-relevant training.",
+          "Join qubitedge's micro-workshops and skill-building sessions in AI, quantum computing, data science, business analytics, and more. Short, intensive, and industry-relevant training.",
       },
       { name: "robots", content: "index, follow" },
       {
         name: "keywords",
         content:
-          "Qubitedge workshops, AI workshop Hyderabad, quantum computing workshop, data science training, micro-workshops, tech skill building, business analytics workshop",
+          "qubitedge workshops, AI workshop Hyderabad, quantum computing workshop, data science training, micro-workshops, tech skill building, business analytics workshop",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://qubitedge.in/workshops" },
-      { property: "og:title", content: "Workshops — Qubitedge" },
+      { property: "og:title", content: "Workshops — qubitedge" },
       {
         property: "og:description",
         content:
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/workshops")({
       },
       { property: "og:image", content: "https://qubitedge.in/micro-workshops.webp" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Workshops — Qubitedge" },
+      { name: "twitter:title", content: "Workshops — qubitedge" },
       {
         name: "twitter:description",
         content:

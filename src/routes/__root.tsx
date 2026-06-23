@@ -94,31 +94,31 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       // Default title — individual routes override this
-      { title: "Qubitedge — Sharpening Potential. Building Futures." },
+      { title: "qubitedge — Sharpening Potential. Building Futures." },
       {
         name: "description",
         content:
-          "Qubitedge is a growth ecosystem bridging talent and opportunity through hands-on workshops, cutting-edge IT services, internship programs, and enterprise solutions.",
+          "qubitedge is a growth ecosystem bridging talent and opportunity through hands-on workshops, cutting-edge IT services, internship programs, and enterprise solutions.",
       },
-      { name: "author", content: "Qubitedge" },
+      { name: "author", content: "qubitedge" },
       { name: "robots", content: "index, follow" },
       {
         name: "keywords",
         content:
-          "Qubitedge, internships, workshops, IT services, AI, quantum computing, data science, machine learning, enterprise solutions, student programs, Hyderabad",
+          "qubitedge, internships, workshops, IT services, AI, quantum computing, data science, machine learning, enterprise solutions, student programs, Hyderabad",
       },
       // Open Graph
-      { property: "og:site_name", content: "Qubitedge" },
+      { property: "og:site_name", content: "qubitedge" },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://qubitedge.in" },
       {
         property: "og:title",
-        content: "Qubitedge — Sharpening Potential. Building Futures.",
+        content: "qubitedge — Sharpening Potential. Building Futures.",
       },
       {
         property: "og:description",
         content:
-          "Qubitedge is a growth ecosystem bridging talent and opportunity through workshops, IT services, and enterprise solutions.",
+          "qubitedge is a growth ecosystem bridging talent and opportunity through workshops, IT services, and enterprise solutions.",
       },
       {
         property: "og:image",
@@ -129,11 +129,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { property: "og:locale", content: "en_IN" },
       // Twitter / X Card
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:site", content: "@Qubitedge" },
-      { name: "twitter:creator", content: "@Qubitedge" },
+      { name: "twitter:site", content: "@qubitedge" },
+      { name: "twitter:creator", content: "@qubitedge" },
       {
         name: "twitter:title",
-        content: "Qubitedge — Sharpening Potential. Building Futures.",
+        content: "qubitedge — Sharpening Potential. Building Futures.",
       },
       {
         name: "twitter:description",
@@ -209,7 +209,7 @@ function RootComponent() {
 🚀 Developed by Likhith
 ☕ Coffee | 💻 Code | 🌪️ Chaos
 
-👻 Welcome to Qubitedge`);
+👻 Welcome to qubitedge`);
   }, []);
 
   return (

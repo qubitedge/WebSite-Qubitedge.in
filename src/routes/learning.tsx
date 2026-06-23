@@ -8,21 +8,21 @@ import { BlockWrapper } from "@/components/BlockWrapper";
 export const Route = createFileRoute("/learning")({
   head: () => ({
     meta: [
-      { title: "Learning & Internships — Qubitedge" },
+      { title: "Learning & Internships — qubitedge" },
       {
         name: "description",
         content:
-          "Explore Qubitedge's learning programs and internship opportunities in AI, data science, quantum computing, and software development. Gain real-world experience and industry mentorship.",
+          "Explore qubitedge's learning programs and internship opportunities in AI, data science, quantum computing, and software development. Gain real-world experience and industry mentorship.",
       },
       { name: "robots", content: "index, follow" },
       {
         name: "keywords",
         content:
-          "Qubitedge internships, AI internship Hyderabad, data science internship, software development internship, student learning programs, tech internship India",
+          "qubitedge internships, AI internship Hyderabad, data science internship, software development internship, student learning programs, tech internship India",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://qubitedge.in/learning" },
-      { property: "og:title", content: "Learning & Internships — Qubitedge" },
+      { property: "og:title", content: "Learning & Internships — qubitedge" },
       {
         property: "og:description",
         content:
@@ -30,7 +30,7 @@ export const Route = createFileRoute("/learning")({
       },
       { property: "og:image", content: "https://qubitedge.in/Internships.webp" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "Learning & Internships — Qubitedge" },
+      { name: "twitter:title", content: "Learning & Internships — qubitedge" },
       {
         name: "twitter:description",
         content:

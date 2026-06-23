@@ -15,7 +15,7 @@ export function Footer() {
           {/* Column 1: Brand & Description */}
           <div className="flex flex-col space-y-6">
             <div className="flex items-center gap-3">
-              <img src="/logo.png" alt="Qubitedge Logo" className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(100,206,251,0.4)]" />
+              <img src="/logo.png" alt="qubitedge Logo" className="h-8 w-8 object-contain drop-shadow-[0_0_15px_rgba(100,206,251,0.4)]" />
               {isAdmin ? (
                 <EditableText
                   as="span"
@@ -31,7 +31,7 @@ export function Footer() {
               )}
             </div>
             <p className="text-white/60 text-sm leading-relaxed max-w-xs">
-              Qubitedge helps students build job-ready skills through hands-on training in IT, AI, and communication. We offer workshops, internships, and career support to prepare you for real-world opportunities.
+              qubitedge helps students build job-ready skills through hands-on training in IT, AI, and communication. We offer workshops, internships, and career support to prepare you for real-world opportunities.
             </p>
             <div className="flex gap-4">
               <a href="https://www.instagram.com/qubitedge?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" rel="noopener noreferrer" className="text-white/40 hover:text-[#64CEFB] transition-colors" aria-label="Instagram">
@@ -98,7 +98,7 @@ export function Footer() {
               placeholder="Copyright text…"
             />
           ) : (
-            <p>{content.footer.copyright || `© ${new Date().getFullYear()} Qubitedge. All rights reserved.`}</p>
+            <p>{content.footer.copyright || `© ${new Date().getFullYear()} qubitedge. All rights reserved.`}</p>
           )}
         </div>
       </div>

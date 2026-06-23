@@ -19,21 +19,21 @@ import {
 export const Route = createFileRoute("/it-marketing")({
   head: () => ({
     meta: [
-      { title: "IT & Marketing Projects — Qubitedge" },
+      { title: "IT & Marketing Projects — qubitedge" },
       {
         name: "description",
         content:
-          "Explore Qubitedge's IT & marketing showcase: from the JNTU GV 3D Campus Navigator with A* pathfinding to custom web systems, spatial apps, and enterprise-grade digital solutions.",
+          "Explore qubitedge's IT & marketing showcase: from the JNTU GV 3D Campus Navigator with A* pathfinding to custom web systems, spatial apps, and enterprise-grade digital solutions.",
       },
       { name: "robots", content: "index, follow" },
       {
         name: "keywords",
         content:
-          "Qubitedge IT services, web development Hyderabad, campus navigator, 3D mapping, digital marketing, enterprise software, React Three.js projects, spatial web",
+          "qubitedge IT services, web development Hyderabad, campus navigator, 3D mapping, digital marketing, enterprise software, React Three.js projects, spatial web",
       },
       { property: "og:type", content: "website" },
       { property: "og:url", content: "https://qubitedge.in/it-marketing" },
-      { property: "og:title", content: "IT & Marketing Projects — Qubitedge" },
+      { property: "og:title", content: "IT & Marketing Projects — qubitedge" },
       {
         property: "og:description",
         content:
@@ -41,7 +41,7 @@ export const Route = createFileRoute("/it-marketing")({
       },
       { property: "og:image", content: "https://qubitedge.in/logo.webp" },
       { name: "twitter:card", content: "summary_large_image" },
-      { name: "twitter:title", content: "IT & Marketing Projects — Qubitedge" },
+      { name: "twitter:title", content: "IT & Marketing Projects — qubitedge" },
       {
         name: "twitter:description",
         content:

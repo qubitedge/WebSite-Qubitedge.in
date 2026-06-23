@@ -5,7 +5,7 @@ import { Link } from "@tanstack/react-router";
 import { useAdmin } from "@/lib/AdminContext";
 
 export const Route = createFileRoute("/admin")({
-  head: () => ({ meta: [{ title: "Admin — Qubitedge" }] }),
+  head: () => ({ meta: [{ title: "Admin — qubitedge" }] }),
   component: AdminPage,
 });
 
@@ -51,7 +51,7 @@ function LoginScreen({ onAuth }: { onAuth: (email: string, password: string) => 
             <Lock className="h-4 w-4 text-[#64CEFB]" />
           </div>
           <div>
-            <div className="text-sm font-semibold">Qubitedge CMS</div>
+            <div className="text-sm font-semibold">qubitedge CMS</div>
             <div className="text-xs text-white/50">Admin sign-in</div>
           </div>
         </div>

@@ -1,7 +1,7 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
 
 const ADMIN_EMAIL = "qubitedge@gmail.com";
-const ADMIN_PASSWORD = "Qubitedge@2026";
+const ADMIN_PASSWORD = "qubitedge@2026";
 const AUTH_KEY = "qubitedge.admin.auth";
 
 type AdminContextType = {
