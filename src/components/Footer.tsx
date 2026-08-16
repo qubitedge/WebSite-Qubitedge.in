@@ -61,13 +61,15 @@ export function Footer() {
           </div>
 
           {/* Column 2: Company */}
-          <div className="flex flex-col space-y-4">
+          <div className="flex flex-col space-y-3">
             <h3 className="text-white font-medium mb-2">Company</h3>
             <Link to="/about" className="text-sm text-white/60 hover:text-white transition-colors">About Us</Link>
-            <a href="#" className="text-sm text-white/60 hover:text-white transition-colors">Policy</a>
-            <a href="#" className="text-sm text-white/60 hover:text-white transition-colors">Terms and Conditions</a>
-            <a href="#" className="text-sm text-white/60 hover:text-white transition-colors">Career</a>
-            <a href="#" className="text-sm text-white/60 hover:text-white transition-colors">Blog</a>
+            <Link to="/policy" search={{ tab: "privacy" }} hash="privacy" className="text-sm text-white/60 hover:text-white transition-colors">Privacy Policy</Link>
+            <Link to="/policy" search={{ tab: "terms" }} hash="terms" className="text-sm text-white/60 hover:text-white transition-colors">Terms and Conditions</Link>
+            <Link to="/policy" search={{ tab: "copyright" }} hash="copyright" className="text-sm text-white/60 hover:text-white transition-colors">Copyright & IP</Link>
+            <Link to="/policy" search={{ tab: "disclaimer" }} hash="disclaimer" className="text-sm text-white/60 hover:text-white transition-colors">Disclaimer</Link>
+            <Link to="/policy" search={{ tab: "cookies" }} hash="cookies" className="text-sm text-white/60 hover:text-white transition-colors">Cookie Policy</Link>
+            <a href="/#articles" className="text-sm text-white/60 hover:text-white transition-colors">Blog</a>
           </div>
 
           {/* Column 3: Services */}
@@ -82,7 +84,7 @@ export function Footer() {
             <address className="not-italic text-sm text-white/60 leading-relaxed max-w-xs space-y-3">
               <p>4-61-15, Galilee Enclave,<br />Lawsons Bay Colony,<br />Visakhapatnam.</p>
               <p><a href="tel:+916302829618" className="hover:text-white transition-colors">+91 6302829618</a></p>
-              <p><a href="mailto:info@quibitedge.in" className="hover:text-white transition-colors">info@quibitedge.in</a></p>
+              <p><a href="mailto:info@qubitedge.in" className="hover:text-white transition-colors">info@qubitedge.in</a></p>
               <p className="pt-2">Monday – Saturday: 9:00 AM – 5:00 PM</p>
             </address>
           </div>
@@ -100,6 +102,14 @@ export function Footer() {
           ) : (
             <p>{content.footer.copyright || `© ${new Date().getFullYear()} qubitedge. All rights reserved.`}</p>
           )}
+
+          <div className="flex flex-wrap items-center gap-5 text-xs text-white/50">
+            <Link to="/policy" search={{ tab: "privacy" }} className="hover:text-[#64CEFB] transition-colors">Privacy</Link>
+            <Link to="/policy" search={{ tab: "terms" }} className="hover:text-[#64CEFB] transition-colors">Terms</Link>
+            <Link to="/policy" search={{ tab: "copyright" }} className="hover:text-[#64CEFB] transition-colors">Copyright</Link>
+            <Link to="/policy" search={{ tab: "disclaimer" }} className="hover:text-[#64CEFB] transition-colors">Disclaimer</Link>
+            <Link to="/policy" search={{ tab: "cookies" }} className="hover:text-[#64CEFB] transition-colors">Cookies</Link>
+          </div>
         </div>
       </div>
     </footer>

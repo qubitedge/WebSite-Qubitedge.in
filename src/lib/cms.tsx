@@ -322,9 +322,11 @@ export const defaultContent: SiteContent = {
   footer: {
     copyright: "© 2026 qubitedge. All rights reserved.",
     links: [
-      { label: "Privacy", href: "#" },
-      { label: "Terms", href: "#" },
-      { label: "Contact", href: "#contact" },
+      { label: "Privacy Policy", href: "/policy?tab=privacy" },
+      { label: "Terms & Conditions", href: "/policy?tab=terms" },
+      { label: "Copyright & IP", href: "/policy?tab=copyright" },
+      { label: "Disclaimer", href: "/policy?tab=disclaimer" },
+      { label: "Cookie Policy", href: "/policy?tab=cookies" },
     ],
   },
 };

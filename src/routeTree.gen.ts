@@ -10,8 +10,14 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as WorkshopsRouteImport } from './routes/workshops'
+import { Route as TermsRouteImport } from './routes/terms'
+import { Route as PrivacyRouteImport } from './routes/privacy'
+import { Route as PolicyRouteImport } from './routes/policy'
 import { Route as LearningRouteImport } from './routes/learning'
 import { Route as ItMarketingRouteImport } from './routes/it-marketing'
+import { Route as DisclaimerRouteImport } from './routes/disclaimer'
+import { Route as CopyrightRouteImport } from './routes/copyright'
+import { Route as CookiesRouteImport } from './routes/cookies'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
@@ -19,6 +25,21 @@ import { Route as IndexRouteImport } from './routes/index'
 const WorkshopsRoute = WorkshopsRouteImport.update({
   id: '/workshops',
   path: '/workshops',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const TermsRoute = TermsRouteImport.update({
+  id: '/terms',
+  path: '/terms',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PrivacyRoute = PrivacyRouteImport.update({
+  id: '/privacy',
+  path: '/privacy',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PolicyRoute = PolicyRouteImport.update({
+  id: '/policy',
+  path: '/policy',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LearningRoute = LearningRouteImport.update({
@@ -29,6 +50,21 @@ const LearningRoute = LearningRouteImport.update({
 const ItMarketingRoute = ItMarketingRouteImport.update({
   id: '/it-marketing',
   path: '/it-marketing',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DisclaimerRoute = DisclaimerRouteImport.update({
+  id: '/disclaimer',
+  path: '/disclaimer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CopyrightRoute = CopyrightRouteImport.update({
+  id: '/copyright',
+  path: '/copyright',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const CookiesRoute = CookiesRouteImport.update({
+  id: '/cookies',
+  path: '/cookies',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AdminRoute = AdminRouteImport.update({
@@ -51,16 +87,28 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/cookies': typeof CookiesRoute
+  '/copyright': typeof CopyrightRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/it-marketing': typeof ItMarketingRoute
   '/learning': typeof LearningRoute
+  '/policy': typeof PolicyRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/cookies': typeof CookiesRoute
+  '/copyright': typeof CopyrightRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/it-marketing': typeof ItMarketingRoute
   '/learning': typeof LearningRoute
+  '/policy': typeof PolicyRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
 }
 export interface FileRoutesById {
@@ -68,8 +116,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
   '/admin': typeof AdminRoute
+  '/cookies': typeof CookiesRoute
+  '/copyright': typeof CopyrightRoute
+  '/disclaimer': typeof DisclaimerRoute
   '/it-marketing': typeof ItMarketingRoute
   '/learning': typeof LearningRoute
+  '/policy': typeof PolicyRoute
+  '/privacy': typeof PrivacyRoute
+  '/terms': typeof TermsRoute
   '/workshops': typeof WorkshopsRoute
 }
 export interface FileRouteTypes {
@@ -78,18 +132,42 @@ export interface FileRouteTypes {
     | '/'
     | '/about'
     | '/admin'
+    | '/cookies'
+    | '/copyright'
+    | '/disclaimer'
     | '/it-marketing'
     | '/learning'
+    | '/policy'
+    | '/privacy'
+    | '/terms'
     | '/workshops'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/about' | '/admin' | '/it-marketing' | '/learning' | '/workshops'
+  to:
+    | '/'
+    | '/about'
+    | '/admin'
+    | '/cookies'
+    | '/copyright'
+    | '/disclaimer'
+    | '/it-marketing'
+    | '/learning'
+    | '/policy'
+    | '/privacy'
+    | '/terms'
+    | '/workshops'
   id:
     | '__root__'
     | '/'
     | '/about'
     | '/admin'
+    | '/cookies'
+    | '/copyright'
+    | '/disclaimer'
     | '/it-marketing'
     | '/learning'
+    | '/policy'
+    | '/privacy'
+    | '/terms'
     | '/workshops'
   fileRoutesById: FileRoutesById
 }
@@ -97,8 +175,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AboutRoute: typeof AboutRoute
   AdminRoute: typeof AdminRoute
+  CookiesRoute: typeof CookiesRoute
+  CopyrightRoute: typeof CopyrightRoute
+  DisclaimerRoute: typeof DisclaimerRoute
   ItMarketingRoute: typeof ItMarketingRoute
   LearningRoute: typeof LearningRoute
+  PolicyRoute: typeof PolicyRoute
+  PrivacyRoute: typeof PrivacyRoute
+  TermsRoute: typeof TermsRoute
   WorkshopsRoute: typeof WorkshopsRoute
 }
 
@@ -109,6 +193,27 @@ declare module '@tanstack/react-router' {
       path: '/workshops'
       fullPath: '/workshops'
       preLoaderRoute: typeof WorkshopsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/terms': {
+      id: '/terms'
+      path: '/terms'
+      fullPath: '/terms'
+      preLoaderRoute: typeof TermsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/privacy': {
+      id: '/privacy'
+      path: '/privacy'
+      fullPath: '/privacy'
+      preLoaderRoute: typeof PrivacyRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/policy': {
+      id: '/policy'
+      path: '/policy'
+      fullPath: '/policy'
+      preLoaderRoute: typeof PolicyRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/learning': {
@@ -123,6 +228,27 @@ declare module '@tanstack/react-router' {
       path: '/it-marketing'
       fullPath: '/it-marketing'
       preLoaderRoute: typeof ItMarketingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/disclaimer': {
+      id: '/disclaimer'
+      path: '/disclaimer'
+      fullPath: '/disclaimer'
+      preLoaderRoute: typeof DisclaimerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/copyright': {
+      id: '/copyright'
+      path: '/copyright'
+      fullPath: '/copyright'
+      preLoaderRoute: typeof CopyrightRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/cookies': {
+      id: '/cookies'
+      path: '/cookies'
+      fullPath: '/cookies'
+      preLoaderRoute: typeof CookiesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/admin': {
@@ -153,8 +279,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
   AdminRoute: AdminRoute,
+  CookiesRoute: CookiesRoute,
+  CopyrightRoute: CopyrightRoute,
+  DisclaimerRoute: DisclaimerRoute,
   ItMarketingRoute: ItMarketingRoute,
   LearningRoute: LearningRoute,
+  PolicyRoute: PolicyRoute,
+  PrivacyRoute: PrivacyRoute,
+  TermsRoute: TermsRoute,
   WorkshopsRoute: WorkshopsRoute,
 }
 export const routeTree = rootRouteImport

@@ -708,16 +708,24 @@
     "copyright": "© 2026 qubitedge. All rights reserved.",
     "links": [
       {
-        "label": "Privacy",
-        "href": "#"
+        "label": "Privacy Policy",
+        "href": "/policy?tab=privacy"
       },
       {
-        "label": "Terms",
-        "href": "#"
+        "label": "Terms & Conditions",
+        "href": "/policy?tab=terms"
       },
       {
-        "label": "Contact",
-        "href": "#contact"
+        "label": "Copyright & IP",
+        "href": "/policy?tab=copyright"
+      },
+      {
+        "label": "Disclaimer",
+        "href": "/policy?tab=disclaimer"
+      },
+      {
+        "label": "Cookie Policy",
+        "href": "/policy?tab=cookies"
       }
     ]
   }
