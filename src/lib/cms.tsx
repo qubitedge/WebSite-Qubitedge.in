@@ -37,7 +37,7 @@ export type SiteContent = {
   footer: { copyright: string; links: { label: string; href: string }[] };
 };
 
-const STORAGE_KEY = "qubitedge.cms.v13";
+const STORAGE_KEY = "qubitedge.cms.v14";
 
 /* ---------- Default content (mirrors the existing site) ---------- */
 
@@ -51,7 +51,7 @@ const defaultHomeBlocks = [
     data: {
       eyebrow: "Learn from Leaders",
       topLeft: "qubitedge is an ecosystem for growth, bridging the gap between talent and opportunity.",
-      topRight: "8000+ Learners. Real careers. Real impact.",
+      topRight: "",
       titleLine1: "Sharpening Potential.",
       titleLine2: "Building Futures.",
       subtitle:
@@ -135,10 +135,10 @@ const defaultHomeBlocks = [
       title: "People. Progress. Proof.",
       intro: "Hear what respected professionals say about partnering with qubitedge.",
       items: [
-        { id: uid(), quote: "qubitedge is solving a real gap—bridging academic knowledge with skills companies actually hire for.", author: "Industry Leader", role: "Tech" },
-        { id: uid(), quote: "The clarity and focus in qubitedge's sessions are rare.", author: "Industry Leader", role: "AI" },
-        { id: uid(), quote: "Workshops like these are what the industry needs—short, impactful, and led by people who've actually done the work.", author: "Industry Leader", role: "Education" },
-        { id: uid(), quote: "We've hired interns from qubitedge programs and were impressed by their practical skills and readiness.", author: "Industry Leader", role: "HR" },
+        { id: uid(), quote: "qubitedge bridges academic foundations and real-world engineering seamlessly. The hands-on, project-driven approach and mentorship gave me the technical confidence to thrive in modern software engineering roles.", author: "Joel Masa", role: "Software Engineer" },
+        { id: uid(), quote: "qubitedge brings exceptional industry exposure directly into academic ecosystems. Their workshops empower students with cutting-edge technologies that complement university curriculums and elevate learning outcomes.", author: "Dr G Jayasuma", role: "Professor" },
+        { id: uid(), quote: "The internship and workshop sessions were an incredible turning point for my learning journey. Working with real datasets, modern AI tools, and supportive mentors gave me the practical skills and confidence to stand out.", author: "Penumatsa Spandana", role: "Student" },
+        { id: uid(), quote: "The structured modules and practical pedagogy at qubitedge make complex emerging concepts like AI and Quantum technologies accessible, engaging, and genuinely career-transforming for learners.", author: "Satish Kumar", role: "Assistant Professor" },
       ],
     },
   },

@@ -63,7 +63,6 @@ export function Hero() {
             We deliver transformative programs that empower emerging product designers with cutting-edge expertise and vision to thrive globally.
           </p>
           <p className="text-sm text-white/80 md:text-base lg:text-right">
-            8000+ Talented Designers Launched !
           </p>
         </div>
 
