@@ -7,6 +7,7 @@ export type BlockType =
   | "hero"
   | "features"
   | "workshops"
+  | "playlists"
   | "testimonials"
   | "articles"
   | "faq"
@@ -129,6 +130,51 @@ const defaultHomeBlocks = [
   },
   {
     id: uid(),
+    type: "playlists" as const,
+    anchor: "learning-playlists",
+    data: {
+      eyebrow: "Learning",
+      title: "Learning Playlists",
+      intro:
+        "Watch our curated YouTube playlists—from the Applied AI Internship 2026 to beginner-friendly AI and Cyber Security series for kids.",
+      ctaLabel: "Explore Learning",
+      ctaHref: "/learning",
+      items: [
+        {
+          id: uid(),
+          tag: "Internship 2026",
+          title: "Applied AI Internship 2026",
+          body: "Recorded sessions and hands-on modules from our Applied AI & Data Science Internship 2026 covering Python, Machine Learning, Neural Networks, and Generative AI.",
+          playlistUrl: "https://youtube.com/playlist?list=PLyiZmTVMILR5HlG8prx8RbpzeF3qB7JIY&si=BvsquIO4DwTcrvmL",
+          thumbnailUrl: "https://i.ytimg.com/vi/MmqtTOdyqv4/maxresdefault.jpg",
+          fallbackThumbnailUrl: "https://i.ytimg.com/vi/MmqtTOdyqv4/hqdefault.jpg",
+          cta: "Watch Playlist",
+        },
+        {
+          id: uid(),
+          tag: "Kids Learning",
+          title: "AI for Kids",
+          body: "Fun, interactive AI adventures introducing young learners to Artificial Intelligence concepts through engaging stories and real-world examples.",
+          playlistUrl: "https://youtube.com/playlist?list=PLZW00-gqDuDk&si=7K_RD95t0I98ZTXg",
+          thumbnailUrl: "https://i.ytimg.com/vi/5ODE6nmVYgo/maxresdefault.jpg",
+          fallbackThumbnailUrl: "https://i.ytimg.com/vi/5ODE6nmVYgo/hqdefault.jpg",
+          cta: "Watch Playlist",
+        },
+        {
+          id: uid(),
+          tag: "Cyber Safety",
+          title: "Cyber Security for Kids",
+          body: "Essential online safety and cybersecurity lessons tailored for kids—covering digital citizenship, safe browsing, and protecting personal information.",
+          playlistUrl: "https://youtube.com/playlist?list=PLGHdRtRzrZbE&si=7TlmLU5tEns2kY0l",
+          thumbnailUrl: "https://i.ytimg.com/vi/wt7NuI1URiM/maxresdefault.jpg",
+          fallbackThumbnailUrl: "https://i.ytimg.com/vi/wt7NuI1URiM/hqdefault.jpg",
+          cta: "Watch Playlist",
+        },
+      ],
+    },
+  },
+  {
+    id: uid(),
     type: "testimonials" as const,
     data: {
       eyebrow: "Testimonials & Reviews",
@@ -207,12 +253,54 @@ export const defaultContent: SiteContent = {
         id: uid(),
         type: "hero",
         data: {
-          eyebrow: "Coming Soon",
-          titleLine1: "Learning Paths",
-          titleLine2: "",
-          subtitle: "We are currently building our comprehensive learning resources. Check back soon for courses, tutorials, and materials designed to bridge the gap between talent and opportunity.",
-          primaryCta: { label: "Return Home", anchor: "" }
+          eyebrow: "Learning Hub",
+          titleLine1: "Learning",
+          titleLine2: "Playlists.",
+          subtitle: "Explore curated video playlists and structured learning series from qubitedge—covering Applied AI Internship 2026, AI for Kids, and Cyber Security for Kids.",
+          primaryCta: { label: "Explore Playlists", anchor: "learning-playlists" }
         }
+      },
+      {
+        id: uid(),
+        type: "playlists",
+        anchor: "learning-playlists",
+        data: {
+          eyebrow: "Our Playlists",
+          title: "Watch & Learn With qubitedge",
+          intro: "Stream our full YouTube learning playlists anytime—built for students, young innovators, and aspiring AI practitioners.",
+          items: [
+            {
+              id: uid(),
+              tag: "Internship 2026",
+              title: "Applied AI Internship 2026",
+              body: "Recorded sessions and hands-on modules from our Applied AI & Data Science Internship 2026 covering Python, Machine Learning, Neural Networks, and Generative AI.",
+              playlistUrl: "https://youtube.com/playlist?list=PLyiZmTVMILR5HlG8prx8RbpzeF3qB7JIY&si=BvsquIO4DwTcrvmL",
+              thumbnailUrl: "https://i.ytimg.com/vi/MmqtTOdyqv4/maxresdefault.jpg",
+              fallbackThumbnailUrl: "https://i.ytimg.com/vi/MmqtTOdyqv4/hqdefault.jpg",
+              cta: "Watch Playlist",
+            },
+            {
+              id: uid(),
+              tag: "Kids Learning",
+              title: "AI for Kids",
+              body: "Fun, interactive AI adventures introducing young learners to Artificial Intelligence concepts through engaging stories and real-world examples.",
+              playlistUrl: "https://youtube.com/playlist?list=PLZW00-gqDuDk&si=7K_RD95t0I98ZTXg",
+              thumbnailUrl: "https://i.ytimg.com/vi/5ODE6nmVYgo/maxresdefault.jpg",
+              fallbackThumbnailUrl: "https://i.ytimg.com/vi/5ODE6nmVYgo/hqdefault.jpg",
+              cta: "Watch Playlist",
+            },
+            {
+              id: uid(),
+              tag: "Cyber Safety",
+              title: "Cyber Security for Kids",
+              body: "Essential online safety and cybersecurity lessons tailored for kids—covering digital citizenship, safe browsing, and protecting personal information.",
+              playlistUrl: "https://youtube.com/playlist?list=PLGHdRtRzrZbE&si=7TlmLU5tEns2kY0l",
+              thumbnailUrl: "https://i.ytimg.com/vi/wt7NuI1URiM/maxresdefault.jpg",
+              fallbackThumbnailUrl: "https://i.ytimg.com/vi/wt7NuI1URiM/hqdefault.jpg",
+              cta: "Watch Playlist",
+            },
+          ],
+        },
       }
     ],
     "it-marketing": [
@@ -476,6 +564,24 @@ function emptyBlock(type: BlockType): Block {
       break;
     case "workshops":
       base.data = { eyebrow: "Workshops", title: "Programs", intro: "Short intro.", items: [{ id: uid(), tag: "Tag", title: "Workshop", body: "Body.", cta: "Learn more" }] };
+      break;
+    case "playlists":
+      base.data = {
+        eyebrow: "Learning",
+        title: "Learning Playlists",
+        intro: "Explore our curated YouTube playlists.",
+        items: [
+          {
+            id: uid(),
+            tag: "Playlist",
+            title: "New Playlist",
+            body: "Describe this playlist.",
+            playlistUrl: "https://youtube.com",
+            thumbnailUrl: "",
+            cta: "Watch Playlist",
+          },
+        ],
+      };
       break;
     case "testimonials":
       base.data = { eyebrow: "Reviews", title: "What people say", intro: "", items: [{ id: uid(), quote: "Great work.", author: "Name", role: "Role" }] };

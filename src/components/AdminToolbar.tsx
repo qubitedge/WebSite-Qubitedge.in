@@ -8,6 +8,7 @@ const BLOCK_LABELS: Record<BlockType, string> = {
   hero: "Hero",
   features: "Features Grid",
   workshops: "Workshops / Cards",
+  playlists: "Learning Playlists",
   testimonials: "Testimonials",
   articles: "Articles / News",
   faq: "FAQ",
@@ -15,6 +16,7 @@ const BLOCK_LABELS: Record<BlockType, string> = {
   richText: "Rich Text",
   profile: "Profile Block",
   story: "Story Block",
+  customLayout: "Custom Layout Block",
 };
 
 const PAGES: Record<string, string> = {
@@ -68,7 +70,7 @@ export function AdminToolbar() {
   if (!isAdmin) return null;
 
   const blockTypes: BlockType[] = [
-    "hero", "features", "workshops", "testimonials",
+    "hero", "features", "workshops", "playlists", "testimonials",
     "articles", "faq", "cta", "richText", "profile", "story", "customLayout"
   ];
 

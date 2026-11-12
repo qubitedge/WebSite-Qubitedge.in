@@ -7,6 +7,7 @@ const BLOCK_LABELS: Record<BlockType, string> = {
   hero: "Hero",
   features: "Features Grid",
   workshops: "Workshops / Cards",
+  playlists: "Learning Playlists",
   testimonials: "Testimonials",
   articles: "Articles / News",
   faq: "FAQ",
@@ -42,7 +43,7 @@ export function BlockWrapper({ blockId, blockType, pageId, index, total, childre
   const anchorVal = currentBlock?.anchor || "";
 
   const blockTypes: BlockType[] = [
-    "hero", "features", "workshops", "testimonials",
+    "hero", "features", "workshops", "playlists", "testimonials",
     "articles", "faq", "cta", "richText", "profile", "story", "customLayout"
   ];
 

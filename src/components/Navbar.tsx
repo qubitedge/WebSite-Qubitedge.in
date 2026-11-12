@@ -54,8 +54,8 @@ export function Navbar() {
     <>
       <header className={`fixed left-0 right-0 z-50 px-3 sm:px-4 ${isAdmin ? "top-[44px]" : "top-3"}`}>
         <div
-          className={`mx-auto max-w-6xl flex items-center justify-between rounded-full border border-white/15 transition-all ${
-            scrolled ? "bg-black/70 backdrop-blur-xl shadow-[0_8px_40px_-12px_rgba(100,206,251,0.25)]" : "bg-black/40 backdrop-blur-md"
+          className={`mx-auto max-w-6xl flex items-center justify-between rounded-full border border-white/25 transition-all ${
+            scrolled ? "bg-black/85 backdrop-blur-xl shadow-[0_8px_40px_-12px_rgba(100,206,251,0.25)]" : "bg-black/65 backdrop-blur-md"
           } pl-5 pr-3 py-3`}
         >
           {/* Brand */}
@@ -78,8 +78,8 @@ export function Navbar() {
           <nav className="hidden lg:flex items-center gap-1">
             {content.nav.map((i, idx) => {
               const isActive = activePath === i.href;
-              const linkClasses = `relative px-5 py-2.5 text-base transition-colors ${
-                isActive ? "text-white" : "text-white/70 hover:text-white"
+              const linkClasses = `relative px-5 py-2.5 text-base font-medium transition-colors ${
+                isActive ? "text-white" : "text-white/95 hover:text-white"
               }`;
               const activeIndicator = isActive && (
                 <motion.span
@@ -94,8 +94,8 @@ export function Navbar() {
                   <div key={i.id} className="relative group/nav flex items-center animate-fade-in">
                     <button
                       onClick={() => setEditingNavItemIdx(isEditing ? null : idx)}
-                      className={`relative px-4 py-2 text-base transition-all rounded-full flex items-center gap-1.5 border border-white/10 hover:border-[#64CEFB]/40 hover:bg-[#64CEFB]/5 ${
-                        activePath === i.href ? "text-white bg-white/10 border-[#64CEFB]/40" : "text-white/70 hover:text-white hover:bg-white/5"
+                      className={`relative px-4 py-2 text-base transition-all rounded-full flex items-center gap-1.5 border border-white/15 hover:border-[#64CEFB]/40 hover:bg-[#64CEFB]/10 ${
+                        activePath === i.href ? "text-white bg-white/15 border-[#64CEFB]/40" : "text-white/95 hover:text-white hover:bg-white/10"
                       }`}
                     >
                       <span className="font-medium">{i.label || "New Item"}</span>
@@ -233,7 +233,7 @@ export function Navbar() {
                 </div>
                 <button
                   onClick={() => setOpen(false)}
-                  className="h-9 w-9 rounded-full flex items-center justify-center text-white/70 hover:text-white hover:bg-white/10"
+                  className="h-9 w-9 rounded-full flex items-center justify-center text-white/90 hover:text-white hover:bg-white/10"
                   aria-label="Close"
                 >
                   <X className="h-5 w-5" />
@@ -258,7 +258,7 @@ export function Navbar() {
                           className="group w-full flex items-center justify-between px-4 py-4 rounded-xl hover:bg-white/5 transition-colors"
                         >
                           <span className="text-xl font-medium text-white tracking-tight">{i.label}</span>
-                          <ArrowUpRight className="h-5 w-5 text-white/30 group-hover:text-[#64CEFB] transition-colors" />
+                          <ArrowUpRight className="h-5 w-5 text-white/60 group-hover:text-[#64CEFB] transition-colors" />
                         </a>
                       ) : (
                         <Link
@@ -267,7 +267,7 @@ export function Navbar() {
                           className="group w-full flex items-center justify-between px-4 py-4 rounded-xl hover:bg-white/5 transition-colors"
                         >
                           <span className="text-xl font-medium text-white tracking-tight">{i.label}</span>
-                          <ArrowUpRight className="h-5 w-5 text-white/30 group-hover:text-[#64CEFB] transition-colors" />
+                          <ArrowUpRight className="h-5 w-5 text-white/60 group-hover:text-[#64CEFB] transition-colors" />
                         </Link>
                       )}
                     </motion.li>

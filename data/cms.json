@@ -160,6 +160,50 @@
       }
     },
     {
+      "id": "lrnply01",
+      "type": "playlists",
+      "anchor": "learning-playlists",
+      "data": {
+        "eyebrow": "Learning",
+        "title": "Learning Playlists",
+        "intro": "Watch our curated YouTube playlists—from the Applied AI Internship 2026 to beginner-friendly AI and Cyber Security series for kids.",
+        "ctaLabel": "Explore Learning",
+        "ctaHref": "/learning",
+        "items": [
+          {
+            "id": "plyai261",
+            "tag": "Internship 2026",
+            "title": "Applied AI Internship 2026",
+            "body": "Recorded sessions and hands-on modules from our Applied AI & Data Science Internship 2026 covering Python, Machine Learning, Neural Networks, and Generative AI.",
+            "playlistUrl": "https://youtube.com/playlist?list=PLyiZmTVMILR5HlG8prx8RbpzeF3qB7JIY&si=BvsquIO4DwTcrvmL",
+            "thumbnailUrl": "https://i.ytimg.com/vi/MmqtTOdyqv4/maxresdefault.jpg",
+            "fallbackThumbnailUrl": "https://i.ytimg.com/vi/MmqtTOdyqv4/hqdefault.jpg",
+            "cta": "Watch Playlist"
+          },
+          {
+            "id": "plyaikid",
+            "tag": "Kids Learning",
+            "title": "AI for Kids",
+            "body": "Fun, interactive AI adventures introducing young learners to Artificial Intelligence concepts through engaging stories and real-world examples.",
+            "playlistUrl": "https://youtube.com/playlist?list=PLZW00-gqDuDk&si=7K_RD95t0I98ZTXg",
+            "thumbnailUrl": "https://i.ytimg.com/vi/5ODE6nmVYgo/maxresdefault.jpg",
+            "fallbackThumbnailUrl": "https://i.ytimg.com/vi/5ODE6nmVYgo/hqdefault.jpg",
+            "cta": "Watch Playlist"
+          },
+          {
+            "id": "plycybkd",
+            "tag": "Cyber Safety",
+            "title": "Cyber Security for Kids",
+            "body": "Essential online safety and cybersecurity lessons tailored for kids—covering digital citizenship, safe browsing, and protecting personal information.",
+            "playlistUrl": "https://youtube.com/playlist?list=PLGHdRtRzrZbE&si=7TlmLU5tEns2kY0l",
+            "thumbnailUrl": "https://i.ytimg.com/vi/wt7NuI1URiM/maxresdefault.jpg",
+            "fallbackThumbnailUrl": "https://i.ytimg.com/vi/wt7NuI1URiM/hqdefault.jpg",
+            "cta": "Watch Playlist"
+          }
+        ]
+      }
+    },
+    {
       "id": "csw96ke0",
       "type": "testimonials",
       "data": {
@@ -417,6 +461,50 @@
         }
       },
       {
+        "id": "lrnply01",
+        "type": "playlists",
+        "anchor": "learning-playlists",
+        "data": {
+          "eyebrow": "Learning",
+          "title": "Learning Playlists",
+          "intro": "Watch our curated YouTube playlists—from the Applied AI Internship 2026 to beginner-friendly AI and Cyber Security series for kids.",
+          "ctaLabel": "Explore Learning",
+          "ctaHref": "/learning",
+          "items": [
+            {
+              "id": "plyai261",
+              "tag": "Internship 2026",
+              "title": "Applied AI Internship 2026",
+              "body": "Recorded sessions and hands-on modules from our Applied AI & Data Science Internship 2026 covering Python, Machine Learning, Neural Networks, and Generative AI.",
+              "playlistUrl": "https://youtube.com/playlist?list=PLyiZmTVMILR5HlG8prx8RbpzeF3qB7JIY&si=BvsquIO4DwTcrvmL",
+              "thumbnailUrl": "https://i.ytimg.com/vi/MmqtTOdyqv4/maxresdefault.jpg",
+              "fallbackThumbnailUrl": "https://i.ytimg.com/vi/MmqtTOdyqv4/hqdefault.jpg",
+              "cta": "Watch Playlist"
+            },
+            {
+              "id": "plyaikid",
+              "tag": "Kids Learning",
+              "title": "AI for Kids",
+              "body": "Fun, interactive AI adventures introducing young learners to Artificial Intelligence concepts through engaging stories and real-world examples.",
+              "playlistUrl": "https://youtube.com/playlist?list=PLZW00-gqDuDk&si=7K_RD95t0I98ZTXg",
+              "thumbnailUrl": "https://i.ytimg.com/vi/5ODE6nmVYgo/maxresdefault.jpg",
+              "fallbackThumbnailUrl": "https://i.ytimg.com/vi/5ODE6nmVYgo/hqdefault.jpg",
+              "cta": "Watch Playlist"
+            },
+            {
+              "id": "plycybkd",
+              "tag": "Cyber Safety",
+              "title": "Cyber Security for Kids",
+              "body": "Essential online safety and cybersecurity lessons tailored for kids—covering digital citizenship, safe browsing, and protecting personal information.",
+              "playlistUrl": "https://youtube.com/playlist?list=PLGHdRtRzrZbE&si=7TlmLU5tEns2kY0l",
+              "thumbnailUrl": "https://i.ytimg.com/vi/wt7NuI1URiM/maxresdefault.jpg",
+              "fallbackThumbnailUrl": "https://i.ytimg.com/vi/wt7NuI1URiM/hqdefault.jpg",
+              "cta": "Watch Playlist"
+            }
+          ]
+        }
+      },
+      {
         "id": "csw96ke0",
         "type": "testimonials",
         "data": {
@@ -567,14 +655,56 @@
         "id": "ge4lxg5o",
         "type": "hero",
         "data": {
-          "eyebrow": "Coming Soon",
-          "titleLine1": "Learning Paths",
-          "titleLine2": "",
-          "subtitle": "We are currently building our comprehensive learning resources. Check back soon for courses, tutorials, and materials designed to bridge the gap between talent and opportunity.",
+          "eyebrow": "Learning Hub",
+          "titleLine1": "Learning",
+          "titleLine2": "Playlists.",
+          "subtitle": "Explore curated video playlists and structured learning series from qubitedge—covering Applied AI Internship 2026, AI for Kids, and Cyber Security for Kids.",
           "primaryCta": {
-            "label": "Return Home",
-            "anchor": ""
+            "label": "Explore Playlists",
+            "anchor": "learning-playlists"
           }
+        }
+      },
+      {
+        "id": "lrnpg001",
+        "type": "playlists",
+        "anchor": "learning-playlists",
+        "data": {
+          "eyebrow": "Our Playlists",
+          "title": "Watch & Learn With qubitedge",
+          "intro": "Stream our full YouTube learning playlists anytime—built for students, young innovators, and aspiring AI practitioners.",
+          "items": [
+            {
+              "id": "lrnai261",
+              "tag": "Internship 2026",
+              "title": "Applied AI Internship 2026",
+              "body": "Recorded sessions and hands-on modules from our Applied AI & Data Science Internship 2026 covering Python, Machine Learning, Neural Networks, and Generative AI.",
+              "playlistUrl": "https://youtube.com/playlist?list=PLyiZmTVMILR5HlG8prx8RbpzeF3qB7JIY&si=BvsquIO4DwTcrvmL",
+              "thumbnailUrl": "https://i.ytimg.com/vi/MmqtTOdyqv4/maxresdefault.jpg",
+              "fallbackThumbnailUrl": "https://i.ytimg.com/vi/MmqtTOdyqv4/hqdefault.jpg",
+              "cta": "Watch Playlist"
+            },
+            {
+              "id": "lrnaikid",
+              "tag": "Kids Learning",
+              "title": "AI for Kids",
+              "body": "Fun, interactive AI adventures introducing young learners to Artificial Intelligence concepts through engaging stories and real-world examples.",
+              "playlistUrl": "https://youtube.com/playlist?list=PLZW00-gqDuDk&si=7K_RD95t0I98ZTXg",
+              "thumbnailUrl": "https://i.ytimg.com/vi/5ODE6nmVYgo/maxresdefault.jpg",
+              "fallbackThumbnailUrl": "https://i.ytimg.com/vi/5ODE6nmVYgo/hqdefault.jpg",
+              "cta": "Watch Playlist"
+            },
+            {
+              "id": "lrncybkd",
+              "tag": "Cyber Safety",
+              "title": "Cyber Security for Kids",
+              "body": "Essential online safety and cybersecurity lessons tailored for kids—covering digital citizenship, safe browsing, and protecting personal information.",
+              "playlistUrl": "https://youtube.com/playlist?list=PLGHdRtRzrZbE&si=7TlmLU5tEns2kY0l",
+              "thumbnailUrl": "https://i.ytimg.com/vi/wt7NuI1URiM/maxresdefault.jpg",
+              "fallbackThumbnailUrl": "https://i.ytimg.com/vi/wt7NuI1URiM/hqdefault.jpg",
+              "cta": "Watch Playlist"
+            }
+          ]
         }
       }
     ],

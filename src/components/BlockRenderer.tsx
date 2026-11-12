@@ -1,7 +1,8 @@
 import { motion, useScroll, useTransform, AnimatePresence } from "framer-motion";
-import { ArrowRight, ArrowUpRight, Sparkles, Plus, Minus, Trash2, ChevronDown, X, Edit2 } from "lucide-react";
+import { ArrowRight, ArrowUpRight, Sparkles, Plus, Minus, Trash2, ChevronDown, X, Edit2, Play, Youtube } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import { useState, useRef } from "react";
+import { Link } from "@tanstack/react-router";
 import type { Block } from "@/lib/cms";
 import { scrollToAnchor, useCMS } from "@/lib/cms";
 import { useAdmin } from "@/lib/AdminContext";
@@ -635,6 +636,178 @@ export function BlockRenderer({ block, pageId = "home" }: BlockRendererProps) {
                 className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 py-4 text-sm text-white/40 hover:text-[#64CEFB] hover:border-[#64CEFB]/30 transition-all"
               >
                 <Plus className="h-4 w-4" /> Add Workshop Item
+              </button>
+            )}
+          </ParallaxContent>
+        </section>
+      );
+    }
+
+    case "playlists":
+      {
+        const accent = d.accentColor || "#64CEFB";
+        return (
+          <section id={anchor} data-accent={accent} style={{ "--accent-color": accent } as React.CSSProperties} className="py-24 md:py-32 border-t border-white/10 bg-black/50 backdrop-blur-sm relative overflow-hidden">
+          <ParallaxContent offset={35} className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 relative z-10">
+            <div className="mb-14 flex flex-col md:flex-row md:items-end justify-between gap-6">
+              <div className="max-w-3xl">
+                <EditableText as="p" className="text-xs uppercase tracking-widest mb-4" style={{ color: 'var(--accent-color, #64CEFB)' }} value={d.eyebrow || ""} onChange={(v) => set("eyebrow", v)} placeholder="Eyebrow…" />
+                <EditableText as="h2" className="text-4xl md:text-5xl lg:text-6xl font-medium tracking-tighter mb-5" style={{ lineHeight: 0.95 }} value={d.title || ""} onChange={(v) => set("title", v)} placeholder="Title…" />
+                {(d.intro || isAdmin) && (
+                  <EditableText as="p" className="text-white/70 text-base md:text-lg" value={d.intro || ""} onChange={(v) => set("intro", v)} multiline placeholder="Intro text…" />
+                )}
+              </div>
+              {d.ctaLabel && d.ctaHref && (
+                <Link
+                  to={d.ctaHref}
+                  className="group inline-flex items-center gap-2 rounded-full border border-white/25 bg-white/5 px-6 py-3 text-sm font-medium text-white hover:bg-white hover:text-black transition-all shrink-0 w-fit"
+                >
+                  {d.ctaLabel}
+                  <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                </Link>
+              )}
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {(d.items || []).map((p: any, i: number) => (
+                <TiltCard
+                  key={p.id || i}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
+                  className="group flex flex-col rounded-2xl border border-white/15 bg-white/[0.03] overflow-hidden hover:bg-white/[0.06] hover:border-[#64CEFB]/50 transition-all relative"
+                >
+                  {isAdmin && (
+                    <button
+                      onClick={() => removeItem(i)}
+                      title="Remove playlist"
+                      className="absolute top-3 right-3 p-1.5 rounded-md bg-red-500/20 text-red-300 opacity-0 group-hover:opacity-100 hover:bg-red-500/40 transition-all z-20"
+                    >
+                      <Trash2 className="h-3.5 w-3.5" />
+                    </button>
+                  )}
+
+                  {/* Thumbnail */}
+                  <a
+                    href={!isAdmin ? (p.playlistUrl || "#") : undefined}
+                    target={!isAdmin && p.playlistUrl ? "_blank" : undefined}
+                    rel={!isAdmin && p.playlistUrl ? "noopener noreferrer" : undefined}
+                    onClick={(e) => {
+                      if (isAdmin || !p.playlistUrl) e.preventDefault();
+                    }}
+                    className="relative aspect-video overflow-hidden bg-black/70 block"
+                  >
+                    {p.thumbnailUrl ? (
+                      <img
+                        src={p.thumbnailUrl}
+                        alt={p.title || "Playlist thumbnail"}
+                        loading="lazy"
+                        onError={(e) => {
+                          const img = e.currentTarget;
+                          if (p.fallbackThumbnailUrl && img.src !== p.fallbackThumbnailUrl) {
+                            img.src = p.fallbackThumbnailUrl;
+                          }
+                        }}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#64CEFB]/20 to-black">
+                        <Youtube className="h-10 w-10 text-white/40" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
+
+                    {/* YouTube Playlist Pill */}
+                    <div className="absolute top-3 left-3 inline-flex items-center gap-1.5 rounded-full bg-black/75 backdrop-blur-md border border-white/15 px-3 py-1 text-[11px] font-medium text-white/95">
+                      <Youtube className="h-3.5 w-3.5 text-red-500" />
+                      <span>YouTube Playlist</span>
+                    </div>
+
+                    {/* Center Play Overlay */}
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <span className="flex h-12 w-12 items-center justify-center rounded-full bg-black/70 border border-white/30 backdrop-blur-md text-white shadow-lg transition-all duration-300 group-hover:scale-110 group-hover:bg-[#64CEFB] group-hover:text-black group-hover:border-[#64CEFB]">
+                        <Play className="h-5 w-5 fill-current ml-0.5" />
+                      </span>
+                    </div>
+                  </a>
+
+                  {/* Details */}
+                  <div className="p-6 flex-1 flex flex-col">
+                    <EditableText
+                      as="span"
+                      className="text-xs uppercase tracking-widest mb-2.5 font-medium"
+                      style={{ color: 'var(--accent-color, #64CEFB)' }}
+                      value={p.tag || ""}
+                      onChange={(v) => updateItem(i, { tag: v })}
+                      placeholder="Tag…"
+                    />
+                    <EditableText
+                      as="h3"
+                      className="text-xl font-medium mb-2.5 tracking-tight text-white group-hover:text-[#64CEFB] transition-colors"
+                      value={p.title || ""}
+                      onChange={(v) => updateItem(i, { title: v })}
+                      placeholder="Playlist title…"
+                    />
+                    <EditableText
+                      as="p"
+                      className="text-sm text-white/70 leading-relaxed mb-5"
+                      value={p.body || ""}
+                      onChange={(v) => updateItem(i, { body: v })}
+                      multiline
+                      placeholder="Playlist description…"
+                    />
+
+                    {isAdmin ? (
+                      <div className="mt-auto pt-3 border-t border-white/10 space-y-2 text-xs">
+                        <input
+                          type="text"
+                          value={p.playlistUrl || ""}
+                          onChange={(e) => updateItem(i, { playlistUrl: e.target.value })}
+                          placeholder="YouTube Playlist URL..."
+                          className="w-full bg-white/5 border border-white/15 rounded px-2.5 py-1.5 text-white/90 font-mono focus:outline-none focus:border-[#64CEFB]"
+                        />
+                        <input
+                          type="text"
+                          value={p.thumbnailUrl || ""}
+                          onChange={(e) => updateItem(i, { thumbnailUrl: e.target.value })}
+                          placeholder="Thumbnail URL..."
+                          className="w-full bg-white/5 border border-white/15 rounded px-2.5 py-1.5 text-white/90 font-mono focus:outline-none focus:border-[#64CEFB]"
+                        />
+                      </div>
+                    ) : (
+                      p.playlistUrl && (
+                        <a
+                          href={p.playlistUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="mt-auto pt-4 border-t border-white/10 inline-flex items-center justify-between text-sm font-medium text-white/90 hover:text-[#64CEFB] transition-colors"
+                        >
+                          <span>{p.cta || "Watch Playlist"}</span>
+                          <ArrowUpRight className="h-4 w-4 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+                        </a>
+                      )
+                    )}
+                  </div>
+                </TiltCard>
+              ))}
+            </div>
+
+            {isAdmin && (
+              <button
+                onClick={() =>
+                  addItem({
+                    tag: "Playlist",
+                    title: "New Playlist",
+                    body: "Playlist description.",
+                    playlistUrl: "https://youtube.com",
+                    thumbnailUrl: "",
+                    cta: "Watch Playlist",
+                  })
+                }
+                className="mt-6 w-full inline-flex items-center justify-center gap-2 rounded-xl border-2 border-dashed border-white/15 py-4 text-sm text-white/40 hover:text-[#64CEFB] hover:border-[#64CEFB]/30 transition-all"
+              >
+                <Plus className="h-4 w-4" /> Add Playlist Item
               </button>
             )}
           </ParallaxContent>
