@@ -221,7 +221,8 @@
             "id": "jq2265sp",
             "quote": "qubitedge brings exceptional industry exposure directly into academic ecosystems. Their workshops empower students with cutting-edge technologies that complement university curriculums and elevate learning outcomes.",
             "author": "Dr G Jayasuma",
-            "role": "Professor"
+            "role": "Professor",
+            "imageUrl": "/jayasuma.jpg"
           },
           {
             "id": "elurojcx",
@@ -522,7 +523,8 @@
               "id": "jq2265sp",
               "quote": "qubitedge brings exceptional industry exposure directly into academic ecosystems. Their workshops empower students with cutting-edge technologies that complement university curriculums and elevate learning outcomes.",
               "author": "Dr G Jayasuma",
-              "role": "Professor"
+              "role": "Professor",
+              "imageUrl": "/jayasuma.jpg"
             },
             {
               "id": "elurojcx",

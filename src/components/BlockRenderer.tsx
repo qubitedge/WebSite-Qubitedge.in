@@ -840,10 +840,28 @@ export function BlockRenderer({ block, pageId = "home" }: BlockRendererProps) {
                     "<EditableText as="span" className="text-lg md:text-xl text-white/90 leading-relaxed" value={t.quote || ""} onChange={(v) => updateItem(i, { quote: v })} multiline placeholder="Quote text…" />"
                   </blockquote>
                   <figcaption className="flex items-center gap-3 text-sm text-white/60">
-                    <div className="h-10 w-10 rounded-full" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #F59E0B), rgba(255,255,255,0.1))` }} />
-                    <div>
+                    {t.imageUrl ? (
+                      <img
+                        src={t.imageUrl}
+                        alt={t.author || "Reviewer"}
+                        className="h-12 w-12 rounded-full object-cover object-top border border-white/20 shrink-0"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <div className="h-12 w-12 rounded-full shrink-0" style={{ background: `linear-gradient(to bottom right, var(--accent-color, #F59E0B), rgba(255,255,255,0.1))` }} />
+                    )}
+                    <div className="flex-1 min-w-0">
                       <EditableText as="div" className="text-white" value={t.author || ""} onChange={(v) => updateItem(i, { author: v })} placeholder="Author name…" />
                       <EditableText as="div" className="text-xs" value={t.role || ""} onChange={(v) => updateItem(i, { role: v })} placeholder="Role…" />
+                      {isAdmin && (
+                        <input
+                          type="text"
+                          value={t.imageUrl || ""}
+                          onChange={(e) => updateItem(i, { imageUrl: e.target.value })}
+                          placeholder="Avatar image URL..."
+                          className="mt-2 w-full bg-white/5 border border-white/15 rounded px-2 py-1 text-xs text-white/80 font-mono focus:outline-none focus:border-[#64CEFB]"
+                        />
+                      )}
                     </div>
                   </figcaption>
                 </motion.figure>

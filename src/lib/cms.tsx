@@ -182,7 +182,7 @@ const defaultHomeBlocks = [
       intro: "Hear what respected professionals say about partnering with qubitedge.",
       items: [
         { id: uid(), quote: "qubitedge bridges academic foundations and real-world engineering seamlessly. The hands-on, project-driven approach and mentorship gave me the technical confidence to thrive in modern software engineering roles.", author: "Joel Masa", role: "Software Engineer" },
-        { id: uid(), quote: "qubitedge brings exceptional industry exposure directly into academic ecosystems. Their workshops empower students with cutting-edge technologies that complement university curriculums and elevate learning outcomes.", author: "Dr G Jayasuma", role: "Professor" },
+        { id: uid(), quote: "qubitedge brings exceptional industry exposure directly into academic ecosystems. Their workshops empower students with cutting-edge technologies that complement university curriculums and elevate learning outcomes.", author: "Dr G Jayasuma", role: "Professor", imageUrl: "/jayasuma.jpg" },
         { id: uid(), quote: "The internship and workshop sessions were an incredible turning point for my learning journey. Working with real datasets, modern AI tools, and supportive mentors gave me the practical skills and confidence to stand out.", author: "Penumatsa Spandana", role: "Student" },
         { id: uid(), quote: "The structured modules and practical pedagogy at qubitedge make complex emerging concepts like AI and Quantum technologies accessible, engaging, and genuinely career-transforming for learners.", author: "Satish Kumar", role: "Assistant Professor" },
       ],
